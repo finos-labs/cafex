@@ -1,0 +1,27 @@
+#Mobile App Automation Keys
+'mobile_os': 'android' #ios/android
+'mobile_platform': 'browserstack' #simulator/device/browserstack
+'mobile_after_scenario_flag': false #Quit the driver after every scenario
+'desired_capabilities_file' : 'capabilities.yml'
+'ios_device_json': 'ios_devices.json'
+'android_device_json': 'android_devices.json'
+#For simulator and device
+'ip_address_android': ''
+'port_number_android': ''
+'ip_address_ios': ''
+'port_number_ios': ''
+#BrowserStack Keys
+'browserstack_username': ''
+'browserstack_access_key': ''
+'browserstack_upload_appcenter_app': false
+'uploaded_android_app_id' : "android_app"
+'uploaded_ios_app_id' : "ios_app"
+'use_random_devices_browserstack': true
+#BrowserStack Url
+'browserstack_url': 'https://api-cloud.browserstack.com/app-automate/upload'
+'get_browserstack_devices_url': 'https://api-cloud.browserstack.com/app-automate/devices.json'
+#Appcenter Url and token
+'ios_appcenter_url': ''
+'ios_appcenter_token': ''
+'android_appcenter_url': ''
+'android_appcenter_token': ''

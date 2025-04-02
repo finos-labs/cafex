@@ -1,0 +1,1 @@
+::: cafex_core.post_install

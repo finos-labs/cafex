@@ -1,0 +1,1 @@
+::: cafex_core.utils.hooks_.pytest_session_start_hook
