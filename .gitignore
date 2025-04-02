@@ -1,0 +1,12 @@
+.idea/
+.pytest_cache
+__pycache__/
+/build/
+/dist/
+*.log
+/log/
+/logs/
+/libs/cafex_core/src/cafex_core.egg-info/
+/.tox/
+/libs/cafex_api/.tox/
+.env

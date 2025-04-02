@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=71.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cafex-core"
+dynamic = ["version"]
+description = "Core Package"
+dependencies = [
+    "pytest-bdd==7.3.0",
+    "pytest==8.3.3",
+    "pytest-xdist==3.6.1",
+    "lxml==4.9.3",
+    "pandas==2.2.1",
+    "nipyapi== 0.19.1",
+    "PyYAML==6.0.1",
+    "pycryptodome==3.20.0",
+    "python-json-logger==2.0.7",
+    "py7zr== 0.21.0",
+    "beautifulsoup4== 4.12.3",
+    "xlrd== 2.0.1",
+    "paramiko== 3.4.0",
+    "boto3== 1.34.57",
+    "scikit-image==0.22.0",
+    "Pillow==10.2.0",
+    "Nested-lookup== 0.2.25",
+    "objectpath==0.6.1",
+    "json2xml== 4.1.0",
+    "lockfile==0.12.2",
+    "PyAutoGUI==0.9.54 ; platform_system == 'Windows'",
+    "allure-pytest==2.13.2",
+    "requests==2.31.0",
+    "pypsexec==0.3.0",
+    "sqlAlchemy== 1.4.29",
+    "pymsteams==0.2.2",
+    "requests-kerberos==0.14.0",
+    "requests_ntlm==1.2.0",
+    "dicttoxml==1.7.16",
+    "python-dotenv==1.0.1",
+    "openpyxl==3.1.5",
+    "python-docx==1.1.2",
+    "pyMuPDF==1.23.26",
+]
+
+authors = [
+    { name = "QA Automation Team", email = "qa_automation@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+cafex = "cafex_core.cafex_cli:main"
+
+[project.optional-dependencies]
+ui = ["cafex-ui>=0.0.30"]
+db = ["cafex-db>=0.0.30"]
+api = ["cafex-api>=0.0.30"]
+all = ["cafex-ui>=0.0.30","cafex-api>=0.0.30","cafex-db>=0.0.30"]
+
+[project.urls]
+Homepage = "https://example.com"
+Documentation = "https://readthedocs.org"
+Repository = "https://github.com/me/spam.git"
+Issues = "https://github.com/me/spam/issues"
+Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["test*", "__pycache__"]
+
+[tool.setuptools.dynamic]
+version = {attr = "cafex_core.__version__"}

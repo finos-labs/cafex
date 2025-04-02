@@ -1,0 +1,58 @@
+[
+  {
+    "browserName" : "Chrome",
+    "bstack:options" : {
+      "os": "Windows",
+      "osVersion": "10",
+      "browserVersion": "124.0"
+    }
+   },
+    {
+    "browserName" : "Chrome",
+    "bstack:options" : {
+      "os": "Windows",
+      "osVersion": "Monterey",
+      "browserVersion": "131.0"
+    }
+   },
+  {
+    "browserName" : "Firefox",
+    "bstack:options" : {
+      "os": "Windows",
+      "osVersion": "10",
+      "browserVersion": "130.0"
+    }
+   },
+  {
+    "browserName": "MicrosoftEdge",
+    "bstack:options": {
+      "os": "Windows",
+      "osVersion": "11",
+      "browserVersion": "latest"
+    }
+  },
+  {
+    "browserName": "IE",
+    "bstack:options": {
+      "os": "Windows",
+      "osVersion": "10",
+      "browserVersion": "11.0"
+    }
+  },
+  {
+    "browserName": "Safari",
+    "bstack:options": {
+      "os": "OS X",
+      "osVersion": "Monterey",
+      "browserVersion": "15.0"
+    }
+  },
+  {
+    "browserName": "Safari",
+    "bstack:options": {
+      "os": "OS X",
+      "osVersion": "Catalina",
+      "browserVersion": "14.0"
+    }
+  }
+]

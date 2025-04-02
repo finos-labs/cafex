@@ -1,0 +1,11 @@
+env:
+  dev:
+    db_demo:
+      super_user1: { username: "avnadmin", password: "qkGmrSEhOEn8vtcyQvvZnK8w1Ky0BH4Pw/cyhP9ow4M=" }
+      cafex:
+        db_type: "mysql"
+        db_server: "mysql-3e8f59d6-prat-cafex.d.aivencloud.com"
+        db_name: "defaultdb"
+        port: "13726"
+        user: super_user1
+        overwrite_default_db_user: True
