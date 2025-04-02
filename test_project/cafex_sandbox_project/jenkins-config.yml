@@ -1,0 +1,18 @@
+language: python
+cafe_version: latest
+environments:
+  dev:
+    env_type: dev
+    stages:
+      - tag: bvt
+  staging:
+    env_type: staging
+    stages:
+      - tag: bvt
+  prod:
+    env_type: prod
+    stages:
+      - tag: bvt
+email:
+  - pratik.mehta1@spglobal.com
+common_dashboard: http://10.220.4.52:2812/automation/execution

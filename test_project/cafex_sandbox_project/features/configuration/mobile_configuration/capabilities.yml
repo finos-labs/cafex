@@ -1,0 +1,63 @@
+'android':
+  'simulator':
+    'app_package': ''
+    'app': '' #app location
+    'platformName': 'Android'
+    'platformVersion': '13'
+    'deviceName': ''
+    'newCommandTimeout': 6000
+    'appWaitActivity': '*'
+  'browserstack':
+    'platformName': 'android'
+    'app': ''
+    'platformVersion': '11.0'
+    'deviceName': 'Google Pixel 5'
+    'bstack:options':
+      "projectName": "Android Automation"
+      "buildName": "Cafex Mobile Android"
+      "sessionName": "Cafex Android Automation"
+      "appiumVersion": "2.0.1"
+      "debug" : "true"
+      "interactiveDebugging" : "true"
+      "idleTimeout": "3000"
+  'device':
+    'platformName': 'Android'
+    'platformVersion': '8'
+    'udid': ''
+    'deviceName': ''
+    'newCommandTimeout': 6000
+    'app': '' #app location
+    'appWaitActivity': '*'
+'ios':
+  'simulator':
+    'platformName': 'iOS'
+    'platformVersion': '12.2'
+    'deviceName': 'iPhone 7'
+    'newCommandTimeout': 6000
+    'bundleId': ''
+    'app': '' #app location
+    'automationName': 'XCUITest'
+  'browserstack':
+    'platformName': 'ios'
+    'app': ''
+    'platformVersion': '16'
+    'deviceName': 'iPhone 14'
+    'bstack:options':
+      "projectName": "iOS Automation"
+      "buildName": "Cafex Mobile iOS"
+      "sessionName": "Cafex iOS Automation"
+      "resignApp" : "true"
+      "acceptInsecureCerts" : "false"
+      "appiumVersion": "2.0.1"
+      "debug" : "true"
+      "interactiveDebugging" : "true"
+  'device':
+    'platformName': 'iOS'
+    'platformVersion': '12.2'
+    'deviceName': 'iPhone 7'
+    'newCommandTimeout': 6000
+    'bundleId': ''
+    'app': '' #app location
+    'automationName': 'XCUITest'
+
+
