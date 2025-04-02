@@ -1,0 +1,12 @@
+{
+ "SearchToken":"search",
+ "Start":0,
+ "Rows":20,
+ "Catalogs":"",
+ "Fields":"",
+ "SortType":1,
+ "SortFields":"",
+ "Filters":[],
+ "AdvFilters":[],
+ "RequestType":"1"
+}

@@ -1,0 +1,27 @@
+# Service description for JSONPlaceholder API
+
+get_post:
+  method: GET
+  endpoint: /posts/
+  headers:
+    Accept: application/json
+
+create_post:
+  method: POST
+  endpoint: /posts
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+
+update_post:
+  method: PATCH
+  endpoint: /posts/
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+
+delete_post:
+  method: DELETE
+  endpoint: /posts/
+  headers:
+    Accept: application/json

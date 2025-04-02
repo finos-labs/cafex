@@ -1,0 +1,7 @@
+*.pyc
+.idea
+build/
+cafe.egg-info/
+venv/
+dist/
+/src/cafex_ui.egg-info/

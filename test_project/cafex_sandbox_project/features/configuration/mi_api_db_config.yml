@@ -1,0 +1,11 @@
+env:
+  dev:
+    cafex_cloud:
+      super_user1: { username: "", password: "" }
+      cafex:
+        db_type: ""
+        db_server: ""
+        db_name: ""
+        port: ""
+        user: 
+        overwrite_default_db_user: True

@@ -1,0 +1,147 @@
+"""
+This module contains the unit tests for the Internet Page functionality.
+"""
+import unittest
+
+import pytest
+from pytest_bdd import step
+
+from test_project.cafex_sandbox_project.features.forms.ui_methods.internet_page import InternetPageMethods
+
+internet_page = InternetPageMethods()
+
+
+# if you specify ui_web marker then cafex itself create the driver with the capabilities mentioned in
+# config.yml file
+class TestInternetPageUnittest(unittest.TestCase):
+    """Unit tests for Internet Page functionality."""
+
+    @pytest.mark.ui_web
+    def test_check_for_a_specific_element(self):
+        """Check for a specific element on the homepage."""
+
+        @step("Given the user is on the homepage")
+        def step_given_homepage():
+            self.assertTrue(internet_page.open_home_page())
+
+        @step('Then the user should see the "Welcome to the-internet" text')
+        def step_then_check_text():
+            self.assertTrue(internet_page.validate_home_page_title("Welcome to the-internet"))
+
+        # Execute the steps
+        step_given_homepage()
+        step_then_check_text()
+
+    @pytest.mark.ui_web
+    def test_navigate_to_a_or_b_testing(self):
+        """Navigate to the A/B Testing page and verify its content."""
+
+        @step("Given the user is on the homepage")
+        def step_given_homepage():
+            self.assertTrue(internet_page.open_home_page())
+
+        @step('When the user navigates to the "A/B Testing" page')
+        def step_when_navigate():
+            self.assertTrue(internet_page.navigate_to_given_page("A/B Testing"))
+
+        @step('Then the user should see the "A/B Test Control" text')
+        def step_then_verify_text():
+            self.assertTrue(internet_page.validate_a_or_b_testing_header("A/B"))
+
+        # Execute the steps
+        step_given_homepage()
+        step_when_navigate()
+        step_then_verify_text()
+
+    @pytest.mark.ui_web
+    def test_navigate_to_add_or_remove_elements(self):
+        """Navigate to the Add/Remove Elements page and add an element."""
+
+        @step("Given the user is on the homepage")
+        def step_given_homepage():
+            self.assertTrue(internet_page.open_home_page())
+
+        @step('When the user navigates to the "Add/Remove Elements" page')
+        def step_when_navigate():
+            self.assertTrue(internet_page.navigate_to_given_page("Add/Remove Elements"))
+
+        @step('When the user adds an element')
+        def step_when_add_element():
+            self.assertTrue(internet_page.add_element_page())
+
+        @step('Then the user should see the delete button')
+        def step_then_see_delete_button():
+            self.assertTrue(internet_page.validate_delete_button())
+
+        # Execute the steps
+        step_given_homepage()
+        step_when_navigate()
+        step_when_add_element()
+        step_then_see_delete_button()
+
+    @pytest.mark.ui_web
+    def test_navigate_to_form_auth_pages(self):
+        """Navigate to Form Authentication page and validate the login mechanism."""
+
+        @step("Given the user is on the homepage")
+        def step_given_homepage():
+            self.assertTrue(internet_page.open_home_page())
+
+        @step('When the user navigates to the "Form Authentication" page')
+        def step_when_navigate_to_form_authentication():
+            self.assertTrue(internet_page.navigate_to_form_authentication_page())
+
+        @step('When the user enters the credentials')
+        def step_when_enter_credentials():
+            self.assertTrue(internet_page.enter_credentials("tomsmith",
+                                                            "ENjnpCHhJG89EZ+B8YnWdRp5jITEZY9EPV5NIoifG/w="))
+
+        @step('When the user clicks the login button')
+        def step_when_click_login_button():
+            self.assertTrue(internet_page.click_login_button())
+
+        @step('Then the user should see the message "You logged into a secure area!"')
+        def step_then_login_successful():
+            self.assertTrue(internet_page.validate_flash_message("You logged into a secure area!"))
+
+        # Execute the steps
+        step_given_homepage()
+        step_when_navigate_to_form_authentication()
+        step_when_enter_credentials()
+        step_when_click_login_button()
+        step_then_login_successful()
+
+    @pytest.mark.ui_web
+    def test_navigate_to_form_pages(self):
+        """Navigate to Form Authentication page and validate the login mechanism using config file."""
+
+        @step("Given the user is on the homepage")
+        def step_given_homepage():
+            self.assertTrue(internet_page.open_home_page())
+
+        @step("When the user navigates to the Form Authentication page")
+        def step_when_navigate_to_form_authentication():
+            self.assertTrue(internet_page.navigate_to_form_authentication_page())
+
+        @step('When the user enters the credentials from the config file')
+        def step_when_enter_credentials():
+            internet_page.get_credentials_from_config_file()
+
+        @step('When the user hits the login button')
+        def step_when_click_login_button():
+            self.assertTrue(internet_page.click_login_button())
+
+        @step('Then the user should see the message "You logged into a secure area!"')
+        def step_then_verify_login_message():
+            self.assertTrue(internet_page.validate_flash_message("You logged into a secure area!"))
+
+        # Execute the steps
+        step_given_homepage()
+        step_when_navigate_to_form_authentication()
+        step_when_enter_credentials()
+        step_when_click_login_button()
+        step_then_verify_login_message()
+
+
+if __name__ == '__main__':
+    unittest.main()
