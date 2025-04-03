@@ -13,7 +13,7 @@ import nipyapi
 import paramiko
 import requests
 from boto3 import Session
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 from pypsexec.client import Client as Remote_client
 from requests.auth import HTTPBasicAuth, HTTPProxyAuth, HTTPDigestAuth
 from requests_ntlm import HttpNtlmAuth
