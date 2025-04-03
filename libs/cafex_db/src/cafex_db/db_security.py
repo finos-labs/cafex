@@ -9,8 +9,6 @@ import sqlalchemy as sc
 # from cassandra.auth import PlainTextAuthProvider
 # from cassandra.cluster import Cluster
 from Cryptodome.Cipher import AES
-from cassandra.auth import PlainTextAuthProvider
-from cassandra.cluster import Cluster
 from pymongo import MongoClient
 
 from cafex_core.utils.core_security import (
@@ -274,62 +272,62 @@ class DBSecurity(Security):
         except Exception as e:
             self.__obj_generic_exception.raise_generic_exception(str(e))
 
-    def cassandra_connection(self, server_name: str | list, **kwargs):
-        """Creates a Cassandra connection.
-
-        Args:
-            server_name: Hostname or IP address of the Cassandra server, or a list of contact points.
-            **kwargs: Keyword arguments for connection options.
-
-        Keyword Args:
-            username (str): The username for authentication.
-            password (str): The password for authentication.
-            port_number (int): The Cassandra port (default: 9042).
-            control_connection_timeout (float): Control connection timeout in seconds.
-
-        Returns:
-            cassandra.cluster.Session: The Cassandra session object.
-
-        Raises:
-            CassandraConnectionError: If a connection error occurs.
-        """
-        port = kwargs.get("port_number", 9042)
-        control_timeout = kwargs.get("control_connection_timeout")
-
-        auth_provider = None
-        if username := kwargs.get("username"):  # Walrus operator for cleaner assignment and check
-            password = kwargs.get(
-                "password"
-            )  # Put password retrieval inside to avoid unused variable if no username
-
-            if not password:
-                raise ValueError("Password is required when username is provided")
-            auth_provider = PlainTextAuthProvider(username=username, password=password)
-
-        try:
-            if isinstance(server_name, list):
-                cluster = Cluster(
-                    server_name,
-                    auth_provider=auth_provider,
-                    port=port,
-                    control_connection_timeout=control_timeout,
-                )
-            else:
-                cluster = Cluster(
-                    [server_name],  # Always a list of contact points
-                    auth_provider=auth_provider,
-                    port=port,
-                    control_connection_timeout=control_timeout,
-                )
-
-            session = cluster.connect(kwargs.get("database_name"))
-            return session
-
-        except Exception as e:
-            raise e
-            # raise self.__obj_generic_exception.raise_generic_exception(
-            #     str(e) + f"Error connecting to Cassandra: {e}"
-            # ) from e
+    # def cassandra_connection(self, server_name: str | list, **kwargs):
+    #     """Creates a Cassandra connection.
+    #
+    #     Args:
+    #         server_name: Hostname or IP address of the Cassandra server, or a list of contact points.
+    #         **kwargs: Keyword arguments for connection options.
+    #
+    #     Keyword Args:
+    #         username (str): The username for authentication.
+    #         password (str): The password for authentication.
+    #         port_number (int): The Cassandra port (default: 9042).
+    #         control_connection_timeout (float): Control connection timeout in seconds.
+    #
+    #     Returns:
+    #         cassandra.cluster.Session: The Cassandra session object.
+    #
+    #     Raises:
+    #         CassandraConnectionError: If a connection error occurs.
+    #     """
+    #     port = kwargs.get("port_number", 9042)
+    #     control_timeout = kwargs.get("control_connection_timeout")
+    #
+    #     auth_provider = None
+    #     if username := kwargs.get("username"):  # Walrus operator for cleaner assignment and check
+    #         password = kwargs.get(
+    #             "password"
+    #         )  # Put password retrieval inside to avoid unused variable if no username
+    #
+    #         if not password:
+    #             raise ValueError("Password is required when username is provided")
+    #         auth_provider = PlainTextAuthProvider(username=username, password=password)
+    #
+    #     try:
+    #         if isinstance(server_name, list):
+    #             cluster = Cluster(
+    #                 server_name,
+    #                 auth_provider=auth_provider,
+    #                 port=port,
+    #                 control_connection_timeout=control_timeout,
+    #             )
+    #         else:
+    #             cluster = Cluster(
+    #                 [server_name],  # Always a list of contact points
+    #                 auth_provider=auth_provider,
+    #                 port=port,
+    #                 control_connection_timeout=control_timeout,
+    #             )
+    #
+    #         session = cluster.connect(kwargs.get("database_name"))
+    #         return session
+    #
+    #     except Exception as e:
+    #         raise e
+    #         # raise self.__obj_generic_exception.raise_generic_exception(
+    #         #     str(e) + f"Error connecting to Cassandra: {e}"
+    #         # ) from e
 
     def establish_mongodb_connection(self, username, password, cluster_url, database_name):
         try:

@@ -14,7 +14,7 @@
 'auto_dashboard_report': false
 'rerun_iteration': 'NA'
 'rerun_failures': 0
-'use_secured_password': true
+'use_secured_password': false
 'enable_logging': false
 'local_reporting': false
 'run_on_mobile': false
