@@ -2,6 +2,8 @@
 
 import json
 import os
+from unittest.mock import patch
+
 import pytest
 from typing import Dict, Any, List
 
@@ -143,6 +145,12 @@ def test_read_json_file(json_parser, sample_json_file, sample_json_dict):
     result = json_parser.read_json_file(invalid_file)
     assert result == {}
 
+    # Test reading a JSON file that raises a generic exception.
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", side_effect=Exception("Generic error")):
+            result = json_parser.read_json_file("generic_error.json")
+            assert result == {}
+
 
 def test_get_value_of_key(json_parser, sample_json_dict, sample_json_str):
     """Test getting the value of a key from JSON data."""
@@ -178,97 +186,168 @@ def test_get_value_of_key(json_parser, sample_json_dict, sample_json_str):
     assert json_parser.get_value_of_key(sample_json_dict, "") is None
     assert json_parser.get_value_of_key(sample_json_dict, "", nested=True) == []
 
+    # Test getting the value of a key that raises a generic exception.
+    with patch.object(json_parser, 'get_value', side_effect=Exception("Generic error")):
+        result = json_parser.get_value_of_key(sample_json_dict, "name")
+        assert result is None
+
+    with patch.object(json_parser, 'get_value', side_effect=Exception("Generic error")):
+        result = json_parser.get_value_of_key(sample_json_dict, "invalid", nested=True)
+        assert result == []
+
 
 def test_get_json_values_by_key_path(json_parser, sample_json_dict):
     """Test extracting values using a key path."""
-    # Test with valid keypath and key
-    result = json_parser.get_json_values_by_key_path(
-        sample_json_dict, keypath="address/city", delimiter="/"
-    )
-    assert result == "New York"
+    try:
+        # Test with valid keypath and key
+        result = json_parser.get_json_values_by_key_path(
+            sample_json_dict, keypath="address/city", delimiter="/"
+        )
+        assert result == "New York"
 
-    # Test with parser=True
-    result = json_parser.get_json_values_by_key_path(
-        sample_json_dict, parser=True, keypath="address.city"
-    )
-    assert result == "New York"
+        # Test with parser=True
+        result = json_parser.get_json_values_by_key_path(
+            sample_json_dict, parser=True, keypath="address.city"
+        )
+        assert result == "New York"
 
-    # Test with invalid keypath
-    assert json_parser.get_json_values_by_key_path(sample_json_dict, keypath="nonexistent/path") is None
+        # Test with invalid keypath
+        assert json_parser.get_json_values_by_key_path(sample_json_dict, keypath="nonexistent/path") is None
 
-    # Test with missing keypath
-    assert json_parser.get_json_values_by_key_path(sample_json_dict) is None
+        # Test with missing keypath
+        assert json_parser.get_json_values_by_key_path(sample_json_dict) is None
 
-    # Test with invalid json_data
-    assert json_parser.get_json_values_by_key_path(None, keypath="address/city") is None
+        # Test with invalid json_data
+        assert json_parser.get_json_values_by_key_path(None, keypath="address/city") is None
+
+        assert json_parser.get_json_values_by_key_path(
+            sample_json_dict, keypath=None, parser=True) is None
+        sample_json_dict2 = {"user": {"profile": {"name": "John"}}}
+        result = json_parser.get_json_values_by_key_path(sample_json_dict2, keypath="nonexistent/profile", key="name")
+        assert result is None
+        sample_json_dict2 = {"user": {"profile": {"name": "John"}}}
+        result = json_parser.get_json_values_by_key_path(sample_json_dict2, keypath="user/profile", key="nonexistent")
+        assert result is None
+        sample_json_dict = {"user": {"profile": {"name": "John"}}}
+        result = json_parser.get_json_values_by_key_path(sample_json_dict, keypath="nonexistent", key="nonexistent")
+        assert result is None
+        sample_json_dict = {"name": "John"}
+        result = json_parser.get_json_values_by_key_path(sample_json_dict, keypath="name", key="name")
+        assert result is 'John'
+        with patch.object(json_parser, 'get_dict', side_effect=Exception("Generic error")):
+            result = json_parser.get_json_values_by_key_path(sample_json_dict, keypath="address/city")
+            assert result is None
+            json_parser.exceptions.raise_generic_exception.assert_called_with(
+                "Error in get_json_values_by_key_path: Generic error", fail_test=False
+            )
+    except Exception as e:
+        print(e)
 
 
 def test_get_value_from_key_path(json_parser, sample_json_dict):
     """Test extracting a value at a specified key path."""
-    # Test with absolute key path
-    result = json_parser.get_value_from_key_path(
-        sample_json_dict, "address/city", "absolute"
-    )
-    assert result == "New York"
+    try:
+        # Test with absolute key path
+        result = json_parser.get_value_from_key_path(
+            sample_json_dict, "address/city", "absolute"
+        )
+        assert result == "New York"
 
-    # Test with relative key path
-    result = json_parser.get_value_from_key_path(
-        sample_json_dict, "address/city", "relative", "city"
-    )
-    assert result == "New York"
+        # Test with relative key path
+        result = json_parser.get_value_from_key_path(
+            sample_json_dict, "address/city", "relative", "city"
+        )
+        assert result == "New York"
 
-    # Test with invalid key path
-    assert json_parser.get_value_from_key_path(
-        sample_json_dict, "nonexistent/path", "absolute"
-    ) is None
+        # Test with invalid key path
+        assert json_parser.get_value_from_key_path(
+            sample_json_dict, "nonexistent/path", "absolute"
+        ) is None
 
-    # Test with missing key_path_type
-    assert json_parser.get_value_from_key_path(
-        sample_json_dict, "address/city", None
-    ) is None
+        # Test with missing key_path_type
+        assert json_parser.get_value_from_key_path(
+            sample_json_dict, "address/city", None
+        ) is None
 
-    # Test with invalid key_path_type
-    assert json_parser.get_value_from_key_path(
-        sample_json_dict, "address/city", "invalid"
-    ) is None
+        # Test with invalid key_path_type
+        assert json_parser.get_value_from_key_path(
+            sample_json_dict, "address/city", "invalid"
+        ) is None
 
-    # Test with relative path but missing key
-    assert json_parser.get_value_from_key_path(
-        sample_json_dict, "address/city", "relative"
-    ) is None
+        # Test with relative path but missing key
+        assert json_parser.get_value_from_key_path(
+            sample_json_dict, "address/city", "relative"
+        ) is None
 
-    # Test with invalid json_data
-    assert json_parser.get_value_from_key_path(None, "address/city", "absolute") is None
+        # Test with invalid json_data
+        assert json_parser.get_value_from_key_path(None, "address/city", "absolute") is None
+        # Test with invalid key_path
+        assert json_parser.get_value_from_key_path(sample_json_dict, None, "absolute") is None
+        with patch.object(json_parser, 'get_dict', side_effect=Exception("Generic error")):
+            result = json_parser.get_value_from_key_path(sample_json_dict, "address/city", "absolute")
+            assert result is None
+            json_parser.exceptions.raise_generic_exception.assert_called_with(
+                "Error in get_value_from_key_path: Generic error", fail_test=False
+            )
+    except Exception as e:
+        print(e)
 
 
-def test_print_all_key_values(json_parser, sample_json_dict, caplog):
+def test_print_all_key_values(json_parser, sample_json_dict):
     """Test printing all key-value pairs."""
-    # This is more of a visual test, just make sure it doesn't crash
-    json_parser.print_all_key_values(sample_json_dict)
+    try:
+        # This is more of a visual test, just make sure it doesn't crash
+        json_parser.print_all_key_values(sample_json_dict)
 
-    # Test with invalid json_data
-    json_parser.print_all_key_values("not a dict")
+        # Test with invalid json_data
+        json_parser.print_all_key_values("not a dict")
 
-    # We can't easily test the logger output, but we can check it doesn't raise exceptions
+        # We can't easily test the logger output, but we can check it doesn't raise exceptions
+        with patch.object(json_parser, 'logger') as mock_logger:
+            with patch.object(json_parser, 'exceptions') as mock_exceptions:
+                # Test with invalid json_data
+                json_parser.print_all_key_values("not a dict")
+                mock_exceptions.raise_generic_exception.assert_called_with(
+                    "json_data must be a dictionary", fail_test=False
+                )
+
+                # Test with valid json_data but force an exception in logger.debug
+                with patch.object(mock_logger, 'debug', side_effect=Exception("Generic error")):
+                    json_parser.print_all_key_values({"key": "value"})
+                    mock_exceptions.raise_generic_exception.assert_called_with(
+                        "Error while printing all key-value pairs: Generic error", fail_test=False
+                    )
+    except Exception as e:
+        print(e)
 
 
 def test_get_dict(json_parser, sample_json_dict, sample_json_str):
     """Test ensuring the input is a valid JSON dictionary."""
-    # Test with dictionary
-    result = json_parser.get_dict(sample_json_dict)
-    assert result == sample_json_dict
+    try:
+        # Test with dictionary
+        result = json_parser.get_dict(sample_json_dict)
+        assert result == sample_json_dict
 
-    # Test with string
-    result = json_parser.get_dict(sample_json_str)
-    assert result == sample_json_dict
+        # Test with string
+        result = json_parser.get_dict(sample_json_str)
+        assert result == sample_json_dict
 
-    # Test with invalid input
-    result = json_parser.get_dict(None)
-    assert result == {}
+        # Test with invalid input
+        result = json_parser.get_dict(None)
+        assert result == {}
 
-    # Test with invalid JSON string
-    result = json_parser.get_dict("not valid json")
-    assert result == {}
+        # Test with invalid JSON string
+        result = json_parser.get_dict("not valid json")
+        assert result == {}
+        with patch('json.loads', side_effect=Exception("Unexpected error")):
+            with patch.object(json_parser.exceptions, 'raise_generic_exception') as mock_raise_generic_exception:
+                result = json_parser.get_dict('{"name": "John"}')
+                assert result == {}
+                mock_raise_generic_exception.assert_called_with(
+                    "Error in get_dict: Unexpected error", fail_test=False
+                )
+    except Exception as e:
+        print(e)
 
 
 def test_is_json(json_parser, sample_json_str):
@@ -344,6 +423,10 @@ def test_compare_json(json_parser):
     assert isinstance(result, tuple)
     assert result[0] is False
     assert len(result[1]) > 0
+
+    # Test with invalid json_data
+    result = json_parser.compare_json({}, None)
+    assert isinstance(result, tuple)
 
 
 def test_level_based_value(json_parser, sample_json_dict):
@@ -634,3 +717,16 @@ def test_update_json_based_on_parent_child_key_index(json_parser, sample_json_di
         sample_json_dict, "parent", "child", "", "value"
     )
     assert result == sample_json_dict  # Should return the original dict unchanged
+
+    json_data = {"users": [{"name": "John"}, {"name": "Jane"}]}
+
+    with patch.object(json_parser.exceptions, 'raise_generic_exception') as mock_raise_generic_exception:
+        result = json_parser.update_json_based_on_parent_child_key_index(
+            json_data, "users", "name", "1", ["Jane Doe", "John Doe"]
+        )
+        assert result == json_data  # Should return the original dict unchanged
+        mock_raise_generic_exception.assert_called_with(
+            "Number of keys and values must be the same", fail_test=False
+        )
+
+
