@@ -1,0 +1,6853 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../pytest_bdd_step_error/">
+      
+      
+        <link rel="next" href="../pytest_collection_finish_hook/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
+    
+    
+      
+        <title>pytest_before_scenario_hook - CafeX Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.4af4bdda.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="CafeX Documentation" class="md-header__button md-logo" aria-label="CafeX Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CafeX Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              pytest_before_scenario_hook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="CafeX Documentation" class="md-nav__button md-logo" aria-label="CafeX Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CafeX Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    C:
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            C:
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Users
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            Users
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1" id="__nav_2_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Pratik mehta
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Pratik mehta
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1_1" id="__nav_2_1_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Documents
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Documents
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1_1_1" id="__nav_2_1_1_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Cafex demo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_2_1_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Cafex demo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1_1_1_1" id="__nav_2_1_1_1_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Cafex
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="6" aria-labelledby="__nav_2_1_1_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Cafex
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1_1_1_1_1" id="__nav_2_1_1_1_1_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Docs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="7" aria-labelledby="__nav_2_1_1_1_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Docs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1_1_1_1_1_1" id="__nav_2_1_1_1_1_1_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="8" aria-labelledby="__nav_2_1_1_1_1_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_1" id="__nav_2_1_1_1_1_1_1_1_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="9" aria-labelledby="__nav_2_1_1_1_1_1_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            cafex
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex/cafex/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cafex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_api/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_api
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_2" id="__nav_2_1_1_1_1_1_1_1_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="9" aria-labelledby="__nav_2_1_1_1_1_1_1_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_api
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_api/api_exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    api_exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_api/request_builder/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    request_builder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_api/response_parser_json/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    response_parser_json
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_api/response_parser_xml/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    response_parser_xml
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_api/socket_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    socket_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_core
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3" id="__nav_2_1_1_1_1_1_1_1_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="9" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_core
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/cafex_cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cafex_cli
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/handlers/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    handlers
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_2" id="__nav_2_1_1_1_1_1_1_1_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            handlers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/handlers/file_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    file_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/handlers/folder_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    folder_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/logging/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    logging
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_3" id="__nav_2_1_1_1_1_1_1_1_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            logging
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/logging/colargulog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    colargulog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/logging/logger_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    logger_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/parsers/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    parsers
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_4" id="__nav_2_1_1_1_1_1_1_1_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            parsers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/parsers/html_parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    html_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/parsers/json_parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    json_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/parsers/xml_parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    xml_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    reporting_
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_5" id="__nav_2_1_1_1_1_1_1_1_3_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            reporting_
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_5_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/_report_viewer/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    _report_viewer
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_5_1" id="__nav_2_1_1_1_1_1_1_1_3_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="11" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            _report_viewer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_5_1_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/_report_viewer/_server_scripts/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    _server_scripts
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_5_1_1" id="__nav_2_1_1_1_1_1_1_1_3_5_1_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="12" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_5_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_5_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            _server_scripts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/_report_viewer/_server_scripts/_server_generator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    _server_generator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/_report_viewer/_server_scripts/_server_launcher/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    _server_launcher
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/report_generator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    report_generator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/reporting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    reporting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/screenshot_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    screenshot_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/reporting_/step_decorator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    step_decorator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/singletons_/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    singletons_
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_6" id="__nav_2_1_1_1_1_1_1_1_3_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            singletons_
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/singletons_/request_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    request_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/singletons_/session_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    session_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_7" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    utils
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_7" id="__nav_2_1_1_1_1_1_1_1_3_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            utils
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/apache_air_flow_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apache_air_flow_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/apache_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apache_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/assertions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    assertions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/config_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    config_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/core_security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    core_security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/custom_encryption/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    custom_encryption
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/date_time_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    date_time_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/elastic_search_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    elastic_search_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/file_reader_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    file_reader_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/file_transfer_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    file_transfer_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_3_7_12" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    hooks_
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_3_7_12" id="__nav_2_1_1_1_1_1_1_1_3_7_12_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="11" aria-labelledby="__nav_2_1_1_1_1_1_1_1_3_7_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_3_7_12">
+            <span class="md-nav__icon md-icon"></span>
+            hooks_
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/hook_helper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook_helper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/hook_util/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook_util
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_add_option_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_add_option_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_after_scenario_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_after_scenario_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_after_step_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_after_step_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_bdd_before_step/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_bdd_before_step
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_bdd_step_error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_bdd_step_error
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_before_scenario_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_before_scenario_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_collection_finish_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_collection_finish_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_configure_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_configure_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_run_test_logreport/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_run_test_logreport
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_run_test_make_report/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_run_test_make_report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_run_test_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_run_test_setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_session_finish_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_session_finish_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/hooks_/pytest_session_start_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_session_start_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/item_attribute_accessor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item_attribute_accessor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/regex_constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    regex_constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_core/utils/ssh_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ssh_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_db
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_4" id="__nav_2_1_1_1_1_1_1_1_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="9" aria-labelledby="__nav_2_1_1_1_1_1_1_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_db
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/database_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    database_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/database_operations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    database_operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/databricks_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    databricks_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/db_exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    db_exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/db_security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    db_security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/mongo_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mongo_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_db/snowflake_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    snowflake_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_ui
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_5" id="__nav_2_1_1_1_1_1_1_1_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="9" aria-labelledby="__nav_2_1_1_1_1_1_1_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_ui
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_5_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/mobile_client/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    mobile_client
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_5_1" id="__nav_2_1_1_1_1_1_1_1_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            mobile_client
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/mobile_client/mobile_client_actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_client_actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/mobile_client/mobile_driver_factory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_driver_factory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/mobile_client/mobile_driver_initializer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_driver_initializer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/mobile_client/mobile_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/ui_security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ui_security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_5_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    web_client
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_5_3" id="__nav_2_1_1_1_1_1_1_1_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="10" aria-labelledby="__nav_2_1_1_1_1_1_1_1_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            web_client
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/browserstack_integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    browserstack_integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_5_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/drivers/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    drivers
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_5_3_2" id="__nav_2_1_1_1_1_1_1_1_5_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="11" aria-labelledby="__nav_2_1_1_1_1_1_1_1_5_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_5_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            drivers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/drivers/chrome_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    chrome_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/drivers/edge_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    edge_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/drivers/firefox_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    firefox_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/drivers/internet_explorer_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    internet_explorer_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/drivers/safari_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    safari_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/keyboard_mouse_actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    keyboard_mouse_actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/ui_web_driver_initializer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ui_web_driver_initializer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1_1_1_1_1_1_5_3_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_client_actions/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    web_client_actions
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1_1_1_1_1_1_1_5_3_5" id="__nav_2_1_1_1_1_1_1_1_5_3_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="11" aria-labelledby="__nav_2_1_1_1_1_1_1_1_5_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1_1_1_1_1_1_5_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            web_client_actions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_client_actions/base_web_client_actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    base_web_client_actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_client_actions/element_interactions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    element_interactions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_client_actions/utility_methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    utility_methods
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_client_actions/webdriver_interactions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    webdriver_interactions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_client_enum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    web_client_enum
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../C%3A/Users/pratik_mehta/Documents/cafex_demo/cafex/docs/reference/cafex_ui/web_client/web_driver_factory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    web_driver_factory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../assertions/assertions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Assertions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../cafex/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cafex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../cafex_api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cafex api
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../cafex_core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cafex core
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../cafex_ui/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cafex ui
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../changelog/changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../contributing/contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../developer_guide/DEV-README/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Developer guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../exceptions/exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../license/license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../password_mechanism/custom_encryption/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Password mechanism
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_1" id="__nav_14_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_1">
+            <span class="md-nav__icon md-icon"></span>
+            cafex
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex/cafex/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cafex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_api/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_api
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_2" id="__nav_14_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_2">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_api
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_api/api_exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    api_exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_api/request_builder/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    request_builder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_api/response_parser_json/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    response_parser_json
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_api/response_parser_xml/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    response_parser_xml
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_api/socket_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    socket_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_core
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3" id="__nav_14_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14_3">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_core
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cafex_cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cafex_cli
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../handlers/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    handlers
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_2" id="__nav_14_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            handlers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../handlers/file_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    file_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../handlers/folder_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    folder_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../logging/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    logging
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_3" id="__nav_14_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            logging
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../logging/colargulog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    colargulog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../logging/logger_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    logger_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../parsers/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    parsers
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_4" id="__nav_14_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            parsers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../parsers/html_parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    html_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../parsers/json_parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    json_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../parsers/xml_parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    xml_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reporting_/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    reporting_
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_5" id="__nav_14_3_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            reporting_
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_5_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reporting_/_report_viewer/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    _report_viewer
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_5_1" id="__nav_14_3_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_14_3_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            _report_viewer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_5_1_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reporting_/_report_viewer/_server_scripts/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    _server_scripts
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_5_1_1" id="__nav_14_3_5_1_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_14_3_5_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_5_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            _server_scripts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reporting_/_report_viewer/_server_scripts/_server_generator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    _server_generator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reporting_/_report_viewer/_server_scripts/_server_launcher/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    _server_launcher
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reporting_/report_generator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    report_generator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reporting_/reporting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    reporting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reporting_/screenshot_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    screenshot_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reporting_/step_decorator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    step_decorator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../singletons_/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    singletons_
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_6" id="__nav_14_3_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            singletons_
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../singletons_/request_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    request_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../singletons_/session_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    session_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_7" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    utils
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_7" id="__nav_14_3_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_3_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            utils
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache_air_flow_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apache_air_flow_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apache_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../assertions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    assertions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    config_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core_security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    core_security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../custom_encryption/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    custom_encryption
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../date_time_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    date_time_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../elastic_search_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    elastic_search_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../file_reader_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    file_reader_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../file_transfer_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    file_transfer_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_3_7_12" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    hooks_
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_3_7_12" id="__nav_14_3_7_12_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_14_3_7_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_14_3_7_12">
+            <span class="md-nav__icon md-icon"></span>
+            hooks_
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hook_helper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook_helper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hook_util/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook_util
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_add_option_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_add_option_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_after_scenario_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_after_scenario_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_after_step_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_after_step_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_bdd_before_step/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_bdd_before_step
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_bdd_step_error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_bdd_step_error
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    pytest_before_scenario_hook
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    pytest_before_scenario_hook
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      pytest_before_scenario_hook
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      PytestBeforeScenario
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PytestBeforeScenario">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario.before_scenario_hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      before_scenario_hook
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_collection_finish_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_collection_finish_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_configure_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_configure_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_run_test_logreport/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_run_test_logreport
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_run_test_make_report/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_run_test_make_report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_run_test_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_run_test_setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_session_finish_/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_session_finish_
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pytest_session_start_hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pytest_session_start_hook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../item_attribute_accessor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item_attribute_accessor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../regex_constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    regex_constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ssh_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ssh_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_db/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_db
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_4" id="__nav_14_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_4">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_db
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/database_handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    database_handler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/database_operations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    database_operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/databricks_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    databricks_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/db_exceptions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    db_exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/db_security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    db_security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/mongo_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mongo_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_db/snowflake_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    snowflake_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_ui/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    cafex_ui
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_5">
+            <span class="md-nav__icon md-icon"></span>
+            cafex_ui
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_ui/mobile_client/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    mobile_client
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5_1" id="__nav_14_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            mobile_client
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/mobile_client/mobile_client_actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_client_actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/mobile_client/mobile_driver_factory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_driver_factory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/mobile_client/mobile_driver_initializer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_driver_initializer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/mobile_client/mobile_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mobile_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/ui_security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ui_security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_ui/web_client/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    web_client
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5_3" id="__nav_14_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_14_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            web_client
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/browserstack_integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    browserstack_integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5_3_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_ui/web_client/drivers/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    drivers
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5_3_2" id="__nav_14_5_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_14_5_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_5_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            drivers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/drivers/chrome_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    chrome_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/drivers/edge_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    edge_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/drivers/firefox_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    firefox_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/drivers/internet_explorer_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    internet_explorer_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/drivers/safari_driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    safari_driver
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/keyboard_mouse_actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    keyboard_mouse_actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/ui_web_driver_initializer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ui_web_driver_initializer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5_3_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../cafex_ui/web_client/web_client_actions/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    web_client_actions
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5_3_5" id="__nav_14_5_3_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_14_5_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_5_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            web_client_actions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/web_client_actions/base_web_client_actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    base_web_client_actions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/web_client_actions/element_interactions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    element_interactions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/web_client_actions/utility_methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    utility_methods
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/web_client_actions/webdriver_interactions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    webdriver_interactions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/web_client_enum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    web_client_enum
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cafex_ui/web_client/web_driver_factory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    web_driver_factory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../release/release/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../reporting/reporting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reporting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      pytest_before_scenario_hook
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      PytestBeforeScenario
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PytestBeforeScenario">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario.before_scenario_hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      before_scenario_hook
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>pytest_before_scenario_hook</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="cafex_core.utils.hooks_.pytest_before_scenario_hook"></a>
+    <div class="doc doc-contents first">
+
+        <p>This module contains the PytestBeforeScenario class which is used to handle
+the before scenario hook in Pytest.</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario" class="doc doc-heading">
+            <code>PytestBeforeScenario</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A class that handles the before scenario hook in Pytest.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>libs\cafex_core\src\cafex_core\utils\hooks_\pytest_before_scenario_hook.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 11</span>
+<span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PytestBeforeScenario</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that handles the before scenario hook in Pytest.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_</span><span class="p">,</span> <span class="n">scenario_</span><span class="p">,</span> <span class="n">request_</span><span class="p">,</span> <span class="n">args_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the PytestBeforeScenario class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            scenario_: The pytest scenario to be managed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span> <span class="o">=</span> <span class="n">scenario_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature</span> <span class="o">=</span> <span class="n">feature_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span> <span class="o">=</span> <span class="n">SessionStore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">CoreLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hook_util</span> <span class="o">=</span> <span class="n">HookUtil</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_attribute_accessor</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">before_scenario_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The before scenario hook method that is called before each scenario.</span>
+
+<span class="sd">        It logs the before scenario event and the worker ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting execution of pytest-bdd scenario : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_scenario_report_configuration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario_setup</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">scenario_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tags</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ui_web&quot;</span><span class="p">,</span> <span class="s2">&quot;mobile_web&quot;</span><span class="p">]):</span>
+            <span class="kn">from</span> <span class="nn">cafex_ui.web_client.ui_web_driver_initializer</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">WebDriverInitializer</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">ui_scenario</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">datadriven</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">scenarios</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">examples</span>
+            <span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">counter</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">driver</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">WebDriverInitializer</span><span class="p">()</span><span class="o">.</span><span class="n">initialize_driver</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">driver</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">WebDriverInitializer</span><span class="p">()</span><span class="o">.</span><span class="n">initialize_driver</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="s2">&quot;mobile_app&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tags</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">cafex_ui.mobile_client.mobile_driver_initializer</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">MobileDriverInitializer</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">mobile_ui_scenario</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">datadriven</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">scenarios</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">examples</span>
+            <span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">counter</span><span class="p">:</span>
+                <span class="n">MobileDriverInitializer</span><span class="p">()</span><span class="o">.</span><span class="n">initialize_driver</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">MobileDriverInitializer</span><span class="p">()</span><span class="o">.</span><span class="n">initialize_driver</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">before_scenario_report_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">node_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">nodeid</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">node</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_attribute_accessor</span> <span class="o">=</span> <span class="n">ItemAttributeAccessor</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_scenario_globals</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+            <span class="n">feature_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_feature_details</span><span class="p">()</span>
+            <span class="n">scenario_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_scenario_details</span><span class="p">(</span><span class="n">feature_details</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_test_data</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">scenario_details</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in before_scenario_report_configuration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_scenario_globals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">):</span>
+        <span class="n">globals_to_set</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;_current_scenario_id&quot;</span><span class="p">:</span> <span class="n">node_id</span><span class="p">,</span>
+            <span class="s2">&quot;_scenario_data_modify&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;_scenario_failure_reason&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;_current_scenario_failed&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;_scenario_tags&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">globals_to_set</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">node_id</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="s2">&quot;api&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">node_id</span><span class="si">}</span><span class="s2">_bool_api_scenarios&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;True&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_feature_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">feature_file</span><span class="p">,</span> <span class="n">feature_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hook_util</span><span class="o">.</span><span class="n">get_feature_file_and_its_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;featureName&quot;</span><span class="p">:</span> <span class="n">feature_name</span><span class="p">,</span>
+                <span class="s2">&quot;featureDescription&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="s2">&quot;featureTags&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in _get_feature_details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_scenario_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_details</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scenario_details</span> <span class="o">=</span> <span class="n">feature_details</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">scenario_details</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;scenarioName&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;scenarioTags&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tags</span><span class="p">,</span>
+                    <span class="s2">&quot;scenarioDescription&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">scenario_details</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in _get_scenario_details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_test_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">scenario_details</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_data_driven</span><span class="p">,</span> <span class="n">is_outline</span><span class="p">,</span> <span class="n">example</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_set_info</span><span class="p">()</span>
+            <span class="n">test_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">reporting</span><span class="p">[</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_attribute_accessor</span><span class="o">.</span><span class="n">is_scenario</span><span class="p">:</span>
+                <span class="n">test_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;scenario&quot;</span><span class="p">:</span> <span class="n">scenario_details</span><span class="p">,</span>
+                        <span class="s2">&quot;isDataDriven&quot;</span><span class="p">:</span> <span class="n">is_data_driven</span><span class="p">,</span>
+                        <span class="s2">&quot;isOutline&quot;</span><span class="p">:</span> <span class="n">is_outline</span><span class="p">,</span>
+                        <span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="n">example</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span><span class="o">.</span><span class="n">reporting</span><span class="p">[</span><span class="s2">&quot;tests&quot;</span><span class="p">][</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_data</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in _update_test_data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_data_set_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get information about the data set being used in the scenario.</span>
+
+<span class="sd">        Handles both scenario outlines and parametrized (data-driven)</span>
+<span class="sd">        tests correctly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_data_driven</span> <span class="o">=</span> <span class="n">is_outline</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">example</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="s2">&quot;callspec&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">callspec</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">callspec</span><span class="o">.</span><span class="n">params</span>
+                <span class="n">is_data_driven</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">is_outline</span> <span class="o">=</span> <span class="s2">&quot;_pytest_bdd_example&quot;</span> <span class="ow">in</span> <span class="n">params</span>
+                <span class="n">example_data</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_pytest_bdd_example&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">params</span>
+                <span class="n">example</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">example_data</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">is_data_driven</span><span class="p">,</span> <span class="n">is_outline</span><span class="p">,</span> <span class="n">example</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in _get_data_set_info: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">feature_</span><span class="p">,</span> <span class="n">scenario_</span><span class="p">,</span> <span class="n">request_</span><span class="p">,</span> <span class="n">args_</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Initialize the PytestBeforeScenario class.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>scenario_</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The pytest scenario to be managed.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>libs\cafex_core\src\cafex_core\utils\hooks_\pytest_before_scenario_hook.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_</span><span class="p">,</span> <span class="n">scenario_</span><span class="p">,</span> <span class="n">request_</span><span class="p">,</span> <span class="n">args_</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize the PytestBeforeScenario class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        scenario_: The pytest scenario to be managed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span> <span class="o">=</span> <span class="n">scenario_</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">feature</span> <span class="o">=</span> <span class="n">feature_</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request_</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args_</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">session_store</span> <span class="o">=</span> <span class="n">SessionStore</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">CoreLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">hook_util</span> <span class="o">=</span> <span class="n">HookUtil</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scenario_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">item_attribute_accessor</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="cafex_core.utils.hooks_.pytest_before_scenario_hook.PytestBeforeScenario.before_scenario_hook" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">before_scenario_hook</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>The before scenario hook method that is called before each scenario.</p>
+<p>It logs the before scenario event and the worker ID.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>libs\cafex_core\src\cafex_core\utils\hooks_\pytest_before_scenario_hook.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">before_scenario_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The before scenario hook method that is called before each scenario.</span>
+
+<span class="sd">    It logs the before scenario event and the worker ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting execution of pytest-bdd scenario : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">before_scenario_report_configuration</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scenario_setup</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": [], "search": "../../../../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
