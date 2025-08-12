@@ -1,0 +1,8 @@
+*.pyc
+.idea
+build/
+cafe.egg-info/
+venv/
+dist/
+/src/cafex_db.egg-info/
+

@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=71.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cafex-ui"
+dynamic = ["version"]
+description = "UI Library"
+authors = [
+    { name = "QA Automation Team", email = "qa_automation@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "cafex-core>=0.0.30",
+    "selenium==4.26.1",
+    "Appium-Python-Client==4.0.1",
+    "browserstack-local==1.2.7",
+    "pywinauto==0.6.8 ; platform_system == 'Windows'",
+    "opencv-python==4.10.0.84"
+]
+
+keywords = ["ui", "appium", "selenium", "pytest", "automation"]
+
+[project.urls]
+Homepage = "https://example.com"
+Documentation = "https://readthedocs.org"
+Repository = "https://github.com/me/spam.git"
+Issues = "https://github.com/me/spam/issues"
+Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["__pycache__"]
+
+[tool.setuptools.dynamic]
+version = {attr = "cafex_ui.__version__"}
+
+[project.scripts]
+CafeXWeb = "cafex_ui.__init__:main"

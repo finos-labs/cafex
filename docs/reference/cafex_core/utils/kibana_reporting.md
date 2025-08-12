@@ -1,0 +1,1 @@
+::: cafex_core.utils.kibana_reporting

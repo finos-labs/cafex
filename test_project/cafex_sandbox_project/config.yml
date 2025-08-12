@@ -1,0 +1,43 @@
+'current_execution_browser': 'chrome'
+'default_explicit_wait': 60
+'default_implicit_wait': 30
+'environment': 'http://the-internet.herokuapp.com'
+'environment_type': 'db_demo'
+'execution_environment': 'dev'
+'selenium_grid_ip': 'http://localhost:4444'
+'use_grid': false
+'chrome_options': ['download.default_directory=C:/mydownloads', 'download.prompt_for_download=false',
+  'download.directory_upgrade= true', 'safebrowsing.enabled= true']
+'web_capabilities':
+  'ms:edgeOptions':
+    'args': ['--window-size=1900,1200']
+'auto_dashboard_report': false
+'rerun_iteration': 'NA'
+'rerun_failures': 0
+'use_secured_password': false
+'enable_logging': false
+'local_reporting': false
+'run_on_mobile': false
+'is_debug_execution': false
+'use_selenium_grid': false
+'service_description': 'services/service_description'
+'service_payloads': 'services/payloads'
+'run_on_browserstack': false
+'auto_launch_report': true
+'env':
+  'dev':
+    'api_demo':
+      'base_url': 'https://jsonplaceholder.typicode.com'
+      'default_db_user':
+        'password': ''
+        'username': ''
+    'ui_demo':
+      'base_url': 'http://the-internet.herokuapp.com'
+      'default_user':
+        'password': 'lUgrzemNo5m9Z3aiN168JcBoGCas1XsFvo2Ab3hcZlDXJwkbMXHcWjbddsaKdjnRxieB+g=='
+        'username': 'tomsmith'
+    'db_demo':
+      'base_url': ''
+      'default_db_user':
+        'password': ''
+        'username': ''

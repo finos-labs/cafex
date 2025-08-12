@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafex Test Automation Report</title>
+    <!-- STYLE_PLACEHOLDER -->
+</head>
+<body>
+    <header>
+        <h1>Cafex Test Automation Report</h1>
+    </header>
+
+    <!-- Summary Section -->
+    <div class="summary-container">
+        <div class="summary-section">
+            <h2>Collection Info</h2>
+            <p><strong>Test Count:</strong> <span id="testCount"></span></p>
+            <p><strong>Pytest Count:</strong> <span id="pytestCount"></span></p>
+            <p><strong>Pytest BDD Count:</strong> <span id="pytestBddCount"></span></p>
+            <p><strong>Unittest Count:</strong> <span id="unittestCount"></span></p>
+        </div>
+        <div class="summary-section">
+            <h2>Execution Info</h2>
+            <p><strong>Execution ID:</strong> <span id="executionId"></span></p>
+            <p><strong>Status:</strong> <span id="executionStatus" class="status-badge"></span></p>
+            <p><strong>Start Time:</strong> <span id="executionStartTime"></span></p>
+            <p><strong>End Time:</strong> <span id="executionEndTime"></span></p>
+            <p><strong>Duration:</strong> <span id="executionDuration"></span></p>
+            <p><strong>Total Passed:</strong> <span id="totalPassed"></span></p>
+            <p><strong>Total Failed:</strong> <span id="totalFailed"></span></p>
+            <p><strong>Is Parallel Execution:</strong> <span id="isParallel"></span></p>
+        </div>
+        <div class="summary-section">
+            <h2>Framework Versions</h2>
+            <p><strong>Cafex:</strong> <span id="cafex"></span></p>
+            <p><strong>CORE:</strong> <span id="cafexCore"></span></p>
+            <p><strong>API:</strong> <span id="cafexApi"></span></p>
+            <p><strong>DB:</strong> <span id="cafexDb"></span></p>
+            <p><strong>UI:</strong> <span id="cafexUi"></span></p>
+        </div>
+        <div class="summary-section">
+            <h2>Environment Details</h2>
+            <p><strong>Browser:</strong> <span id="browser"></span></p>
+            <p><strong>Execution Tags:</strong> <span id="executionTags"></span></p>
+            <p><strong>Environment:</strong> <span id="environment"></span></p>
+            <p><strong>Executed By:</strong> <span id="user"></span></p>
+        </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <nav class="tabs">
+        <button id="btn-pytestBdd">Pytest-BDD</button>
+        <button id="btn-pytest">Pytest</button>
+        <button id="btn-unittest">Unittest</button>
+    </nav>
+
+    <!-- Test Details -->
+    <div id="test-details-container"></div>
+
+    <!-- Logs Section -->
+    <div class="logs-section">
+        <div class="logs-header">
+            <h2>Execution Logs</h2>
+            <button onclick="openLogsInNewWindow()" class="pop-out-btn">Pop Out</button>
+        </div>
+        <div class="log-container">
+            <select id="log-file-select"></select>
+            <pre id="log-content"></pre>
+        </div>
+    </div>
+
+    <!-- SCRIPT_PLACEHOLDER -->
+</body>
+</html>
