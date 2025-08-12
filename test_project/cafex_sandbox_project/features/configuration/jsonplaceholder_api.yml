@@ -1,0 +1,21 @@
+# Configuration file for JSONPlaceholder API tests
+
+# Environmental configuration
+env:
+  dev:
+    api_demo:
+      base_url: "https://jsonplaceholder.typicode.com"
+      overwrite_base_url: false
+  staging:
+    api_demo:
+      base_url: "https://jsonplaceholder.typicode.com"
+      overwrite_base_url: false
+  prod:
+    api_demo:
+      base_url: "https://jsonplaceholder.typicode.com"
+      overwrite_base_url: false
+
+# Application configuration
+execution_environment: "prod"
+environment_type: "api_demo"
+service_description: "services/service_description"

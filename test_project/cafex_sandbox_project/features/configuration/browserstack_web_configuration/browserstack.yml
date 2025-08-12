@@ -1,0 +1,30 @@
+'browser':
+  'chrome':
+    'os': 'Windows'
+    'osVersion': '10'
+    'browserVersion': 'latest'
+  'firefox':
+    'os': 'Windows'
+    'osVersion': '11'
+    'browserVersion': 'latest'
+  'safari':
+    'os': 'OS X'
+    'osVersion': 'Monterey'
+    'browserVersion': '15.6'
+  'edge':
+    'os': 'Windows'
+    'osVersion': '10'
+    'browserVersion': 'latest'
+  'internet explorer':
+    'os': 'Windows'
+    'osVersion': '10'
+    'browserVersion': '11.0'
+'bstack:options':
+  "projectName": "Cafex Web Automation Demo"
+  "buildName": "Cafex Web Automation Demo"
+  "sessionName": "Cafex Automation Demo"
+  "local": false
+"use_random_browsers": false
+
+
+
