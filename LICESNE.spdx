@@ -1,0 +1,7 @@
+SPDXVersion: SPDX-2.0
+DataLicense: CC0-1.0
+Creator: QA Automation
+PackageName: CafeX
+PackageOriginator: QA Automation
+PackageHomePage: https://github.com/finos-labs/cafex
+PackageLicenseDeclared: Apache-2.0
