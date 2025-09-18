@@ -50,9 +50,13 @@ class PytestSessionStart:
         self.session_worker = xdist.get_xdist_worker_id(self.session)
         self.is_worker = xdist.get_xdist_worker_id(self.session)
         self.session_store = SessionStore()
-        self.session_store.global_dict = {}
-        self.session_store.collection_details = {}
-        self.session_store.base_config = None
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.paths = self.session_context.paths
+        self.reporting = self.session_context.reporting
+        self.metadata.global_dict = {}
+        self.metadata.collection_details = {}
+        self.metadata.base_config = None
         self.logger = CoreLogger(name=__name__).get_logger()
         self.date_time_util = DateTimeActions()
         self.file_handler_obj = FileHandler()
@@ -63,10 +67,9 @@ class PytestSessionStart:
 
     def session_start_hook(self):
         """Hook method called at the start of the session."""
-        if "auto_dashboard_report" in self.config_utils.base_config.keys():
-            self.session_store.is_report = self.config_utils.base_config.get(
-                "auto_dashboard_report"
-            )
+        base_config = self.config_utils.base_config
+        if base_config and "auto_dashboard_report" in base_config.keys():
+            self.metadata.is_report = base_config.get("auto_dashboard_report")
         else:
             self.logger.warning(
                 "Warning! To push data to reporting server."
@@ -80,7 +83,7 @@ class PytestSessionStart:
     def update_commandline_data(self):
         """Updates the command line data based on the options provided."""
         try:
-            config_yaml = self.session_store.base_config
+            config_yaml = self.metadata.base_config or {}
             options = self.session.config.option
             attributes = [
                 "mobile_platform",
@@ -106,7 +109,7 @@ class PytestSessionStart:
                         config_yaml[attr] = literal_eval(option_value)
                     else:
                         config_yaml[attr] = option_value
-            self.session_store.global_dict["jenkins_build"] = options.jenkins_build
+            self.metadata.global_dict["jenkins_build"] = options.jenkins_build
             auto_dashboard_report = options.auto_dashboard_report
             if auto_dashboard_report is not None:
                 config_yaml["auto_dashboard_report"] = auto_dashboard_report.lower() == "true"
@@ -146,7 +149,7 @@ class PytestSessionStart:
                     "password": options.default_db_user__password,
                 }
             # TODO: add the logic for custom_params, config_keys
-            self.session_store.base_config = config_yaml
+            self.metadata.base_config = config_yaml
         except Exception as error_in_update_commandline_data:
             self.logger.exception(
                 f"Error in update_commandline_data --> {error_in_update_commandline_data}"
@@ -198,10 +201,11 @@ class PytestSessionStart:
     def pytest_session_start_auto_dash_configuration(self):
         """Configures the auto dashboard for pytest session."""
         options = self.session.config.option
-        execution_id = self.session_store.execution_uuid
+        execution_id = self.paths.execution_uuid
         execution_start_time = self.date_time_util.get_current_date_time()
         is_ct_build = "1" if options.jenkins_build else "0"
         os.environ["isCTBuild"] = is_ct_build
+        base_config = self.metadata.base_config or {}
         if (
             self.session_worker.lower() == "master"
             or os.environ.get("PYTEST_XDIST_WORKER", "master") == "master"
@@ -223,15 +227,13 @@ class PytestSessionStart:
                 "isReRun": 0,
                 "isPerformanceExecution": 0,
             }
-            if "rerun_failures" in self.session_store.base_config.keys():
-                is_rerun = self.session_store.base_config["rerun_failures"]
+            if "rerun_failures" in base_config.keys():
+                is_rerun = base_config["rerun_failures"]
                 if is_rerun:
                     execution_details["isReRun"] = 1
-            str_exec_env = (
-                str(self.session_store.base_config["execution_environment"]).strip().lower()
-            )
+            str_exec_env = str(base_config["execution_environment"]).strip().lower()
             os.environ["execution_environment"] = str_exec_env
-            str_environment_type = self.session_store.base_config["environment_type"]
+            str_environment_type = base_config["environment_type"]
             os.environ["environment_type"] = str_environment_type
             ct_details = {}
             if options.jenkins_build:
@@ -262,15 +264,11 @@ class PytestSessionStart:
                     "isDebugExecution": self.get_execution_mode(),
                     "executionStartTime": execution_start_time,
                     "executionEnvironment": str_exec_env,
-                    "isGrid": int(self.session_store.base_config.get("use_grid", 0)),
-                    "environment": (
-                        self.session_store.base_config["environment"]
-                        if "environment" in self.session_store.base_config.keys()
-                        else None
-                    ),
+                    "isGrid": int(base_config.get("use_grid", 0)),
+                    "environment": base_config.get("environment"),
                     "machineName": platform.uname()[1],
                     "user": str_username,
-                    "isParallel": True if self.session_store.workers_count > 1 else False,
+                    "isParallel": True if self.metadata.workers_count > 1 else False,
                     "runCommands": self.get_run_commands(),
                 }
             )
@@ -284,7 +282,7 @@ class PytestSessionStart:
                             self.sys_arg.index(arg) + 1
                         ]
             self.file_handler_obj.create_json_file(
-                self.session_store.temp_execution_dir, "execution.json", execution_details
+                self.paths.temp_execution_dir, "execution.json", execution_details
             )
 
     def get_run_commands(self):
@@ -305,35 +303,38 @@ class PytestSessionStart:
         return run_commands
 
     def re_run_data(self):
-        var_rerun = self.session_store.base_config
-        is_rerun = self.session_store.base_config.get("rerun_failures", False)
+        if not self.metadata.base_config:
+            return
+
+        var_rerun = self.metadata.base_config
+        is_rerun = var_rerun.get("rerun_failures", False)
         if is_rerun:
             if "--lf" not in sys.argv:
                 var_master = os.environ.get("execution_id")
                 master_id = var_master
                 parent_id = "NA"
-                if "rerun_failures_count" in self.session_store.base_config.keys():
+                if "rerun_failures_count" in var_rerun.keys():
                     var_rerun["rerun_iteration"] = "NA"
-                    int_re = self.session_store.base_config["rerun_failures_count"]
+                    int_re = var_rerun["rerun_failures_count"]
                     if int_re > 5:
                         var_rerun["rerun_failures_count"] = 5
-                self.session_store.base_config = var_rerun
+                self.metadata.base_config = var_rerun
         else:
             var_rerun["rerun_iteration"] = "NA"
-            self.session_store.base_config = var_rerun
-        rerun_data = self.session_store.base_config
-        if "rerun_failures" not in self.session_store.base_config.keys():
-            config_yaml_re_del = self.session_store.base_config
-            if "rerun_failures_count_dummy" in self.session_store.base_config.keys():
+            self.metadata.base_config = var_rerun
+        rerun_data = self.metadata.base_config
+        if "rerun_failures" not in rerun_data.keys():
+            config_yaml_re_del = rerun_data
+            if "rerun_failures_count_dummy" in rerun_data.keys():
                 config_yaml_re_del.popf("rerun_failures_count_dummy")
-                self.session_store.base_config = config_yaml_re_del
-        if "rerun_failures" in self.session_store.base_config.keys():
-            config_yaml_re_del1 = self.session_store.base_config
-            rerun_value = self.session_store.base_config["rerun_failures"]
+                self.metadata.base_config = config_yaml_re_del
+        if "rerun_failures" in rerun_data.keys():
+            config_yaml_re_del1 = rerun_data
+            rerun_value = rerun_data["rerun_failures"]
             if not rerun_value:
-                if "rerun_failures_count_dummy" in self.session_store.base_config.keys():
+                if "rerun_failures_count_dummy" in rerun_data.keys():
                     config_yaml_re_del1.pop("rerun_failures_count_dummy")
-                    self.session_store.base_config = config_yaml_re_del1
+                    self.metadata.base_config = config_yaml_re_del1
             # Below condition is to handle when pytest is triggered in parallel - makes sure only one session is created
             dir_path = os.path.join(
                 self.config_utils.get_project_path(), ".pytest_cache/v/cache/lastfailed"
@@ -341,14 +342,14 @@ class PytestSessionStart:
             if os.path.exists(dir_path):
                 os.remove(dir_path)
             if "--lf" not in sys.argv:
-                if "rerun_failures_count" in self.session_store.base_config.keys() and is_rerun:
-                    re_run_val = self.session_store.base_config["rerun_failures_count"]
-                    config_yaml = self.session_store.base_config
-                    if "rerun_failures_count_dummy" not in self.session_store.base_config.keys():
+                if "rerun_failures_count" in rerun_data.keys() and is_rerun:
+                    re_run_val = rerun_data["rerun_failures_count"]
+                    config_yaml = rerun_data
+                    if "rerun_failures_count_dummy" not in rerun_data.keys():
                         config_yaml["rerun_failures_count_dummy"] = re_run_val
-                    elif "rerun_failures_count_dummy" in self.session_store.base_config.keys():
+                    elif "rerun_failures_count_dummy" in rerun_data.keys():
                         config_yaml["rerun_failures_count_dummy"] = re_run_val
-                    self.session_store.base_config = config_yaml
+                    self.metadata.base_config = config_yaml
                 if os.path.isdir(
                     os.path.join(self.config_utils.get_project_path(), ".pytest_cache")
                 ):
@@ -360,7 +361,8 @@ class PytestSessionStart:
         :return:
         """
         try:
-            debug_execution = self.session_store.base_config.get("is_debug_execution", False)
+            base_config = self.metadata.base_config or {}
+            debug_execution = base_config.get("is_debug_execution", False)
             if debug_execution:
                 if str(debug_execution) in ("True", "true", "TRUE"):
                     return 1

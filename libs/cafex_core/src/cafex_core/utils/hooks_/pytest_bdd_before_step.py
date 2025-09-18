@@ -19,6 +19,9 @@ class PytestBddBeforeStep:
         self.logger = CoreLogger(name=__name__).get_logger()
         self.date_time_util = DateTimeActions()
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.test_context = self.session_context.test
         self.config_utils = ConfigUtils()
 
     def before_step_hook(self):
@@ -31,9 +34,9 @@ class PytestBddBeforeStep:
             ).strip()
             node_id = self.request_.node.nodeid
 
-            self.session_store.current_step = step_name
+            self.test_context.current_step = step_name
 
-            if f"{node_id}_current_scenario_id" in self.session_store.globals:
+            if f"{node_id}_current_scenario_id" in self.metadata.globals:
                 current_time = self.date_time_util.get_current_date_time()
                 step_details = {
                     "stepName": step_name,
@@ -52,7 +55,7 @@ class PytestBddBeforeStep:
                         "rerun_iteration"
                     ]
 
-                self.session_store.current_step_details = step_details
+                self.test_context.current_step_details = step_details
 
             self.logger.info(f"Executing step: {step_name}")
 

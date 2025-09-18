@@ -13,6 +13,10 @@ class PytestBddAfterStep:
         self.logger = CoreLogger(name=__name__).get_logger()
         self.date_time_util = DateTimeActions()
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.reporting = self.session_context.reporting
+        self.test_context = self.session_context.test
         self.request_ = RequestSingleton().request
         self.step = step
         self.step_details = None
@@ -27,8 +31,8 @@ class PytestBddAfterStep:
     def after_step_dash_auto_config(self):
         node_id = self.request_.node.nodeid
         try:
-            if f"{node_id}_current_scenario_id" in self.session_store.globals:
-                self.step_details = self.session_store.current_step_details
+            if f"{node_id}_current_scenario_id" in self.metadata.globals:
+                self.step_details = self.test_context.current_step_details
 
                 self.capture_screenshot_for_step()
 
@@ -50,17 +54,17 @@ class PytestBddAfterStep:
                     duration_seconds
                 )
 
-                test_data = self.session_store.reporting["tests"].get(node_id)
+                test_data = self.reporting["tests"].get(node_id)
                 test_data.setdefault("steps", []).append(self.step_details)
                 if self.step_details["stepStatus"] == "F":
                     test_data["testStatus"] = "F"
-                self.session_store.reporting["tests"][node_id] = test_data
+                self.reporting["tests"][node_id] = test_data
 
         except Exception as e:
             self.logger.error(f"Error in after_step_auto_dash_configuration: {e}")
         finally:
-            self.session_store.current_step = None
-            self.session_store.current_step_details = None
+            self.test_context.current_step = None
+            self.test_context.current_step_details = None
 
     def get_step_status(self):
         try:

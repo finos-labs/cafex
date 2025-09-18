@@ -13,13 +13,17 @@ class PytestAfterScenario:
         self.request_ = RequestSingleton().request
         self.logger = CoreLogger(name=__name__).get_logger()
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.drivers = self.session_context.drivers
         self.config_utils = ConfigUtils()
         self.hook_util = HookUtil()
         self.is_parallel_execution = self.hook_util.is_parallel_execution(self.sys_args)
 
     def after_scenario_hook(self):
         fetch_run_on_mobile_bool = False
-        if "run_on_mobile" in self.session_store.base_config:
+        base_config = self.metadata.base_config or {}
+        if "run_on_mobile" in base_config:
             fetch_run_on_mobile_bool = self.config_utils.fetch_run_on_mobile()
         if "ui_web" in self.scenario.tags and not fetch_run_on_mobile_bool:
             self.after_scenario_browser_teardown()
@@ -52,71 +56,76 @@ class PytestAfterScenario:
             bool_data = False
             scenario_name = self.scenario.name
             examples_len = len(self.scenario.feature.scenarios[scenario_name].examples.examples)
+            metadata = self.metadata
+            drivers = self.drivers
+            base_config = metadata.base_config or {}
 
-            def reset_session_store():
-                self.session_store.driver = None
-                self.session_store.counter = 1
-                self.session_store.datadriven = 1
+            def reset_session_state():
+                drivers.driver = None
+                metadata.counter = 1
+                metadata.datadriven = 1
 
-            def quit_and_reset(session_store, debug_id):
-                self.quit_driver(session_store, debug_id)
-                reset_session_store()
+            def quit_and_reset(debug_id):
+                self.quit_driver(debug_id)
+                reset_session_state()
 
-            if self.session_store.base_config.get("session_end_driver_teardown_flag") is False:
+            if base_config.get("session_end_driver_teardown_flag") is False:
                 if self.is_parallel_execution:
                     self.close_driver()
-                    reset_session_store()
+                    reset_session_state()
                 else:
-                    quit_and_reset(self.session_store, 4)
-            elif self.session_store.base_config.get("skip_teardown_per_example_flag") is False:
+                    quit_and_reset(4)
+            elif base_config.get("skip_teardown_per_example_flag") is False:
                 if examples_len == 0 and len(self.scenario.params) == 0:
                     bool_data = True
                 if examples_len == 0 and bool_data and not self.is_parallel_execution:
-                    quit_and_reset(self.session_store, 1)
+                    quit_and_reset(1)
                 else:
-                    if examples_len > 0 and examples_len == self.session_store.counter:
-                        quit_and_reset(self.session_store, 2)
-                    elif self.session_store.datadriven == self.session_store.rowcount:
-                        quit_and_reset(self.session_store, 3)
+                    if examples_len > 0 and examples_len == metadata.counter:
+                        quit_and_reset(2)
+                    elif metadata.datadriven == metadata.rowcount:
+                        quit_and_reset(3)
                     else:
-                        self.session_store.datadriven += 1
-                        self.session_store.counter += 1
+                        metadata.datadriven += 1
+                        metadata.counter += 1
                     if self.is_parallel_execution:
                         self.close_driver()
-                        reset_session_store()
+                        reset_session_state()
             if examples_len == 0:
                 bool_data = True
             if examples_len == 0 and bool_data and not self.is_parallel_execution:
-                quit_and_reset(self.session_store, 5)
+                quit_and_reset(5)
             else:
                 if (
-                    examples_len == self.session_store.counter
-                    or self.session_store.datadriven == self.session_store.rowcount
+                    examples_len == metadata.counter
+                    or metadata.datadriven == metadata.rowcount
                 ):
-                    quit_and_reset(self.session_store, 6)
+                    quit_and_reset(6)
                 else:
-                    if self.session_store.datadriven == self.session_store.rowcount:
-                        quit_and_reset(self.session_store, 7)
+                    if metadata.datadriven == metadata.rowcount:
+                        quit_and_reset(7)
                     else:
-                        self.session_store.datadriven += 1
-                    self.session_store.counter += 1
+                        metadata.datadriven += 1
+                    metadata.counter += 1
                 if (
                     self.is_parallel_execution
-                    and self.session_store.datadriven != self.session_store.rowcount
+                    and metadata.datadriven != metadata.rowcount
                 ):
-                    quit_and_reset(self.session_store, 8)
+                    quit_and_reset(8)
         except Exception as e:
             self.logger.exception("Error in after_scenario_browser_teardown-->" + str(e))
 
     def close_driver(self):
         try:
-            self.session_store.driver.close()
+            if self.drivers.driver is not None:
+                self.drivers.driver.close()
         except Exception as e:
             self.logger.exception(f"Error while closing driver : {e}")
 
-    def quit_driver(self, session_object, debug_id):
+    def quit_driver(self, debug_id):
         try:
-            session_object.driver.quit()
+            if self.drivers.driver is not None:
+                self.drivers.driver.quit()
         except Exception as e:
             self.logger.exception(f"Error while quitting driver {e} : Debug Id : {debug_id}")
 
@@ -127,10 +136,10 @@ class PytestAfterScenario:
 
         """
         try:
-            if "mobile_after_scenario_flag" in self.session_store.mobile_config.keys():
-                if self.session_store.mobile_config["mobile_after_scenario_flag"] is True:
-                    if self.session_store.mobile_driver is not None:
-                        self.session_store.mobile_driver.quit()
-                        self.session_store.mobile_driver = None
+            mobile_config = self.metadata.mobile_config or {}
+            if mobile_config.get("mobile_after_scenario_flag") is True:
+                if self.drivers.mobile_driver is not None:
+                    self.drivers.mobile_driver.quit()
+                    self.drivers.mobile_driver = None
         except Exception as e:
             self.logger.exception("Error in after_scenario_mobile_teardown-->" + str(e))

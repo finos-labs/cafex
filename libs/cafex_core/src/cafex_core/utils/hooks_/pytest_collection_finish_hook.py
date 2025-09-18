@@ -34,6 +34,9 @@ class PytestCollectionFinish:
         self.file_handler_obj = None
         self.session = session
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.paths = self.session_context.paths
         self.request_store = RequestSingleton()
         self.hook_util = HookUtil()
         self.__init_collection_finish()
@@ -51,8 +54,8 @@ class PytestCollectionFinish:
         gathers scenario details, creates a JSON file with collection
         details, and logs the collection details.
         """
-        if self.session_store.worker_id in ["master", "gw0"]:
-            self.logger.info(f"Worker ID : {self.session_store.worker_id}")
+        if self.metadata.worker_id in ["master", "gw0"]:
+            self.logger.info(f"Worker ID : {self.metadata.worker_id}")
             test_details = [
                 ItemAttributeAccessor(item_).get_properties() for item_ in self.session.items
             ]
@@ -84,6 +87,7 @@ class PytestCollectionFinish:
                 "tagStatistics": tag_statistics,
                 "testDetails": test_details,
             }
+            self.metadata.collection_details = collection_details
             self.file_handler_obj.create_json_file(
-                self.session_store.temp_execution_dir, "collection.json", collection_details
+                self.paths.temp_execution_dir, "collection.json", collection_details
             )

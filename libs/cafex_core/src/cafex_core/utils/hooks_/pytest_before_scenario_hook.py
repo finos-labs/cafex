@@ -22,6 +22,10 @@ class PytestBeforeScenario:
         self.request = request_
         self.args = args_
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.reporting = self.session_context.reporting
+        self.drivers = self.session_context.drivers
         self.logger = CoreLogger(name=__name__).get_logger()
         self.hook_util = HookUtil()
         self.scenario_tags = list(self.scenario.tags)
@@ -43,24 +47,24 @@ class PytestBeforeScenario:
                 WebDriverInitializer,
             )
 
-            self.session_store.ui_scenario = True
-            if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
+            self.drivers.ui_scenario = True
+            if (self.metadata.datadriven >= self.metadata.rowcount + 1) or len(
                 self.scenario.feature.scenarios[self.scenario.name].examples.examples
-            ) >= self.session_store.counter:
-                if self.session_store.driver is None:
+            ) >= self.metadata.counter:
+                if self.drivers.driver is None:
                     WebDriverInitializer().initialize_driver()
             else:
-                if self.session_store.driver is None:
+                if self.drivers.driver is None:
                     WebDriverInitializer().initialize_driver()
         elif "mobile_app" in self.scenario_tags:
             from cafex_ui.mobile_client.mobile_driver_initializer import (
                 MobileDriverInitializer,
             )
 
-            self.session_store.mobile_ui_scenario = True
-            if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
+            self.drivers.mobile_ui_scenario = True
+            if (self.metadata.datadriven >= self.metadata.rowcount + 1) or len(
                 self.scenario.feature.scenarios[self.scenario.name].examples.examples
-            ) >= self.session_store.counter:
+            ) >= self.metadata.counter:
                 MobileDriverInitializer().initialize_driver()
             else:
                 MobileDriverInitializer().initialize_driver()
@@ -87,10 +91,10 @@ class PytestBeforeScenario:
             "_scenario_tags": str(self.scenario.tags),
         }
         for key, value in globals_to_set.items():
-            self.session_store.globals[f"{node_id}{key}"] = value
+            self.metadata.globals[f"{node_id}{key}"] = value
 
         if "api" in self.scenario.tags:
-            self.session_store.globals[f"{node_id}_bool_api_scenarios"] = "True"
+            self.metadata.globals[f"{node_id}_bool_api_scenarios"] = "True"
 
     def _get_feature_details(self):
         try:
@@ -120,7 +124,7 @@ class PytestBeforeScenario:
     def _update_test_data(self, node_id, scenario_details):
         try:
             is_data_driven, is_outline, example = self._get_data_set_info()
-            test_data = self.session_store.reporting["tests"].get(node_id, {})
+            test_data = self.reporting["tests"].get(node_id, {})
             if self.item_attribute_accessor.is_scenario:
                 test_data.update(
                     {
@@ -130,7 +134,7 @@ class PytestBeforeScenario:
                         "example": example,
                     }
                 )
-            self.session_store.reporting["tests"][node_id] = test_data
+            self.reporting["tests"][node_id] = test_data
         except Exception as e:
             self.logger.error(f"Error in _update_test_data: {e}")
 

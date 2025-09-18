@@ -25,8 +25,10 @@ class HookHelper:
         self.hook_util = HookUtil()
         self.session_store = SessionStore()
         self.execution_uuid = self.hook_util.get_or_create_execution_uuid()
-        self.session_store.conf_dir = self.conf_cwd
-        self.session_store.execution_uuid = self.execution_uuid
+
+        context = self.session_store.context
+        context.paths.conf_dir = self.conf_cwd
+        context.paths.execution_uuid = self.execution_uuid
         self._init_hook()
 
     def _init_hook(self):

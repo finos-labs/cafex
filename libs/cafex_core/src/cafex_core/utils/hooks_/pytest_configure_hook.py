@@ -50,11 +50,12 @@ class PytestConfiguration:
         components.
         """
         self.session_store = SessionStore()
-        self.session_store.worker_id = self.worker_id
-        self.session_store.workers_count = self.workers_count
+        session_context = self.session_store.context
+        session_context.metadata.worker_id = self.worker_id
+        session_context.metadata.workers_count = self.workers_count
         self.logger_class = CoreLogger(name=None)
         self.logger = self.logger_class.get_logger()
-        self.logger_class.initialize(True, self.session_store.logs_dir, self.worker_id)
+        self.logger_class.initialize(True, session_context.paths.logs_dir, self.worker_id)
 
     @property
     def worker(self):
@@ -86,14 +87,17 @@ class PytestConfiguration:
         attribute.
         """
         self.logger.info("PytestConfigure")
-        self.session_store.driver = None
-        self.session_store.mobile_driver = None
-        self.session_store.counter = 1
-        self.session_store.datadriven = 1
-        self.session_store.rowcount = 1
-        self.session_store.is_parallel = None
-        self.session_store.globals = {}
-        self.session_store.ui_scenario = False
-        self.session_store.mobile_ui_scenario = False
-        env_path = os.path.join(self.session_store.conf_dir, ".env")
+        metadata = self.session_store.context.metadata
+        drivers = self.session_store.context.drivers
+
+        drivers.driver = None
+        drivers.mobile_driver = None
+        metadata.counter = 1
+        metadata.datadriven = 1
+        metadata.rowcount = 1
+        metadata.is_parallel = None
+        metadata.globals = {}
+        drivers.ui_scenario = False
+        drivers.mobile_ui_scenario = False
+        env_path = os.path.join(self.session_store.context.paths.conf_dir, ".env")
         load_dotenv(env_path)

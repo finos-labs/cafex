@@ -29,6 +29,10 @@ class PytestBDDStepError:
         self.logger = CoreLogger(name=__name__).get_logger()
         self.date_time_util = DateTimeActions()
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.reporting = self.session_context.reporting
+        self.test_context = self.session_context.test
         self.request_ = RequestSingleton().request
         self.step = step
 
@@ -41,8 +45,8 @@ class PytestBDDStepError:
         node_id = self.request_.node.nodeid
         try:
             self.logger.error(f"error in BDD step for node: {node_id}")
-            if f"{node_id}_current_scenario_id" in self.session_store.globals:
-                step_details = self.session_store.current_step_details
+            if f"{node_id}_current_scenario_id" in self.metadata.globals:
+                step_details = self.test_context.current_step_details
                 self.capture_screenshot_for_step_error(step_details)
                 step_details["stepEndTime"] = self.date_time_util.get_current_date_time()
 
@@ -56,17 +60,17 @@ class PytestBDDStepError:
                 )
 
                 step_details["stepStatus"] = "F"
-                self.session_store.globals[f"{node_id}_current_scenario_failed"] = "Yes"
+                self.metadata.globals[f"{node_id}_current_scenario_failed"] = "Yes"
 
-                test_data = self.session_store.reporting["tests"].get(node_id, {})
+                test_data = self.reporting["tests"].get(node_id, {})
                 test_data.setdefault("steps", []).append(step_details)
-                self.session_store.reporting["tests"][node_id] = test_data
+                self.reporting["tests"][node_id] = test_data
 
         except Exception as e:
             self.logger.error(f"Error in bdd step error hook: {e}")
         finally:
-            self.session_store.current_step = None
-            self.session_store.current_step_details = None
+            self.test_context.current_step = None
+            self.test_context.current_step_details = None
 
     def capture_screenshot_for_step_error(self, step_details):
         """Takes a screenshot for a failed step and updates the evidence in

@@ -14,6 +14,7 @@ class PytestRunTestMakeReport:
         self.report = report_
         self.logger = CoreLogger(name=__name__).get_logger()
         self.session_store = SessionStore()
+        self.test_context = self.session_store.context.test
 
     def run_make_report(self):
         """Modifies the test report based on verification failures."""
@@ -25,7 +26,8 @@ class PytestRunTestMakeReport:
 
                     # Log the modification
                     self.logger.warning(
-                        f"Test marked as failed due to verification failures: {self.session_store.current_test}"
+                        "Test marked as failed due to verification failures: "
+                        f"{self.test_context.current_test}"
                     )
         except Exception as e:
             self.logger.error(f"Error in run_make_report: {e}")
