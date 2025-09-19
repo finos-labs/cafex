@@ -35,9 +35,13 @@ class TestCoreSecurity(unittest.TestCase):
     @patch('cafex_core.utils.core_security.AES')
     def test_decrypt_password(self, mock_aes, mock_getenv, mock_logger):
         mock_getenv.return_value = '[0x00] * 16'  # Mock a valid key format
-        mock_aes.new.return_value.decrypt.return_value = b'password   '
+        mock_decrypt_and_verify = MagicMock()
+        mock_decrypt_and_verify.decode.return_value = 'password'
+        mock_aes.new.return_value.decrypt_and_verify.return_value = mock_decrypt_and_verify
+
         encrypted_password = 'cGFzc3dvcmQ='  # Valid base64-encoded string for 'password'
         password = decrypt_password(encrypted_password)
+
         self.assertEqual(password, 'password')
 
     @patch('cafex_core.utils.core_security.CoreLogger')

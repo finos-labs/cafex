@@ -6,7 +6,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.session_ import SessionStore
-from cafex_core.utils.config_utils import ConfigUtils
+from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 from cafex_ui.web_client.web_client_actions.base_web_client_actions import (
     WebClientActions,
 )
@@ -28,7 +28,7 @@ class KeyboardMouseActions:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
+        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.driver = web_driver or SessionStore().storage.get("driver")
         self.actions = ActionChains(self.driver)

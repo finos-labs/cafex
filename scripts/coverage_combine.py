@@ -7,7 +7,7 @@ import sys
 
 def combine_coverage(toxinidir_):
     """Combines coverage data from packages."""
-    packages = ["cafex_api", "cafex_ui", "cafex_db", "cafex_core"]
+    packages = ["cafex_api", "cafex_ui", "cafex_db", "cafex_core", "cafex_desktop"]
     data_paths = [os.path.join(toxinidir_, "coverage", package) for package in packages]
 
     # Specify the path for the combined .coverage file

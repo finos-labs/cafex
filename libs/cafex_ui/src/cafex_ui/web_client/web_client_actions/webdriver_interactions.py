@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.session_ import SessionStore
-from cafex_core.utils.config_utils import ConfigUtils
+from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 
 
 class WebDriverInteractions:
@@ -27,8 +27,8 @@ class WebDriverInteractions:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
-        self.default_implicit_wait = default_implicit_wait or ConfigUtils().get_implicit_wait()
+        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
+        self.default_implicit_wait = default_implicit_wait or WebConfigUtils().get_implicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.driver = web_driver or SessionStore().storage.get("driver")
 
@@ -129,7 +129,7 @@ class WebDriverInteractions:
             None
         """
         try:
-            base_url = base_url or ConfigUtils().fetch_base_url()
+            base_url = base_url or WebConfigUtils().fetch_base_url()
             explicit_wait = explicit_wait or self.default_explicit_wait
             if base_url is None:
                 raise Exception("Base URL is not provided and not found in configuration file")

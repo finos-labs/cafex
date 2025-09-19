@@ -35,6 +35,7 @@ class CoreExceptions:
             "cafex_core",
             "cafex_db",
             "cafex",
+            "cafex_desktop",
             "features",
         ]
         self.exclude_files = [f"{os.sep}exceptions.py"]  # Files to exclude from stack trace

@@ -2,10 +2,10 @@ import os
 
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.session_ import SessionStore
-from cafex_core.utils.config_utils import ConfigUtils
 from cafex_ui.mobile_client.mobile_client_actions import MobileClientActions
 from cafex_ui.mobile_client.mobile_driver_factory import MobileDriverFactory
 from cafex_ui.mobile_client.mobile_utils import MobileUtils
+from cafex_ui.cafex_ui_config_utils import MobileConfigUtils, WebConfigUtils
 
 
 class MobileDriverInitializer:
@@ -13,7 +13,8 @@ class MobileDriverInitializer:
 
     def __init__(self):
         self.session_store = SessionStore()
-        self.config_utils = ConfigUtils()
+        self.config_utils = MobileConfigUtils()
+        self.web_config_utils = WebConfigUtils()
         self.logger = CoreLogger(name=__name__).get_logger()
 
     def initialize_driver(self):
@@ -33,11 +34,11 @@ class MobileDriverInitializer:
         )
 
     def _setup_browserstack_driver(
-        self, mobile_os: str, mobile_platform: str, desired_capabilities: dict
+            self, mobile_os: str, mobile_platform: str, desired_capabilities: dict
     ) -> None:
         """Sets up the mobile driver for BrowserStack."""
-        bs_user_name = self.config_utils.get_browserstack_username()
-        bs_access_key = self.config_utils.get_browserstack_access_key()
+        bs_user_name = self.web_config_utils.get_browserstack_username()
+        bs_access_key = self.web_config_utils.get_browserstack_access_key()
 
         if self.session_store.mobile_config.get("use_random_devices_browserstack"):
             desired_capabilities = self._get_random_browserstack_device_caps(
@@ -58,7 +59,7 @@ class MobileDriverInitializer:
         )
 
     def _setup_local_driver(
-        self, mobile_os: str, mobile_platform: str, desired_capabilities: dict
+            self, mobile_os: str, mobile_platform: str, desired_capabilities: dict
     ) -> None:
         """Sets up the mobile driver for local execution."""
         ip_address = self.config_utils.get_appium_ip_address(mobile_os)
@@ -73,7 +74,7 @@ class MobileDriverInitializer:
         )
 
     def _get_random_browserstack_device_caps(
-        self, mobile_os: str, bs_user_name: str, bs_access_key: str, desired_capabilities: dict
+            self, mobile_os: str, bs_user_name: str, bs_access_key: str, desired_capabilities: dict
     ) -> dict:
         """Retrieves capabilities for a random BrowserStack device."""
         mobile_utils = MobileUtils()
@@ -84,12 +85,12 @@ class MobileDriverInitializer:
             "android_device_json", "android_devices.json"
         )
         ios_device_json_path = (
-            self.config_utils.get_mobile_configuration_directory_path() + os.sep + ios_device_json
+                self.config_utils.get_mobile_configuration_directory_path() + os.sep + ios_device_json
         )
         android_device_json_path = (
-            self.config_utils.get_mobile_configuration_directory_path()
-            + os.sep
-            + android_device_json
+                self.config_utils.get_mobile_configuration_directory_path()
+                + os.sep
+                + android_device_json
         )
 
         bs_devices_url = self.session_store.mobile_config.get("get_browserstack_devices_url")
@@ -106,7 +107,7 @@ class MobileDriverInitializer:
         return desired_capabilities
 
     def _upload_app_to_browserstack(
-        self, mobile_os: str, bs_user_name: str, bs_access_key: str, desired_capabilities: dict
+            self, mobile_os: str, bs_user_name: str, bs_access_key: str, desired_capabilities: dict
     ) -> dict:
         """Uploads the app to BrowserStack if not already uploaded."""
         mobile_utils = MobileUtils()
@@ -125,14 +126,14 @@ class MobileDriverInitializer:
         browserstack_url = self.session_store.mobile_config.get("browserstack_url")
         if not self.session_store.storage.get("browserstack_app_uploaded"):
             if mobile_utils.browserstack_upload_appcenter_app(
-                appcenter_token=appcenter_token,
-                appcenter_url=appcenter_url,
-                browserstack_url=browserstack_url,
-                browserstack_user_name=bs_user_name,
-                browserstack_access_key=bs_access_key,
-                custom_app_id=custom_app_id,
-                proxy=proxy,
-                verify_ssl=True,
+                    appcenter_token=appcenter_token,
+                    appcenter_url=appcenter_url,
+                    browserstack_url=browserstack_url,
+                    browserstack_user_name=bs_user_name,
+                    browserstack_access_key=bs_access_key,
+                    custom_app_id=custom_app_id,
+                    proxy=proxy,
+                    verify_ssl=True,
             ):
                 self.session_store.browserstack_app_uploaded = True
         return desired_capabilities
