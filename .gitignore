@@ -9,4 +9,6 @@ __pycache__/
 /libs/cafex_core/src/cafex_core.egg-info/
 /.tox/
 /libs/cafex_api/.tox/
+/libs/cafex_desktop/.tox/
 .env
+/temp/

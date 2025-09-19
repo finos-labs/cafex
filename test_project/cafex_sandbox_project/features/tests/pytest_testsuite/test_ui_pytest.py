@@ -5,7 +5,7 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from cafex_ui import CafeXWeb
+from cafex import CafeXWeb
 from test_project.cafex_sandbox_project.features.forms.ui_methods. \
     internet_page_locators import InternetPage
 

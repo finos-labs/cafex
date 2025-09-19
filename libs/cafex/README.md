@@ -80,7 +80,7 @@ CAFE-API provides a set of intuitive methods and classes to facilitate API testi
 
 ```python
 from cafex_api import request_builder
-from cafex_api import response_parser_json
+from cafex_core.parsers import json_parser
 
 # Build an API request
 request = request_builder.RequestBuilder().get(url="https://api.example.com/users")
@@ -89,7 +89,7 @@ request = request_builder.RequestBuilder().get(url="https://api.example.com/user
 response = request.send()
 
 # Parse the JSON response
-parsed_response = response_parser_json.ParseJsonData().get_dict(response.text)
+parsed_response = json_parser.ParseJsonData().get_dict(response.text)
 
 # Validate the response data
 assert parsed_response["status"] == "success"
