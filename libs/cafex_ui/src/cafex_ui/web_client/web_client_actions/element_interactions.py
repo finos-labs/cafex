@@ -33,7 +33,7 @@ class ElementInteractions:
         self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
         self.default_implicit_wait = default_implicit_wait or ConfigUtils().get_implicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        self.driver = web_driver or SessionStore().context.drivers.driver
 
     def click(self, locator: Union[str, WebElement], explicit_wait: int = None) -> None:
         """Click on the locator provided.

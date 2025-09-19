@@ -30,7 +30,7 @@ class KeyboardMouseActions:
         """
         self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        self.driver = web_driver or SessionStore().context.drivers.driver
         self.actions = ActionChains(self.driver)
         self.wca = WebClientActions(
             self.driver, default_explicit_wait=self.default_explicit_wait, default_implicit_wait=5

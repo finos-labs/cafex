@@ -30,7 +30,8 @@ class WebDriverInteractions:
         self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
         self.default_implicit_wait = default_implicit_wait or ConfigUtils().get_implicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        session_context = SessionStore().context
+        self.driver = web_driver or session_context.drivers.driver
 
     def get_title(self, expected_title: str = None, explicit_wait: int = None) -> str:
         """Return the title of the browser after waiting for it to be present.

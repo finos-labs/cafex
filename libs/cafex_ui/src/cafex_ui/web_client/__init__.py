@@ -9,14 +9,18 @@ from selenium.webdriver.remote.webdriver import WebDriver
 class WebDriverClass(WebClientActions):
     def __init__(self):
         super().__init__()
-        self.web_client_actions: "WebClientActions" = SessionStore().globals["obj_wca"]
-        self.get_driver: "WebDriver" = SessionStore().driver
+        session_context = SessionStore().context
+        self.web_client_actions: "WebClientActions" = session_context.metadata.globals["obj_wca"]
+        self.get_driver: "WebDriver" = session_context.drivers.driver
 
 
 class Keyboard_Mouse_Class(KeyboardMouseActions):
     def __init__(self):
         super().__init__()
-        self.web_keyboard_mouse_actions: "KeyboardMouseActions" = SessionStore().globals["obj_kma"]
+        session_context = SessionStore().context
+        self.web_keyboard_mouse_actions: "KeyboardMouseActions" = session_context.metadata.globals[
+            "obj_kma"
+        ]
 
 
 __all__ = ["Keyboard_Mouse_Class", "WebDriverClass"]
