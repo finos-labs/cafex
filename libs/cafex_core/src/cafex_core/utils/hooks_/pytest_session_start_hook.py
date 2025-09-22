@@ -19,6 +19,7 @@ from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.date_time_utils import DateTimeActions
+from cafex_ui.cafex_ui_config_utils import WebConfigUtils, MobileConfigUtils
 
 
 class PytestSessionStart:
@@ -58,8 +59,10 @@ class PytestSessionStart:
         self.file_handler_obj = FileHandler()
         self.folder_handler = FolderHandler()
         self.config_utils = ConfigUtils()
+        self.config_utils_web = WebConfigUtils()
+        self.config_utils_mobile = MobileConfigUtils()
         self.config_utils.read_base_config_file()
-        self.config_utils.read_mobile_config_file()
+        self.config_utils_mobile.read_mobile_config_file()
 
     def session_start_hook(self):
         """Hook method called at the start of the session."""
@@ -218,7 +221,7 @@ class PytestSessionStart:
                 "runCommands": None,
                 "executionTags": None,
                 "frameworkVersions": self.get_package_versions(),
-                "browser": self.config_utils.fetch_current_browser(),
+                "browser": self.config_utils_web.fetch_current_browser(),
                 "isCTBuild": is_ct_build,
                 "isReRun": 0,
                 "isPerformanceExecution": 0,
@@ -379,7 +382,7 @@ class PytestSessionStart:
 
     @staticmethod
     def get_package_versions():
-        packages = ["cafex", "cafex-core", "cafex-api", "cafex-db", "cafex-ui"]
+        packages = ["cafex", "cafex-core", "cafex-api", "cafex-db", "cafex-ui", "cafex-desktop"]
         versions = {}
         for package in packages:
             try:

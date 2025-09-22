@@ -3,11 +3,14 @@
 """This module provides the DatabaseOperations class for various operations on
 querying Database."""
 
+import base64
 import json
 import os
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
+from Crypto.Cipher import AES  # noqa: F401
+
 from cafex_core.logging.logger_ import CoreLogger  # type: ignore
 from cafex_db.db_exceptions import DBExceptions
 from cafex_db.db_security import DBSecurity
@@ -206,6 +209,24 @@ class DatabaseOperations:
             if pbool_include_headers and result_list:
                 result_list.insert(0, list(result_list[0].keys()))
             return result_list
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            self.__obj_db_exception.raise_generic_exception(str(e))
+
+    def decode_password(self, pkey: str, psecret_key: str) -> str:
+        """Decode an encrypted password.
+
+        Args:
+            pkey: Encrypted password.
+            psecret_key: Secret key for decryption.
+
+        Returns:
+            Decoded password.
+        """
+        try:
+            cipher = AES.new(psecret_key.encode("utf-8"), AES.MODE_ECB)
+            decoded = base64.b64decode(pkey)
+            decrypted = cipher.decrypt(decoded).decode("utf-8").strip()
+            return decrypted
         except Exception as e:  # pylint: disable=broad-exception-caught
             self.__obj_db_exception.raise_generic_exception(str(e))
 

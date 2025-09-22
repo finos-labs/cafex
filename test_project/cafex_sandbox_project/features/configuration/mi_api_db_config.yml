@@ -1,7 +1,10 @@
 env:
   dev:
     db_demo:
-      super_user1: { username: "avnadmin", password: "qkGmrSEhOEn8vtcyQvvZnK8w1Ky0BH4Pw/cyhP9ow4M=" }
+      super_user1: { username: "avnadmin", password: "" }
+      super_user2: { username: "postgres.dlhmxsyihnrktbecdypk", password: "" }
+      super_user3: { username: "ADMIN", password: "" }
+      super_user4: { username: "auto_admin", password: "" }
       cafex:
         db_type: "mysql"
         db_server: "mysql-3e8f59d6-prat-cafex.d.aivencloud.com"
@@ -9,3 +12,31 @@ env:
         port: "13726"
         user: super_user1
         overwrite_default_db_user: True
+      cafex_PostgreSQL:
+        db_type: "PostgreSQL"
+        db_server: "aws-0-ap-south-1.pooler.supabase.com"
+        db_name: "postgres"
+        port: "6543"
+        user: super_user2
+        overwrite_default_db_user: True
+      cafex_oracle:
+        db_type: "oracle"
+        db_server: "adb.ap-mumbai-1.oraclecloud.com"
+        service_name: "cafexdb_high"  # TNS alias
+        tns_admin: "C:\\oracle\\wallet"  # Path to wallet directory
+        user: super_user3
+        overwrite_default_db_user: True
+      cafex_mssql:
+        db_type: "mssql"
+        db_server: ""
+        db_name: ""
+        user: super_user4
+        overwrite_default_db_user: True
+  prod:
+    CassandraDB:
+      db_type: "cassandra"
+      hosts: [ ]
+      port: 9042
+      keyspace: ''
+      username: ''
+      password: ''

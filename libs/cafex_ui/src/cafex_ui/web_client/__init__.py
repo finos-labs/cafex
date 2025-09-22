@@ -5,18 +5,21 @@ from cafex_ui.web_client.web_client_actions.base_web_client_actions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-
-class WebDriverClass(WebClientActions):
+class WebDriverClass(WebClientActions,KeyboardMouseActions):
     def __init__(self):
         super().__init__()
-        self.web_client_actions: "WebClientActions" = SessionStore().globals["obj_wca"]
-        self.get_driver: "WebDriver" = SessionStore().driver
+        if "obj_wca" in SessionStore().globals or "obj_kma" in SessionStore().globals:
+            self.web_client_actions: "WebClientActions" = SessionStore().globals["obj_wca"]
+            self.get_driver: "WebDriver" = SessionStore().driver
+            self.web_keyboard_mouse_actions: "KeyboardMouseActions" = SessionStore().globals["obj_kma"]
 
-
-class Keyboard_Mouse_Class(KeyboardMouseActions):
+class PlaywrightClass:
     def __init__(self):
-        super().__init__()
-        self.web_keyboard_mouse_actions: "KeyboardMouseActions" = SessionStore().globals["obj_kma"]
+        from playwright.sync_api import Browser, BrowserContext, Page
+        if SessionStore().playwright_page is not None:
+            self.playwright_page: Page = SessionStore().playwright_page
+            self.playwright_browser: Browser = SessionStore().playwright_browser
+            self.playwright_context: BrowserContext = SessionStore().playwright_context
 
 
-__all__ = ["Keyboard_Mouse_Class", "WebDriverClass"]
+__all__ = ["WebDriverClass","PlaywrightClass"]

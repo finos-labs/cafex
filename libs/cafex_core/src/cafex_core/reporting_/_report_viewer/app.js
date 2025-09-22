@@ -5,11 +5,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function renderSummary(data) {
-    // Format Date-Time
-    const formatDate = (isoDate) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Date(isoDate).toLocaleDateString('en-US', options);
+// Format Date-Time
+const formatDate = (isoDate) => {
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'  // Added seconds
     };
+    return new Date(isoDate).toLocaleDateString('en-US', options);
+};
 
     // Populate Collection Info
     document.getElementById("testCount").textContent = data.collectionInfo.testCount;
@@ -47,7 +54,7 @@ function renderSummary(data) {
 
 function setupTabs(data) {
     const testDetailsContainer = document.getElementById("test-details-container");
-    
+
     // Get all buttons
     const pytestBddBtn = document.getElementById("btn-pytestBdd");
     const pytestBtn = document.getElementById("btn-pytest");
@@ -69,7 +76,7 @@ function setupTabs(data) {
     // Add click handlers
     function showTests(testType) {
         if (!data.tests[testType]) return;
-        
+
         testDetailsContainer.innerHTML = data.tests[testType]
             .map((test) => renderTest(test, testType))
             .join("");
@@ -97,8 +104,8 @@ function renderTest(test, testType) {
             ? `<p><strong>Feature:</strong> ${test.scenario.featureName}</p>
                <p><strong>Scenario:</strong> ${test.scenario.scenarioName}</p>`
             : "";
-        
-    const testExceptions = test.evidence?.exceptions?.filter(e => e.phase === 'test') || [];    
+
+    const testExceptions = test.evidence?.exceptions?.filter(e => e.phase === 'test') || [];
 
     return `
         <div class="test-details">
@@ -127,7 +134,7 @@ function renderTest(test, testType) {
 function renderSteps(steps) {
     return steps.map(step => {
         const stepExceptions = step.evidence?.exceptions || [];
-        
+
         return `
             <div class="step">
                 <div class="collapsible-header">
@@ -236,14 +243,39 @@ function renderException(exception) {
                 </div>
                 ${exception.screenshot ? `
                     <div class="screenshot">
-                        <img src="./screenshots/${exception.screenshot.split('\\').pop()}" 
-                             alt="Exception Screenshot" 
+                        <img src="./screenshots/${exception.screenshot.split('\\').pop()}"
+                             alt="Exception Screenshot"
                              onclick="openInNewTab('./screenshots/${exception.screenshot.split('\\').pop()}')"
                              title="Click to expand">
                     </div>
                 ` : ''}
             </div>
         </div>`;
+}
+
+// Helper functions for log searching
+// Define these functions in the global scope so they're accessible everywhere
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function clearHighlights(logContent) {
+    if (logContent) {
+        logContent.innerHTML = logContent.textContent;
+    }
+}
+
+function highlightAllInstances(term, logContent) {
+    if (!term || !logContent) return;
+
+    const content = logContent.textContent;
+    const escapedTerm = escapeRegExp(term);
+    const regex = new RegExp(escapedTerm, 'gi');
+
+    let highlightedContent = content.replace(regex, match =>
+        `<span class="highlight">${match}</span>`);
+
+    logContent.innerHTML = highlightedContent;
 }
 
 function setupLogs(data) {
@@ -254,6 +286,12 @@ function setupLogs(data) {
 
     const select = document.getElementById('log-file-select');
     const logContent = document.getElementById('log-content');
+    const searchInput = document.getElementById('log-search-input');
+    const searchButton = document.getElementById('log-search-button');
+    const clearButton = document.getElementById('clear-search-btn');
+    const resultsContainer = document.getElementById('search-results-container');
+    const resultsList = document.getElementById('search-results-list');
+    const resultsCount = document.getElementById('search-results-count');
 
     // Populate select options
     data.logs.forEach(log => {
@@ -278,27 +316,156 @@ function setupLogs(data) {
         if (selectedLog) {
             logContent.textContent = selectedLog.content;
             logContent.scrollTop = logContent.scrollHeight;
+            // Clear any search highlights when switching logs
+            clearHighlights(logContent);
         }
+    });
+
+    // Search across all logs
+    function searchInLogs(term) {
+        if (!term || !data.logs || data.logs.length === 0) {
+            return [];
+        }
+
+        const results = [];
+        const searchRegex = new RegExp(escapeRegExp(term), 'gi');
+
+        data.logs.forEach(log => {
+            const logFileName = log.name;
+            const logLines = log.content.split('\n');
+
+            logLines.forEach((line, lineIndex) => {
+                if (searchRegex.test(line)) {
+                    // Get match index
+                    searchRegex.lastIndex = 0;
+                    const matchIndex = line.toLowerCase().indexOf(term.toLowerCase());
+
+                    // Create context by highlighting the matched text
+                    let context = line;
+                    // Replace actual match with marked version
+                    context = context.replace(new RegExp(escapeRegExp(term), 'gi'),
+                        match => `<mark>${match}</mark>`);
+
+                    results.push({
+                        fileName: logFileName,
+                        lineNumber: lineIndex + 1,
+                        context: context,
+                        line: line,
+                        matchIndex: matchIndex
+                    });
+                }
+            });
+        });
+
+        return results;
+    }
+
+    // Display search results
+    function displayResults(results) {
+        resultsList.innerHTML = '';
+
+        if (results.length === 0) {
+            resultsCount.textContent = 'No results found';
+            return;
+        }
+
+        resultsCount.textContent = `${results.length} result${results.length === 1 ? '' : 's'}`;
+
+        results.forEach((result, index) => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'search-result-item';
+            resultItem.innerHTML = `
+                <span class="search-result-file">${result.fileName}:${result.lineNumber}</span>
+                <span class="search-result-context">${result.context}</span>
+            `;
+
+            resultItem.addEventListener('click', () => navigateToResult(result));
+            resultsList.appendChild(resultItem);
+        });
+    }
+
+    // Navigate to a search result
+    function navigateToResult(result) {
+        // Switch to the correct log file if needed
+        const logOptions = Array.from(select.options);
+        const targetLogOption = logOptions.find(option => option.value === result.fileName);
+
+        if (targetLogOption) {
+            select.value = result.fileName;
+
+            // Trigger change event to load the log content
+            const changeEvent = new Event('change');
+            select.dispatchEvent(changeEvent);
+
+            // Add slight delay to ensure content is loaded
+            setTimeout(() => {
+                // Scroll to the matched line
+                const logLines = logContent.textContent.split('\n');
+                let linePosition = 0;
+
+                // Calculate position to scroll to
+                for (let i = 0; i < result.lineNumber - 1; i++) {
+                    if (i < logLines.length) {
+                        linePosition += logLines[i].length + 1; // +1 for newline character
+                    }
+                }
+
+                // Clear any existing highlights
+                clearHighlights(logContent);
+
+                // Highlight all instances of the search term in the log
+                highlightAllInstances(searchInput.value, logContent);
+
+                // Scroll to the position
+                const lineHeight = parseInt(getComputedStyle(logContent).lineHeight);
+                const approximateScrollPosition = (result.lineNumber - 1) * lineHeight;
+                logContent.scrollTop = approximateScrollPosition;
+            }, 100);
+        }
+    }
+
+    // Set up search functionality
+    searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            const results = searchInLogs(searchTerm);
+            displayResults(results);
+            resultsContainer.style.display = 'block';
+        }
+    });
+
+    // Search input enter key handler
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            searchButton.click();
+        }
+    });
+
+    // Clear search button
+    clearButton.addEventListener('click', () => {
+        searchInput.value = '';
+        resultsContainer.style.display = 'none';
+        clearHighlights(logContent);
     });
 }
 
 function openLogsInNewWindow() {
     const logSelect = document.getElementById('log-file-select');
     const selectedLog = reportData.logs.find(log => log.name === logSelect.value);
-    
+
     const newWindow = window.open('', '_blank', 'width=1000,height=800');
     newWindow.document.write(`
         <html>
             <head>
                 <title>Log Viewer - ${selectedLog.name}</title>
                 <style>
-                    body { 
-                        margin: 0; 
-                        padding: 20px; 
+                    body {
+                        margin: 0;
+                        padding: 20px;
                         font-family: monospace;
                         background: #f5f5f5;
                     }
-                    pre { 
+                    pre {
                         white-space: pre-wrap;
                         margin: 0;
                         background: white;

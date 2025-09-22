@@ -1,6 +1,6 @@
 import pytest
-from pytest_bdd import step
 
+from cafex_core.reporting_.step_decorator import step
 from test_project.cafex_sandbox_project.features.forms.\
     ui_methods.internet_page import InternetPageMethods
 
@@ -86,9 +86,9 @@ def test_navigate_to_form_auth_pages():
         assert internet_page.navigate_to_form_authentication_page()
 
     @step('When the user enters the username "tomsmith" and '
-          'password "ENjnpCHhJG89EZ+B8YnWdRp5jITEZY9EPV5NIoifG/w="')
+          'password "8GPtex4qM7BhgisF5sgR0pLL2UgHMQ93fL9Y4WxwYxWSQGFoVQKuJt4u/TW1zptVFhgg7g=="')
     def step_when_enter_credentials():
-        assert internet_page.enter_credentials("tomsmith", "ENjnpCHhJG89EZ+B8YnWdRp5jITEZY9EPV5NIoifG/w=")
+        assert internet_page.enter_credentials("tomsmith", "8GPtex4qM7BhgisF5sgR0pLL2UgHMQ93fL9Y4WxwYxWSQGFoVQKuJt4u/TW1zptVFhgg7g==")
 
     @step("When the user hits the login button")
     def step_when_click_login_button():

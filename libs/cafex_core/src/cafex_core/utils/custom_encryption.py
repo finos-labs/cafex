@@ -75,12 +75,3 @@ class CustomEncryption:
             return decrypted_data.decode('utf-8')
         except Exception as e:
             raise e
-
-
-if __name__ == "__main__":
-    key = b"example!KeyLen24or16or32"
-    text = "Hello, World!"
-    encrypted = CustomEncryption.custom_encrypt(text, key)
-    print(f"Encrypted: {encrypted}")
-    decrypted = CustomEncryption.custom_decrypt(encrypted, key)
-    print(f"Decrypted: {decrypted}")

@@ -119,3 +119,9 @@ class PytestRunTestSetup:
                     self.logger.info("Setting up mobile driver for non-BDD test.")
                     self.session_store.mobile_ui_scenario = True
                     MobileDriverInitializer().initialize_driver()
+                if marker.name == "ui_desktop_client" and not self.item_attribute_accessor.is_scenario:
+                    from cafex_desktop.desktop_client.desktop_client_driver_initializer \
+                        import DesktopClientDriverInitializer
+                    self.logger.info("Setting up Desktop Client Handler for non-BDD test.")
+                    self.session_store.ui_desktop_client_scenario = True
+                    DesktopClientDriverInitializer().initialize_driver()

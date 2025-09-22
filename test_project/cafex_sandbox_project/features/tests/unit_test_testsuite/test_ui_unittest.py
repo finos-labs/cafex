@@ -4,8 +4,7 @@ This module contains the unit tests for the Internet Page functionality.
 import unittest
 
 import pytest
-from pytest_bdd import step
-
+from cafex_core.reporting_.step_decorator import step
 from test_project.cafex_sandbox_project.features.forms.ui_methods.internet_page import InternetPageMethods
 
 internet_page = InternetPageMethods()
@@ -94,7 +93,7 @@ class TestInternetPageUnittest(unittest.TestCase):
         @step('When the user enters the credentials')
         def step_when_enter_credentials():
             self.assertTrue(internet_page.enter_credentials("tomsmith",
-                                                            "ENjnpCHhJG89EZ+B8YnWdRp5jITEZY9EPV5NIoifG/w="))
+                                                            "8GPtex4qM7BhgisF5sgR0pLL2UgHMQ93fL9Y4WxwYxWSQGFoVQKuJt4u/TW1zptVFhgg7g=="))
 
         @step('When the user clicks the login button')
         def step_when_click_login_button():
