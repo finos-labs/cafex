@@ -16,12 +16,15 @@ class TestSessionStore(unittest.TestCase):
         self.session_store.some_attribute = "value"
         self.assertEqual(self.session_store.some_attribute, "value")
 
-    def test_protect_internal_storage(self):
-        try:
-            with self.assertRaises(AttributeError):
-                self.session_store.storage = {"key": "value"}
-        except Exception as e:
-            pass
+    def test_storage_property_reassignment(self):
+        new_storage = {"key": "value"}
+        self.session_store.storage = new_storage
+        self.assertIs(self.session_store.storage, new_storage)
+
+    def test_context_exposes_typed_state(self):
+        context = self.session_store.context
+        context.test.current_test = "test_case"
+        self.assertEqual(self.session_store.current_test, "test_case")
 
     def test_add_error_message(self):
         self.session_store.current_test = "test1"

@@ -38,7 +38,7 @@ class UtilityMethods:
         """
         self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
         self.default_implicit_wait = default_implicit_wait or ConfigUtils().get_implicit_wait()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        self.driver = web_driver or SessionStore().context.drivers.driver
         self.logger = CoreLogger(name=__name__).get_logger()
         self.navigate_methods = WebDriverInteractions(
             web_driver=self.driver,

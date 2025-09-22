@@ -60,12 +60,13 @@ class HookUtil:
 
     def set_paths_from_env(self):
         # Set paths in session store from environment variables
-        self.session_store.result_dir = os.environ.get("RESULT_DIR")
-        self.session_store.execution_dir = os.environ.get("EXECUTION_DIR")
-        self.session_store.logs_dir = os.environ.get("LOGS_DIR")
-        self.session_store.screenshots_dir = os.environ.get("SCREENSHOTS_DIR")
-        self.session_store.temp_dir = os.environ.get("TEMP_DIR")
-        self.session_store.temp_execution_dir = os.environ.get("TEMP_EXECUTION_DIR")
+        paths = self.session_store.context.paths
+        paths.result_dir = os.environ.get("RESULT_DIR")
+        paths.execution_dir = os.environ.get("EXECUTION_DIR")
+        paths.logs_dir = os.environ.get("LOGS_DIR")
+        paths.screenshots_dir = os.environ.get("SCREENSHOTS_DIR")
+        paths.temp_dir = os.environ.get("TEMP_DIR")
+        paths.temp_execution_dir = os.environ.get("TEMP_EXECUTION_DIR")
 
     def is_parallel_execution(self, args_list):
 

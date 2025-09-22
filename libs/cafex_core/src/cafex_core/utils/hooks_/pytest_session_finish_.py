@@ -42,6 +42,11 @@ class PytestSessionFinish:
         self.session_ = session_
         self.logger = CoreLogger(name=__name__).get_logger()
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.reporting = self.session_context.reporting
+        self.paths = self.session_context.paths
+        self.drivers = self.session_context.drivers
+        self.metadata = self.session_context.metadata
         self.file_handler = FileHandler()
         self.folder_handler = FolderHandler()
         self.datetime_util = DateTimeActions()
@@ -56,17 +61,17 @@ class PytestSessionFinish:
         a JSON file in the specified result directory. The file name
         includes the current date and time to ensure uniqueness.
         """
-        self.scenarios_folder = self.session_store.temp_execution_dir + os.sep + "scenarios"
+        self.scenarios_folder = self.paths.temp_execution_dir + os.sep + "scenarios"
         if not os.path.exists(self.scenarios_folder):
             os.makedirs(self.scenarios_folder)
-        for node_id in self.session_store.reporting["tests"]:
+        for node_id in self.reporting["tests"]:
             file_name = node_id.replace("/", "-").replace("::", "-")
             # Sanitize the filename by removing invalid characters
             file_name = INVALID_FILENAME_CHARS_PATTERN.sub("", file_name)
             self.file_handler.create_json_file(
                 self.scenarios_folder,
                 f"{file_name}.json",
-                self.session_store.reporting["tests"][node_id],
+                self.reporting["tests"][node_id],
             )
 
         self.driver_teardown()
@@ -114,10 +119,10 @@ class PytestSessionFinish:
         """
         execution_end_time = self.datetime_util.get_current_date_time()
         self.execution_data = self.file_handler.read_data_from_json_file(
-            os.path.join(self.session_store.temp_execution_dir, "execution.json")
+            os.path.join(self.paths.temp_execution_dir, "execution.json")
         )
         self.collection_data = self.file_handler.read_data_from_json_file(
-            os.path.join(self.session_store.temp_execution_dir, "collection.json")
+            os.path.join(self.paths.temp_execution_dir, "collection.json")
         )
 
         self.execution_data.update({"executionEndTime": execution_end_time})
@@ -144,10 +149,10 @@ class PytestSessionFinish:
 
         # Generate the JSON report
         self.file_handler.create_json_file(
-            self.session_store.execution_dir, "result.json", report_data
+            self.paths.execution_dir, "result.json", report_data
         )
-        ReportGenerator.prepare_report_viewer(self.session_store.execution_dir)
-        self.folder_handler.delete_folder(self.session_store.temp_dir)
+        ReportGenerator.prepare_report_viewer(self.paths.execution_dir)
+        self.folder_handler.delete_folder(self.paths.temp_dir)
 
     def find_execution_status(self, tests_data):
         """Determines the overall execution status based on individual test
@@ -181,14 +186,16 @@ class PytestSessionFinish:
     def driver_teardown(self):
         """Quits the driver if it is not None."""
         try:
-            driver = self.session_store.storage.get("driver")
-            mobile_driver = self.session_store.storage.get("mobile_driver")
+            driver = self.drivers.driver
+            mobile_driver = self.drivers.mobile_driver
             if driver is not None:
                 driver.quit()
                 self.logger.info("Driver quit successfully")
+                self.drivers.driver = None
             if mobile_driver is not None:
                 mobile_driver.quit()
                 self.logger.info("Mobile driver quit successfully")
+                self.drivers.mobile_driver = None
         except Exception as e:
             self.logger.error(f"Error in driver teardown: {e}")
 

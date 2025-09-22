@@ -36,6 +36,10 @@ class PytestRunTestSetup:
         self.logger = CoreLogger(name=__name__).get_logger()
         self.item_attribute_accessor = None
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.test_context = self.session_context.test
+        self.reporting = self.session_context.reporting
+        self.drivers = self.session_context.drivers
         self.date_time_util = DateTimeActions()
 
     def run_setup(self):
@@ -57,10 +61,10 @@ class PytestRunTestSetup:
         self.logger.info(f"Test Type : {test_type}")
 
         # Set the current_test in the session store
-        self.session_store.current_test = node_id
+        self.test_context.current_test = node_id
 
         # Initialize basic test data structure for all tests
-        if node_id not in self.session_store.reporting["tests"]:
+        if node_id not in self.reporting["tests"]:
             test_data = {
                 "name": test_name,
                 "testType": test_type,
@@ -99,7 +103,7 @@ class PytestRunTestSetup:
                         }
                     )
 
-            self.session_store.reporting["tests"][node_id] = test_data
+            self.reporting["tests"][node_id] = test_data
 
         if hasattr(self.item_.function, "pytestmark"):
             for marker in self.item_.function.pytestmark:
@@ -109,7 +113,7 @@ class PytestRunTestSetup:
                     )
 
                     self.logger.info("Setting up web driver for non-BDD test.")
-                    self.session_store.ui_scenario = True
+                    self.drivers.ui_scenario = True
                     WebDriverInitializer().initialize_driver()
                 if marker.name == "mobile_app" and not self.item_attribute_accessor.is_scenario:
                     from cafex_ui.mobile_client.mobile_driver_initializer import (
@@ -117,5 +121,5 @@ class PytestRunTestSetup:
                     )
 
                     self.logger.info("Setting up mobile driver for non-BDD test.")
-                    self.session_store.mobile_ui_scenario = True
+                    self.drivers.mobile_ui_scenario = True
                     MobileDriverInitializer().initialize_driver()

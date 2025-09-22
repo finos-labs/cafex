@@ -18,6 +18,9 @@ class WebDriverInitializer:
 
     def __init__(self) -> None:
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.metadata = self.session_context.metadata
+        self.drivers = self.session_context.drivers
         self.config_utils = ConfigUtils()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.bs_obj = None
@@ -45,13 +48,14 @@ class WebDriverInitializer:
         return web_capabilities
 
     def _get_browserstack_capabilities(self, web_capabilities: dict) -> tuple:
-        run_on_browserstack = self.config_utils.base_config.get("run_on_browserstack", False)
+        base_config = self.metadata.base_config or {}
+        run_on_browserstack = base_config.get("run_on_browserstack", False)
         if str(run_on_browserstack).lower() == "true":
             self.bs_obj = BrowserStackDriverFactory()
             bs_capabilities, current_browser = self._configure_browserstack()
         else:
             bs_capabilities = []
-            current_browser = self.config_utils.base_config.get(
+            current_browser = base_config.get(
                 "current_execution_browser", "chrome"
             )
         return bs_capabilities, current_browser
@@ -62,7 +66,8 @@ class WebDriverInitializer:
         if not browserstack_username or not browserstack_access_key:
             self.logger.error("BROWSERSTACK_USERNAME or BROWSERSTACK_ACCESS_KEY not found.")
             raise Exception("Browserstack credentials not found in environment variables.")
-        browserstack_config_file = self.config_utils.base_config.get(
+        base_config = self.metadata.base_config or {}
+        browserstack_config_file = base_config.get(
             "browserstack_config_file", "browserstack.yml"
         )
         bs_config = self.config_utils.read_browserstack_web_yml_file(browserstack_config_file)
@@ -76,7 +81,7 @@ class WebDriverInitializer:
             bs_browser_capabilities = random_browser["bstack:options"]
             current_browser = random_browser["browserName"].lower()
         else:
-            current_browser = self.config_utils.base_config.get(
+            current_browser = base_config.get(
                 "current_execution_browser", "chrome"
             )
             bs_browser_capabilities = bs_config["browser"].get(current_browser, {})
@@ -104,17 +109,18 @@ class WebDriverInitializer:
     def _create_web_driver(
             self, web_capabilities: dict, bs_capabilities: dict, current_browser: str
     ):
-        chrome_options = self.config_utils.base_config.get("chrome_options", [])
-        chrome_preferences = self.config_utils.base_config.get("chrome_preferences", {})
-        firefox_options = self.config_utils.base_config.get("firefox_options", [])
-        firefox_preferences = self.config_utils.base_config.get("firefox_preferences", {})
-        edge_options = self.config_utils.base_config.get("edge_options", [])
-        safari_options = self.config_utils.base_config.get("safari_options", [])
-        use_proxy = self.config_utils.base_config.get("use_proxy", False)
-        ie_and_edge_clear_browser_history = self.config_utils.base_config.get(
+        base_config = self.metadata.base_config or {}
+        chrome_options = base_config.get("chrome_options", [])
+        chrome_preferences = base_config.get("chrome_preferences", {})
+        firefox_options = base_config.get("firefox_options", [])
+        firefox_preferences = base_config.get("firefox_preferences", {})
+        edge_options = base_config.get("edge_options", [])
+        safari_options = base_config.get("safari_options", [])
+        use_proxy = base_config.get("use_proxy", False)
+        ie_and_edge_clear_browser_history = base_config.get(
             "ie_and_edge_clear_browser_history", False
         )
-        browser_version = self.config_utils.base_config.get("browser_version", None)
+        browser_version = base_config.get("browser_version")
         proxy_options = self._get_proxy_options(use_proxy)
         selenium_grid_ip = self.config_utils.fetch_selenium_grid_ip()
         use_grid = self.config_utils.fetch_use_grid()
@@ -137,7 +143,7 @@ class WebDriverInitializer:
             ie_and_edge_clear_browser_history=ie_and_edge_clear_browser_history,
             browserstack_capabilities=bs_capabilities,
             run_on_browserstack=str(
-                self.config_utils.base_config.get("run_on_browserstack", False)
+                base_config.get("run_on_browserstack", False)
             ).lower()
                                 == "true",
             browserstack_username=browserstack_username,
@@ -145,12 +151,13 @@ class WebDriverInitializer:
         )
 
     def _get_proxy_options(self, use_proxy: bool) -> str:
-        if use_proxy and "proxy_options" in self.session_store.base_config.keys():
-            return self.session_store.base_config["proxy_options"]
+        base_config = self.metadata.base_config or {}
+        if use_proxy and "proxy_options" in base_config:
+            return base_config["proxy_options"]
         return ""
 
     def _store_driver_in_session(self, driver_obj) -> None:
-        self.session_store.driver = driver_obj
-        self.session_store.globals["obj_wdf"] = WebDriverFactory()
-        self.session_store.globals["obj_wca"] = WebClientActions(self.session_store.driver)
-        self.session_store.globals["obj_kma"] = KeyboardMouseActions(self.session_store.driver)
+        self.drivers.driver = driver_obj
+        self.metadata.globals["obj_wdf"] = WebDriverFactory()
+        self.metadata.globals["obj_wca"] = WebClientActions(self.drivers.driver)
+        self.metadata.globals["obj_kma"] = KeyboardMouseActions(self.drivers.driver)

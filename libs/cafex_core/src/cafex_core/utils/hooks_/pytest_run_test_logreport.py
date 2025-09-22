@@ -33,6 +33,10 @@ class PytestRunLogReport:
         self.report = report
         self.logger = CoreLogger(name=__name__).get_logger()
         self.session_store = SessionStore()
+        self.session_context = self.session_store.context
+        self.reporting = self.session_context.reporting
+        self.metadata = self.session_context.metadata
+        self.test_context = self.session_context.test
         self.date_time_util = DateTimeActions()
 
     def run_log_report(self):
@@ -49,15 +53,15 @@ class PytestRunLogReport:
         update_status = False
 
         if worker_ is not None:
-            self.session_store.reporting["tests"][node_id].update({when_: {"outcome": outcome_}})
+            self.reporting["tests"][node_id].update({when_: {"outcome": outcome_}})
             update_status = True
-        elif worker_ is None and self.session_store.workers_count > 0:
+        elif worker_ is None and self.metadata.workers_count > 0:
             pass
         else:
-            self.session_store.reporting["tests"][node_id].update({when_: {"outcome": outcome_}})
+            self.reporting["tests"][node_id].update({when_: {"outcome": outcome_}})
             update_status = True
         if update_status:
-            test_data = self.session_store.reporting["tests"][node_id]
+            test_data = self.reporting["tests"][node_id]
             error_messages = []
             current_time = self.date_time_util.get_current_date_time()
             duration_seconds = self.date_time_util.get_time_difference_seconds(
@@ -78,7 +82,7 @@ class PytestRunLogReport:
 
                 # Clear the test status after processing
                 self.session_store.clear_current_test_status()
-                self.session_store.current_test = None
+                self.test_context.current_test = None
 
                 if outcome_ == "failed":
                     error_messages.append(

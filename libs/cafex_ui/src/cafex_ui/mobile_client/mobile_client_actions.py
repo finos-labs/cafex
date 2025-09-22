@@ -24,7 +24,7 @@ class MobileClientActions:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.mobile_driver = mobile_driver or SessionStore().mobile_driver
+        self.mobile_driver = mobile_driver or SessionStore().context.drivers.mobile_driver
         self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.__exceptions_generic = CoreExceptions()
