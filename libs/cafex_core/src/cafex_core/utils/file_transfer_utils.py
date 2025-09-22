@@ -35,7 +35,7 @@ class FileTransferUtils:
             self.logger_class = CoreLogger(name=__name__)
             self.logger = self.logger_class.get_logger()
 
-        def open_ftp_connection(self, ftp_host: str, ftp_username: str, ftp_password: str,) -> FTP:
+        def open_ftp_connection(self, ftp_host: str, ftp_username: str, ftp_password: str, ) -> FTP:
             """
             Establishes an FTP connection to the specified server.
 
@@ -493,7 +493,6 @@ class FileTransferUtils:
 
         def __init__(self):
             self.__obj_exception = CoreExceptions()
-            self.__obj_file_transfer = Security()
             self.logger_class = CoreLogger(name=__name__)
             self.logger = self.logger_class.get_logger()
 
@@ -524,7 +523,7 @@ class FileTransferUtils:
                 botocore_session = kwargs.get("botocore_session")
                 profile_name = kwargs.get("profile_name")
 
-                aws_session = self.__obj_file_transfer.open_aws_session(
+                aws_session = FileTransferUtils().security.open_aws_session(
                     aws_access_key_id,
                     aws_secret_access_key,
                     aws_session_token,
@@ -770,26 +769,27 @@ class FileTransferUtils:
                 'my_bucket', 's3_file.txt', 'local_file.txt')
             """
             try:
-                # Use the base name of the source file if no target path is specified
+                if not bucket_name or not src_s3_file_path:
+                    raise ValueError("Bucket name and source S3 file path must be provided.")
+
                 if tgt_local_file_path is None:
-                    tgt_local_file_path = os.path.join(os.getcwd(),
-                                                       os.path.basename(src_s3_file_path))
+                    tgt_local_file_path = os.path.join(os.getcwd(), os.path.basename(src_s3_file_path))
 
-                self.logger.info("Beginning file download...")
+                self.logger.info("Starting download from bucket '%s', file '%s' to '%s'.",
+                                 bucket_name, src_s3_file_path, tgt_local_file_path)
 
-                # Download the file from S3
                 s3_client.download_file(
                     bucket_name,
                     src_s3_file_path,
                     tgt_local_file_path,
                 )
 
-                self.logger.info("File %s successfully downloaded to %s.", src_s3_file_path,
-                                 tgt_local_file_path)
-
+                self.logger.info("File '%s' successfully downloaded to '%s'.",
+                                 src_s3_file_path, tgt_local_file_path)
+            except ValueError as e:
+                raise e
             except Exception as e:
-                error_message = f"An error occurred while downloading the file " \
-                                f"from S3: {str(e)}"
+                error_message = f"An error occurred while downloading the file from S3: {str(e)}"
                 self.__obj_exception.raise_generic_exception(error_message)
                 raise e
 
@@ -813,43 +813,44 @@ class FileTransferUtils:
 
             Returns:
                 None
-
-            Examples:
-                >> FileTransferUtils().AWSS3().download_folder_from_s3(
-                s3_client, 'my_bucket', 's3_folder/', 'local_folder/')
             """
             try:
+                if not bucket_name:
+                    raise ValueError("Bucket name must be provided.")
+                if not src_s3_folder_path:
+                    raise ValueError("Source S3 folder path must be provided.")
+
                 if tgt_local_folder_path is None:
-                    tgt_local_folder_path = os.path.join(os.getcwd(),
-                                                         os.path.basename(src_s3_folder_path))
+                    tgt_local_folder_path = os.path.join(
+                        os.getcwd(), os.path.basename(os.path.normpath(src_s3_folder_path))
+                    )
 
                 if not src_s3_folder_path.endswith("/"):
                     src_s3_folder_path += "/"
 
                 paginator = s3_client.get_paginator("list_objects_v2")
 
-                for result in paginator.paginate(Bucket=bucket_name,
-                                                 Prefix=src_s3_folder_path):
+                for result in paginator.paginate(Bucket=bucket_name, Prefix=src_s3_folder_path):
                     for key in result.get("Contents", []):
                         rel_path = key["Key"][len(src_s3_folder_path):]
-                        local_file_path = os.path.join(tgt_local_folder_path, rel_path)
+                        local_file_path = os.path.normpath(os.path.join(tgt_local_folder_path, rel_path))
 
                         if key["Key"].endswith("/"):
-                            if not os.path.exists(local_file_path):
-                                self.logger.info("Creating directory: %s", local_file_path)
-                                os.makedirs(local_file_path)
-                                self.logger.info("Directory %s created.", local_file_path)
+                            os.makedirs(local_file_path, exist_ok=True)
+                            self.logger.info("Directory created: %s", local_file_path)
                         else:
                             local_file_dir = os.path.dirname(local_file_path)
                             os.makedirs(local_file_dir, exist_ok=True)
-                            self.logger.info("Beginning file download: %s", key['Key'])
+                            self.logger.info("Starting file download: %s", key["Key"])
                             s3_client.download_file(bucket_name, key["Key"], local_file_path)
                             self.logger.info("File %s successfully downloaded to %s.",
-                                             key['Key'], local_file_path)
-
+                                             key["Key"], local_file_path)
+            except ValueError as ve:
+                self.logger.error("Validation error: %s", str(ve))
+                raise ve
             except Exception as e:
-                error_message = f"An error occurred while downloading the folder" \
-                                f" from S3: {str(e)}"
+                error_message = f"An error occurred while downloading the folder from S3: {str(e)}"
+                self.logger.error(error_message)
                 self.__obj_exception.raise_generic_exception(error_message)
                 raise e
 
@@ -873,34 +874,32 @@ class FileTransferUtils:
 
             Returns:
                 None
-
-            Examples:
-                >> FileTransferUtils().AWSS3().upload_folder_into_s3(s3_client,
-                'my_bucket', 'local_folder/', 's3_folder/')
             """
             try:
+                if not os.path.exists(src_local_folder_path):
+                    raise ValueError(f"The source folder '{src_local_folder_path}' does not exist.")
+                if not os.path.isdir(src_local_folder_path):
+                    raise ValueError(f"The path '{src_local_folder_path}' is not a directory.")
+
                 if tgt_s3_folder_path is None:
                     tgt_s3_folder_path = pathlib.PurePath(src_local_folder_path).name
 
                 if not tgt_s3_folder_path.endswith("/"):
                     tgt_s3_folder_path += "/"
-
                 list_of_local_files = self.get_list_of_files_local(src_local_folder_path)
 
                 for full_path in list_of_local_files:
-                    source_full_path = full_path.replace("\\", "/")
-                    relative_path = source_full_path[len(src_local_folder_path):]
-                    target_full_path = os.path.join(tgt_s3_folder_path, relative_path)
-
-                    self.logger.info("Beginning file upload from %s to %s...",
-                                     source_full_path,
-                                     target_full_path)
+                    source_full_path = os.path.normpath(full_path)
+                    relative_path = os.path.relpath(source_full_path, src_local_folder_path)
+                    target_full_path = os.path.join(tgt_s3_folder_path, relative_path).replace("\\", "/")
+                    self.logger.info("Beginning file upload from %s to %s...", source_full_path, target_full_path)
                     self.upload_file_into_s3(
                         s3_client, s3_bucket_name, source_full_path, target_full_path
                     )
-                    self.logger.info("Successfully transferred file %s to S3.",
-                                     source_full_path)
+                    self.logger.info("Successfully transferred file %s to S3.", source_full_path)
 
+            except ValueError as ve:
+                raise ve
             except Exception as e:
                 error_message = f"An error occurred while uploading the folder to S3: {str(e)}"
                 self.__obj_exception.raise_generic_exception(error_message)
@@ -908,8 +907,7 @@ class FileTransferUtils:
 
         def get_list_of_files_local(self, local_dir_name: str) -> list:
             """
-            Lists all the files in a given local directory, including files in
-            subdirectories.
+            Lists all the files in a given local directory, including files in subdirectories.
 
             Args:
                 local_dir_name (str): Local directory name.
@@ -918,23 +916,24 @@ class FileTransferUtils:
                 list: A list of file paths under the given directory.
 
             Examples:
-                >> files = FileTransferUtils().AWSS3().get_list_of_files_local(
-                'local_directory/')
+                >> files = FileTransferUtils().AWSS3().get_list_of_files_local('local_directory/')
             """
             try:
-                entries = os.listdir(local_dir_name)
-                all_files = []
+                if not os.path.exists(local_dir_name):
+                    raise ValueError(f"The directory '{local_dir_name}' does not exist.")
+                if not os.path.isdir(local_dir_name):
+                    raise ValueError(f"The path '{local_dir_name}' is not a directory.")
 
-                for entry in entries:
-                    full_path = os.path.join(local_dir_name, entry)
-                    if os.path.isdir(full_path):
-                        all_files.extend(self.get_list_of_files_local(full_path))
-                    else:
-                        all_files.append(full_path)
+                all_files = []
+                for root, _, files in os.walk(local_dir_name):
+                    for file in files:
+                        all_files.append(os.path.join(root, file))
 
                 return all_files
+            except ValueError as ve:
+                raise ve
             except Exception as e:
-                error_message = f"An error occurred while listing files in " \
-                                f"the directory '{local_dir_name}': {str(e)}"
+                error_message = f"An error occurred while listing files in the directory" \
+                                f" '{local_dir_name}': {str(e)}"
                 self.__obj_exception.raise_generic_exception(error_message)
                 raise e

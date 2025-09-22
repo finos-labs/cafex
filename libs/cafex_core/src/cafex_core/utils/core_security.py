@@ -107,10 +107,9 @@ class Security:
             nifi_token = nipyapi.nifi.AccessApi().create_access_token(
                 username=username, password=password
             )
-            nipyapi.security.set_service_auth_token(token=nifi_token, service="nifi")
-            bearer_token = "Bearer " + nifi_token
-
             if nifi_token:
+                nipyapi.security.set_service_auth_token(token=nifi_token, service="nifi")
+                bearer_token = "Bearer " + nifi_token
                 Reporting().insert_step(
                     "Successfully generated Nifi token", "Successfully generated Nifi token", "Pass"
                 )

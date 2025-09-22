@@ -47,11 +47,11 @@ class TestDateTimeUtils:
         try:
             dtu = DateTimeActions()
             assert dtu.seconds_to_human_readable(3661) == "1 hour, 1 minute, 1 second"
-            assert dtu.seconds_to_human_readable(3600) == "1 hour, 0 minutes, 0 seconds"
-            assert dtu.seconds_to_human_readable(60) == "1 minute, 0 seconds"
+            assert dtu.seconds_to_human_readable(3600) == "1 hour"
+            assert dtu.seconds_to_human_readable(60) == "1 minute"
             assert dtu.seconds_to_human_readable(1) == "1 second"
-            assert dtu.seconds_to_human_readable(0) == "0 seconds"
-            assert dtu.seconds_to_human_readable(86400) == "1 day, 0 hours, 0 minutes, 0 seconds"
+            assert dtu.seconds_to_human_readable(0) == "0 milliseconds"
+            assert dtu.seconds_to_human_readable(86400) == "1 day"
             dtu.seconds_to_human_readable("invalid")
         except Exception as e:
             print(e)

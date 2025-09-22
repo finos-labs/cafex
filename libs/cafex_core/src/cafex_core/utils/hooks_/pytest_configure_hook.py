@@ -88,12 +88,18 @@ class PytestConfiguration:
         self.logger.info("PytestConfigure")
         self.session_store.driver = None
         self.session_store.mobile_driver = None
+        self.session_store.playwright_browser = None
+        self.session_store.playwright_context = None
+        self.session_store.playwright_page = None
+        self.session_store.handler = None
         self.session_store.counter = 1
         self.session_store.datadriven = 1
         self.session_store.rowcount = 1
         self.session_store.is_parallel = None
         self.session_store.globals = {}
         self.session_store.ui_scenario = False
+        self.session_store.playwright_ui_scenario = False
         self.session_store.mobile_ui_scenario = False
+        self.session_store.ui_desktop_client_scenario = False
         env_path = os.path.join(self.session_store.conf_dir, ".env")
         load_dotenv(env_path)

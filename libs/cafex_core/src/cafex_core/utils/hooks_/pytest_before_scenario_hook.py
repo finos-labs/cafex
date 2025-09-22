@@ -45,7 +45,7 @@ class PytestBeforeScenario:
 
             self.session_store.ui_scenario = True
             if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
-                self.scenario.feature.scenarios[self.scenario.name].examples.examples
+                    self.scenario.feature.scenarios[self.scenario.name].examples.examples
             ) >= self.session_store.counter:
                 if self.session_store.driver is None:
                     WebDriverInitializer().initialize_driver()
@@ -59,11 +59,34 @@ class PytestBeforeScenario:
 
             self.session_store.mobile_ui_scenario = True
             if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
-                self.scenario.feature.scenarios[self.scenario.name].examples.examples
+                    self.scenario.feature.scenarios[self.scenario.name].examples.examples
             ) >= self.session_store.counter:
                 MobileDriverInitializer().initialize_driver()
             else:
                 MobileDriverInitializer().initialize_driver()
+        elif "ui_desktop_client" in self.scenario_tags:
+            from cafex_desktop.desktop_client.desktop_client_driver_initializer \
+                import DesktopClientDriverInitializer
+            self.session_store.ui_desktop_client_scenario = True
+            if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
+                    self.scenario.feature.scenarios[self.scenario.name].examples.examples
+            ) >= self.session_store.counter:
+                DesktopClientDriverInitializer().initialize_driver()
+            else:
+                DesktopClientDriverInitializer().initialize_driver()
+        elif "playwright_web" in self.scenario_tags and "ui_web" not in self.scenario_tags:
+            from cafex_ui.web_client.ui_web_driver_initializer import (
+                WebDriverInitializer,
+            )
+            self.session_store.playwright_ui_scenario = True
+            if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
+                    self.scenario.feature.scenarios[self.scenario.name].examples.examples
+            ) >= self.session_store.counter:
+                if self.session_store.driver is None:
+                    WebDriverInitializer().initialize_playwright_driver()
+            else:
+                if self.session_store.driver is None:
+                    WebDriverInitializer().initialize_playwright_driver()
 
     def before_scenario_report_configuration(self):
         try:
