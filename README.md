@@ -1,3 +1,5 @@
+![badge-labs](https://user-images.githubusercontent.com/327285/230928932-7c75f8ed-e57b-41db-9fb7-a292a13a1e58.svg)
+
 # CAFEX Monorepo
 
 This monorepo contains the following CAFE packages:
@@ -290,7 +292,7 @@ Signed-off-by: John Doe <john.doe@example.com>
 
 Adding the `-s` flag to your `git commit` will add that line automatically. You can also add it manually as part of your commit log message or add it afterwards with `git commit --amend -s`.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for more information
+See [CONTRIBUTING.md](.CONTRIBUTING.md) for more information
 
 ### Helpful DCO Resources
 - [Git Tools - Signing Your Work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
