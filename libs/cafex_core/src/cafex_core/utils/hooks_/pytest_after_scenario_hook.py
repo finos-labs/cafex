@@ -3,6 +3,7 @@ from cafex_core.singletons_.request_ import RequestSingleton
 from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.hooks_.hook_util import HookUtil
+from cafex_ui.cafex_ui_config_utils import MobileConfigUtils
 
 
 class PytestAfterScenario:
@@ -14,17 +15,18 @@ class PytestAfterScenario:
         self.logger = CoreLogger(name=__name__).get_logger()
         self.session_store = SessionStore()
         self.config_utils = ConfigUtils()
+        self.config_utils_mobile = MobileConfigUtils()
         self.hook_util = HookUtil()
         self.is_parallel_execution = self.hook_util.is_parallel_execution(self.sys_args)
 
     def after_scenario_hook(self):
         fetch_run_on_mobile_bool = False
         if "run_on_mobile" in self.session_store.base_config:
-            fetch_run_on_mobile_bool = self.config_utils.fetch_run_on_mobile()
+            fetch_run_on_mobile_bool = self.config_utils_mobile.fetch_run_on_mobile()
         if "ui_web" in self.scenario.tags and not fetch_run_on_mobile_bool:
             self.after_scenario_browser_teardown()
-        if "ui_thick_client" in self.scenario.tags and not self.is_parallel_execution:
-            pass
+        if "ui_desktop_client" in self.scenario.tags and not self.is_parallel_execution:
+            self.after_scenario_desktop_client_teardown()
         if "mobile_web" in self.scenario.tags and not self.is_parallel_execution:
             self.after_scenario_mobile_teardown()
         if "mobile_app" in self.scenario.tags:
@@ -69,7 +71,7 @@ class PytestAfterScenario:
                 else:
                     quit_and_reset(self.session_store, 4)
             elif self.session_store.base_config.get("skip_teardown_per_example_flag") is False:
-                if examples_len == 0 and len(self.scenario.params) == 0:
+                if examples_len == 0:
                     bool_data = True
                 if examples_len == 0 and bool_data and not self.is_parallel_execution:
                     quit_and_reset(self.session_store, 1)
@@ -90,8 +92,8 @@ class PytestAfterScenario:
                 quit_and_reset(self.session_store, 5)
             else:
                 if (
-                    examples_len == self.session_store.counter
-                    or self.session_store.datadriven == self.session_store.rowcount
+                        examples_len == self.session_store.counter
+                        or self.session_store.datadriven == self.session_store.rowcount
                 ):
                     quit_and_reset(self.session_store, 6)
                 else:
@@ -101,8 +103,8 @@ class PytestAfterScenario:
                         self.session_store.datadriven += 1
                     self.session_store.counter += 1
                 if (
-                    self.is_parallel_execution
-                    and self.session_store.datadriven != self.session_store.rowcount
+                        self.is_parallel_execution
+                        and self.session_store.datadriven != self.session_store.rowcount
                 ):
                     quit_and_reset(self.session_store, 8)
         except Exception as e:
@@ -134,3 +136,45 @@ class PytestAfterScenario:
                         self.session_store.mobile_driver = None
         except Exception as e:
             self.logger.exception("Error in after_scenario_mobile_teardown-->" + str(e))
+
+    def after_scenario_desktop_client_teardown(self):
+        """This method is to teardown the desktop client application based on the configuration."""
+        try:
+            scenario_name = self.scenario.name
+            examples_len = len(self.scenario.feature.scenarios[scenario_name].examples.examples)
+
+            def reset_session_store():
+                self.session_store.handler = None
+                self.session_store.counter = 1
+                self.session_store.datadriven = 1
+
+            def close_or_kill_app():
+                if self.config_utils.base_config.get("connect_to_open_app"):
+                    if self.session_store.globals["obj_dca"].window is not None:
+                        self.session_store.globals["obj_dca"].window.close()
+                else:
+                    if self.session_store.globals["obj_dca"].app is not None:
+                        self.session_store.globals["obj_dca"].app.kill()
+
+            if examples_len == 0:
+                close_or_kill_app()
+                reset_session_store()
+            else:
+                if examples_len == self.session_store.counter and \
+                        self.session_store.datadriven == self.session_store.rowcount:
+                    close_or_kill_app()
+                    reset_session_store()
+                else:
+                    if examples_len == 0:
+                        if self.session_store.datadriven == self.session_store.rowcount:
+                            close_or_kill_app()
+                            reset_session_store()
+                        else:
+                            self.session_store.datadriven += 1
+                    else:
+                        self.session_store.counter += 1
+        except Exception as e:
+            self.logger.exception(f"Error in after_scenario_desktop_client_teardown --> {e}")
+
+
+

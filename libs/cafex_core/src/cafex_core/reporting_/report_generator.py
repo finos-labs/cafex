@@ -74,16 +74,20 @@ class ReportGenerator:
 
         log_files = []
         for log_file in logs_dir.glob("*.log"):
-            with open(log_file, "r", encoding="utf-8") as f:
-                log_files.append(
-                    {
-                        "name": log_file.name,
-                        "content": f.read(),
-                        "timestamp": log_file.name.split("_")[1].split(".")[
-                            0
-                        ],  # Extract timestamp from filename
-                    }
-                )
+            try:
+                with open(log_file, "r", encoding="utf-8", errors="replace") as f:
+                    log_files.append(
+                        {
+                            "name": log_file.name,
+                            "content": f.read(),
+                            "timestamp": log_file.name.split("_")[1].split(".")[
+                                0
+                            ],  # Extract timestamp from filename
+                        }
+                    )
+            except Exception as e:
+                logger.warning("Error reading log file %s: %s", log_file, e)
+                continue
 
         # Sort by timestamp descending
         return sorted(log_files, key=lambda x: x["timestamp"], reverse=True)

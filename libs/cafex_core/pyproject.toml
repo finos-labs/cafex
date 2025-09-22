@@ -31,7 +31,6 @@ dependencies = [
     "allure-pytest==2.13.2",
     "requests==2.31.0",
     "pypsexec==0.3.0",
-    "sqlAlchemy== 1.4.29",
     "pymsteams==0.2.2",
     "requests-kerberos==0.14.0",
     "requests_ntlm==1.2.0",

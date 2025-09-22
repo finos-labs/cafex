@@ -1,0 +1,1 @@
+SELECT * FROM "Cafex" ORDER BY id;

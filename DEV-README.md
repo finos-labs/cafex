@@ -14,6 +14,7 @@ cafex
 │   ├── cafex_core/
 │   ├── cafex_db/
 │   └── cafex_ui/
+│   └── cafex_desktop/
 ├── scripts/
 │   ├── build_package.py
 │   └── versioning.py
@@ -51,6 +52,7 @@ To install the packages in editable mode, allowing you to make changes and see t
    * `pip install -e libs/cafex_api/`
    * `pip install -e libs/cafex_db/`
    * `pip install -e libs/cafex_ui/`
+   * `pip install -e libs/cafex_desktop/`
    * `pip install -e libs/cafex/`
    
 ### Building Wheels

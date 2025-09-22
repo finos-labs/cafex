@@ -48,7 +48,7 @@ class TestJSONPlaceholderAPIUnit(unittest.TestCase):
                 method="GET",
                 url="https://jsonplaceholder.typicode.com/posts/1",
                 headers={"Accept": "application/json"},
-                pbln_verify=False
+                verify=False
             )
 
         # Execute the steps
@@ -87,7 +87,7 @@ class TestJSONPlaceholderAPIUnit(unittest.TestCase):
             assert call_args['method'] == "GET"
             assert call_args['url'] == "https://jsonplaceholder.typicode.com/posts/1"
             assert "Accept" in call_args['headers']
-            assert call_args['pbln_verify'] is False
+            assert call_args['verify'] is False
 
         # Execute the steps
         call_get_post()
@@ -107,7 +107,7 @@ class TestJSONPlaceholderAPIUnit(unittest.TestCase):
                 method="GET",
                 url="https://jsonplaceholder.typicode.com/posts/1",
                 headers={"Accept": "application/json"},
-                pbln_verify=False
+                verify=False
             )
 
         # Execute the steps
@@ -129,10 +129,10 @@ class TestJSONPlaceholderAPIUnit(unittest.TestCase):
             assert call_args['method'] == "POST"
             assert call_args['url'].endswith("/posts")
             assert "Content-Type" in call_args['headers']
-            assert call_args['pbln_verify'] is False
+            assert call_args['verify'] is False
 
             # Verify payload
-            payload = json.loads(call_args['pstr_payload'])
+            payload = json.loads(call_args['payload'])
             assert payload['title'] == "Test Title"
             assert payload['body'] == "Test Body"
             assert payload['userId'] == 1
@@ -156,10 +156,10 @@ class TestJSONPlaceholderAPIUnit(unittest.TestCase):
             assert call_args['method'] == "PATCH"
             assert call_args['url'].endswith("/posts/1")
             assert "Content-Type" in call_args['headers']
-            assert call_args['pbln_verify'] is False
+            assert call_args['verify'] is False
 
             # Verify payload
-            payload = json.loads(call_args['pstr_payload'])
+            payload = json.loads(call_args['payload'])
             assert payload['title'] == "Updated Title"
 
         # Execute the steps
@@ -180,7 +180,7 @@ class TestJSONPlaceholderAPIUnit(unittest.TestCase):
             call_args = self.api_service.request_builder.call_request.call_args[1]
             assert call_args['method'] == "DELETE"
             assert call_args['url'].endswith("/posts/1")
-            assert call_args['pbln_verify'] is False
+            assert call_args['verify'] is False
 
         # Execute the steps
         call_delete_post()

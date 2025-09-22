@@ -2,7 +2,7 @@
 'default_explicit_wait': 60
 'default_implicit_wait': 30
 'environment': 'http://the-internet.herokuapp.com'
-'environment_type': 'db_demo'
+'environment_type': 'ui_demo'
 'execution_environment': 'dev'
 'selenium_grid_ip': 'http://localhost:4444'
 'use_grid': false
@@ -23,7 +23,12 @@
 'service_description': 'services/service_description'
 'service_payloads': 'services/payloads'
 'run_on_browserstack': false
-'auto_launch_report': true
+'auto_launch_report': false
+playwright_browser_args:
+ headless: true
+ args: ['--disable-gpu', '--window-size=1920,1080', '--no-sandbox']
+ slow_mo: 50
+ devtools: false
 'env':
   'dev':
     'api_demo':
@@ -34,10 +39,23 @@
     'ui_demo':
       'base_url': 'http://the-internet.herokuapp.com'
       'default_user':
-        'password': 'lUgrzemNo5m9Z3aiN168JcBoGCas1XsFvo2Ab3hcZlDXJwkbMXHcWjbddsaKdjnRxieB+g=='
+        'password': '8GPtex4qM7BhgisF5sgR0pLL2UgHMQ93fL9Y4WxwYxWSQGFoVQKuJt4u/TW1zptVFhgg7g=='
         'username': 'tomsmith'
     'db_demo':
       'base_url': ''
       'default_db_user':
         'password': ''
         'username': ''
+    'desktop_demo':
+      'app_path': ''
+      'app_process_name': 'notepad.exe'
+      'application_name': 'Notepad'
+      'connect_to_open_app': false
+  'prod':
+    CassandraDB:
+      db_type: ''
+      hosts: ''
+      port: ''
+      keyspace: ''
+      username: ''
+      password: ''
