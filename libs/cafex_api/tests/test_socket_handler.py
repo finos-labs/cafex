@@ -29,6 +29,8 @@ class TestWebSocketHandler:
         assert socket_handler.arr_multi_response == []
         assert socket_handler.list_messages == ""
         assert socket_handler.logger is not None
+        assert socket_handler._WebSocketHandler__exceptions_generic is not None
+        assert socket_handler._WebSocketHandler__exceptions_services is not None
 
     @patch('websocket.create_connection')
     def test_set_socket_connection(self, mock_create_connection, socket_handler):
@@ -46,15 +48,14 @@ class TestWebSocketHandler:
         assert socket_handler._ws == mock_ws
         mock_create_connection.assert_called_once_with(socket_url)
 
-        # Test empty URL
-        with pytest.raises(ValueError):
-            socket_handler.set_socket_connection("")
+        # Test empty URL - should return None instead of raising ValueError
+        result = socket_handler.set_socket_connection("")
+        assert result is None
 
-        # Test connection error
+        # Test connection error - should return None instead of raising Exception
         mock_create_connection.side_effect = Exception("Connection error")
-        with pytest.raises(Exception) as exc_info:
-            socket_handler.set_socket_connection(socket_url)
-        assert "Connection error" in str(exc_info.value)
+        result = socket_handler.set_socket_connection(socket_url)
+        assert result is None
 
     @patch('websocket.create_connection')
     def test_send_socket_message(self, mock_create_connection, socket_handler):
@@ -86,19 +87,18 @@ class TestWebSocketHandler:
         mock_ws.send.assert_called_once_with("Another message")
         mock_ws.recv.assert_called_once()
 
-        # Test empty URL
-        with pytest.raises(ValueError):
-            socket_handler.send_socket_message("", message)
+        # Test empty URL - should return None instead of raising ValueError
+        result = socket_handler.send_socket_message("", message)
+        assert result is None
 
-        # Test empty message
-        with pytest.raises(ValueError):
-            socket_handler.send_socket_message(socket_url, "")
+        # Test empty message - should return None instead of raising ValueError
+        result = socket_handler.send_socket_message(socket_url, "")
+        assert result is None
 
-        # Test send error
+        # Test send error - should return None instead of raising Exception
         mock_ws.send.side_effect = Exception("Send error")
-        with pytest.raises(Exception) as exc_info:
-            socket_handler.send_socket_message(socket_url, message)
-        assert "Send error" in str(exc_info.value)
+        result = socket_handler.send_socket_message(socket_url, message)
+        assert result is None
 
     @patch('websocket.WebSocketApp')
     @patch('websocket.enableTrace')
@@ -111,9 +111,10 @@ class TestWebSocketHandler:
         mock_websocket_app.return_value = mock_ws_app
 
         # Test
-        socket_handler.send_multi_socket_message(socket_url, messages)
+        result = socket_handler.send_multi_socket_message(socket_url, messages)
 
         # Assertions
+        assert result is True
         mock_enable_trace.assert_called_once_with(True)
         mock_websocket_app.assert_called_once()
         assert socket_handler.list_messages == messages
@@ -141,7 +142,7 @@ class TestWebSocketHandler:
         ssl_options = {"cert_reqs": ssl.CERT_NONE}
 
         # Test
-        socket_handler.send_multi_socket_message(
+        result = socket_handler.send_multi_socket_message(
             socket_url,
             messages,
             wait_time=2,
@@ -153,6 +154,7 @@ class TestWebSocketHandler:
         )
 
         # Assertions
+        assert result is True
         mock_enable_trace.assert_called_once_with(True)
         mock_websocket_app.assert_called_once_with(
             socket_url,
@@ -172,8 +174,22 @@ class TestWebSocketHandler:
         """Test sending multiple messages with an empty URL."""
         messages = [{"message": "Hello"}, {"message": "World"}]
 
-        with pytest.raises(ValueError):
-            socket_handler.send_multi_socket_message("", messages)
+        # Should return False instead of raising ValueError
+        result = socket_handler.send_multi_socket_message("", messages)
+        assert result is False
+
+        # Ensure WebSocketApp was not created
+        mock_websocket_app.assert_not_called()
+
+    @patch('websocket.WebSocketApp')
+    @patch('websocket.enableTrace')
+    def test_send_multi_socket_message_empty_messages(self, mock_enable_trace, mock_websocket_app, socket_handler):
+        """Test sending empty messages list."""
+        socket_url = "ws://example.com/websocket"
+
+        # Should return False instead of raising error
+        result = socket_handler.send_multi_socket_message(socket_url, None)
+        assert result is False
 
         # Ensure WebSocketApp was not created
         mock_websocket_app.assert_not_called()
@@ -188,12 +204,9 @@ class TestWebSocketHandler:
         # Setup error
         mock_websocket_app.side_effect = Exception("WebSocket error")
 
-        # Test
-        with pytest.raises(Exception) as exc_info:
-            socket_handler.send_multi_socket_message(socket_url, messages)
-
-        # Assertions
-        assert "WebSocket error" in str(exc_info.value)
+        # Should return False instead of raising Exception
+        result = socket_handler.send_multi_socket_message(socket_url, messages)
+        assert result is False
         mock_enable_trace.assert_called_once_with(True)
 
     def test_on_message(self, socket_handler):
@@ -298,8 +311,9 @@ class TestWebSocketHandler:
         socket_handler._ws = mock_ws
         socket_handler.list_messages = [{"message": "Hello"}]
 
-        # Need to patch the logger to avoid actual logging
-        with patch.object(socket_handler.logger, 'exception') as mock_logger:
+        # Need to patch exception handler
+        with patch.object(socket_handler._WebSocketHandler__exceptions_generic,
+                          'raise_generic_exception') as mock_exception:
             # Capture the function and arguments passed to start_new_thread
             def capture_thread_func(*args, **kwargs):
                 # The first arg is the function to run
@@ -315,5 +329,42 @@ class TestWebSocketHandler:
 
             # Assertions
             mock_ws.send.assert_called_once_with(json.dumps({"message": "Hello"}))
-            assert mock_logger.call_count == 1
-            assert "Send error" in mock_logger.call_args[0][1]
+            mock_exception.assert_called_once()
+            assert "Send error" in mock_exception.call_args[0][0]
+
+    def test_exception_handling_in_callbacks(self, socket_handler):
+        """Test exception handling in callback methods."""
+        # Setup
+        mock_ws = MagicMock()
+
+        # Test exception in on_message
+        with patch.object(socket_handler._WebSocketHandler__exceptions_generic,
+                          'raise_generic_exception') as mock_exception:
+            with patch.object(socket_handler.logger, 'info', side_effect=Exception("Logger error")):
+                socket_handler._WebSocketHandler__on_message(mock_ws, "test")
+                mock_exception.assert_called_once()
+                assert "Logger error" in mock_exception.call_args[0][0]
+
+        # Test exception in on_error
+        with patch.object(socket_handler._WebSocketHandler__exceptions_generic,
+                          'raise_generic_exception') as mock_exception:
+            with patch.object(socket_handler.logger, 'exception', side_effect=Exception("Logger error")):
+                socket_handler._WebSocketHandler__on_error(mock_ws, "error")
+                mock_exception.assert_called_once()
+                assert "Logger error" in mock_exception.call_args[0][0]
+
+        # Test exception in on_close
+        with patch.object(socket_handler._WebSocketHandler__exceptions_generic,
+                          'raise_generic_exception') as mock_exception:
+            with patch.object(socket_handler.logger, 'warning', side_effect=Exception("Logger error")):
+                socket_handler._WebSocketHandler__on_close(mock_ws)
+                mock_exception.assert_called_once()
+                assert "Logger error" in mock_exception.call_args[0][0]
+
+        # Test exception in on_open
+        with patch.object(socket_handler._WebSocketHandler__exceptions_generic,
+                          'raise_generic_exception') as mock_exception:
+            with patch.object(socket_handler.logger, 'info', side_effect=Exception("Logger error")):
+                socket_handler._WebSocketHandler__on_open()
+                mock_exception.assert_called_once()
+                assert "Logger error" in mock_exception.call_args[0][0]

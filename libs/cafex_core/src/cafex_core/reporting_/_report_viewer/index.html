@@ -62,7 +62,20 @@
     <div class="logs-section">
         <div class="logs-header">
             <h2>Execution Logs</h2>
-            <button onclick="openLogsInNewWindow()" class="pop-out-btn">Pop Out</button>
+            <div class="logs-actions">
+                <div class="search-container">
+                    <input type="text" id="log-search-input" placeholder="Search in logs...">
+                    <button id="log-search-button" class="search-btn">Search</button>
+                </div>
+                <button onclick="openLogsInNewWindow()" class="pop-out-btn">Pop Out</button>
+            </div>
+        </div>
+        <div class="search-results" id="search-results-container" style="display: none;">
+            <div class="search-results-header">
+                <span id="search-results-count">0 results</span>
+                <button id="clear-search-btn" class="clear-search-btn">Clear</button>
+            </div>
+            <div id="search-results-list" class="search-results-list"></div>
         </div>
         <div class="log-container">
             <select id="log-file-select"></select>

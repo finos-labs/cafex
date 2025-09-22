@@ -9,12 +9,24 @@ db_queries_obj = EmployeeDbQueries()
 def test_executing_a_sql_query_from_file():
     """Executing a SQL Query from file."""
 
+@scenario(r'db_example.feature', 'Executing a PostgreSQL Query from file')
+def test_executing_a_postgre_query_from_file():
+    """Executing a SQL Query from file."""
+
+@scenario(r'db_example.feature', 'Executing a Oracle Query from file')
+def test_executing_a_oracle_query_from_file():
+    """Executing a SQL Query from file."""
+
+@scenario(r'db_example.feature', 'Executing a MSSQL Query from file')
+def test_executing_a_mssql_query_from_file():
+    """Executing a SQL Query from file."""
 
 @given(parsers.cfparse('user connects to server "{str_server_name}"'))
 def user_connects_to_avconsql_server(str_server_name):
     db_queries_obj.mi_establish_connection(str_server_name)
-    
+
     print(str_server_name)
+
 
 @when(parsers.parse('user executes query from file {str_filepath}'))
 def user_executes_query_from_file_filepath(str_filepath):

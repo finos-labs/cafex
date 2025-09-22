@@ -23,7 +23,6 @@ class ElasticSearchUtils:
         self.logger = self.logger_class.get_logger()
         self.response = None
         self.__exceptions = CoreExceptions()
-        # self.__exceptions_services = APIExceptions()
 
     def generate_payload(self,
                          must_parameters: dict = None,
@@ -206,10 +205,10 @@ class ElasticSearchUtils:
 
         try:
             response = self.call_request(
-                pstr_method=method,
-                pstr_url=f"{host_name}{end_point}",
-                pdict_headers=headers or {},
-                pstr_payload=payload,
+                method=method,
+                url=f"{host_name}{end_point}",
+                headers=headers or {},
+                payload=payload,
                 **kwargs,
             )
             return response
@@ -608,7 +607,7 @@ class ElasticSearchUtils:
             >> value = ElasticSearchUtils().get_node_value(".SomeNodePath",
             json_content=response.content)
         """
-        json_content = kwargs.get("json_content", self.response)
+        json_content = kwargs.get("json_content", self.response.json())
         delimiter = kwargs.get("delimiter", ".")
         parser = kwargs.get("parser", False)
 
@@ -616,12 +615,9 @@ class ElasticSearchUtils:
             values = list(ParseJsonData().get_json_values_by_key_path(
                 json_content, delimiter, keypath=node_path, parser=parser
             ))
-
             if not values:
-                return None
-
-            return values if len(values) > 1 else values[0]
-
+                raise ValueError(f"No values found for the node path: {node_path}")
+            return values
         except Exception as e:
             self.logger.error("Error getting node value: %s", str(e))
             self.__exceptions.raise_generic_exception(

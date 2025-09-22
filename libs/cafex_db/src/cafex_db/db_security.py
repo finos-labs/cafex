@@ -1,26 +1,27 @@
 import base64
 import os
+import sys
 import urllib.parse
 
-import cx_Oracle
+import oracledb
 import paramiko
 import sqlalchemy as sc
-
-# from cassandra.auth import PlainTextAuthProvider
-# from cassandra.cluster import Cluster
-from Cryptodome.Cipher import AES
-from pymongo import MongoClient
-
 from cafex_core.utils.core_security import (
     Security,
     decrypt_password,
     use_secured_password,
 )
 from cafex_core.utils.exceptions import CoreExceptions
-from cafex_db.db_exceptions import DBExceptions
-
 # from cassandra.auth import PlainTextAuthProvider
 # from cassandra.cluster import Cluster
+# from cassandra.io.asyncioreactor import AsyncioConnection
+from Crypto.Cipher import AES
+from pymongo import MongoClient
+
+from .db_exceptions import DBExceptions
+
+oracledb.version = "8.3.0"
+sys.modules["cx_Oracle"] = oracledb
 
 
 class DBSecurity(Security):
@@ -44,7 +45,7 @@ class DBSecurity(Security):
         """Decodes a password using AES."""
 
         try:
-            cipher = AES.new(psecret_key.encode("utf8"), AES.MODE_GCM)
+            cipher = AES.new(psecret_key.encode("utf8"), AES.MODE_ECB)
             decoded = cipher.decrypt(base64.b64decode(pkey.encode("latin-1")))
             return decoded.decode("latin-1").strip()
         except Exception as e:
@@ -167,7 +168,8 @@ class DBSecurity(Security):
             self.__obj_generic_exception.raise_generic_exception(str(e))
 
     def hive_connection(self, server_name: str, **kwargs) -> paramiko.SSHClient:
-        """Creates an SSH connection to a Hive server.
+        """
+        Creates an SSH connection to a Hive server.
 
         Args:
             server_name: The hostname or IP address of the Hive server.
@@ -234,9 +236,37 @@ class DBSecurity(Security):
                 str(e) + f"Error creating Hive connection: {e}"
             ) from e
 
-    def oracle(self, server_name: str, **kwargs) -> sc.engine.Connection:
-        """Creates an Oracle connection."""
+    def oracle(self, server_name: str = None, **kwargs) -> sc.engine.Connection:
+        """
+        Creates an Oracle connection using oracledb.
 
+        This method supports multiple connection methods:
+        1. Wallet-based connection (most secure, recommended for Oracle Autonomous Database)
+        2. Direct connection with service name (thin mode, no wallet needed)
+        3. Direct connection with SID
+
+        Args:
+            server_name: The hostname or IP address of the Oracle server.
+                         For wallet connections, can be empty or None.
+            **kwargs: Additional connection parameters.
+
+        Keyword Args:
+            username (str): The database username.
+            password (str): The database password.
+            port_number (int): The database port (default: 1521 for regular, 1522 for Oracle Cloud).
+            sid (str): The Oracle SID.
+            service_name (str): The Oracle service name or TNS alias from tnsnames.ora.
+            encoding (str): The character encoding.
+            thick_mode (bool): Whether to use thick mode (requires Oracle Client).
+            tns_admin (str): Path to the wallet directory (for connections using wallet).
+            use_wallet (bool): Force using wallet-based connection (default: auto-detect).
+
+        Returns:
+            sqlalchemy.engine.Connection: A connection to the Oracle database.
+
+        Raises:
+            ValueError: If required parameters are missing.
+        """
         try:
             username = kwargs.get("username")
             password = kwargs.get("password")
@@ -244,6 +274,16 @@ class DBSecurity(Security):
             sid = kwargs.get("sid")
             service_name = kwargs.get("service_name")
             encoding = kwargs.get("encoding")
+            thick_mode = kwargs.get("thick_mode", False)
+            tns_admin = kwargs.get("tns_admin")
+            use_wallet = kwargs.get("use_wallet")
+
+            # Auto-detect if we should use wallet-based connection
+            if use_wallet is None:
+                use_wallet = tns_admin is not None
+
+            if tns_admin:
+                tns_admin = os.path.normpath(tns_admin)
 
             if self.crypt_bool_key and password:
                 password = decrypt_password(password)
@@ -257,18 +297,84 @@ class DBSecurity(Security):
             if encoding:
                 os.environ["NLS_LANG"] = f".{encoding.upper()}"
 
-            if sid:
-                tns = cx_Oracle.makedsn(server_name, port_number, sid=sid)
-            elif service_name:
-                tns = cx_Oracle.makedsn(server_name, port_number, service_name=service_name)
-            else:
-                raise ValueError("SID or SERVICE_NAME is required for Oracle connection.")
+            # Initialize Oracle Client if needed (thick mode or wallet)
+            if thick_mode or use_wallet:
+                try:
+                    if tns_admin:
+                        oracledb.init_oracle_client(config_dir=tns_admin)
+                    else:
+                        oracledb.init_oracle_client()
+                except Exception as init_err:
+                    self.logger.warning(f"Oracle Client initialization note: {init_err}")
 
-            if username and password:
-                engine = sc.create_engine(f"oracle://{username}:{password}@{tns}")
-                return engine.connect()
+            # Choose connection approach based on parameters and use_wallet
+            if use_wallet:
+                if not service_name:
+                    raise ValueError("service_name is required for wallet-based connection")
+
+                # For wallet, service_name is just the TNS alias
+                # No need for server_name, port, etc. as they're in the wallet
+                connect_string = f"oracle://{username}:{password}@"
+
+                engine = sc.create_engine(connect_string, connect_args={"dsn": service_name})
+
+            elif sid:
+                # SID-BASED CONNECTION
+                if thick_mode:
+                    dsn = oracledb.makedsn(server_name, port_number, sid=sid)
+                    connect_string = f"oracle://{username}:{password}@{dsn}"
+                else:
+                    connect_string = (
+                        f"oracle://{username}:{password}@{server_name}:{port_number}/?sid={sid}"
+                    )
+
+                engine = sc.create_engine(connect_string)
+
+            elif service_name:
+                # SERVICE NAME CONNECTION
+                if thick_mode:
+                    dsn = oracledb.makedsn(server_name, port_number, service_name=service_name)
+                    connect_string = f"oracle://{username}:{password}@{dsn}"
+                else:
+                    connect_string = f"oracle://{username}:{password}@{server_name}:{port_number}/?service_name={service_name}"
+
+                engine = sc.create_engine(connect_string)
+
             else:
-                raise ValueError("Username and password are required for Oracle connection.")
+                raise ValueError(
+                    "Either sid, service_name, or use_wallet with service_name must be provided"
+                )
+
+            # Try to connect with the primary approach
+            try:
+                return engine.connect()
+            except Exception as primary_error:
+                self.logger.warning(f"Primary connection approach failed: {primary_error}")
+
+                # If service_name is provided and we're not using wallet, try alternative formats
+                if service_name and not use_wallet:
+                    try:
+                        # Try alternative 1: direct path format
+                        connect_string = f"oracle://{username}:{password}@{server_name}:{port_number}/{service_name}"
+                        engine = sc.create_engine(connect_string)
+                        return engine.connect()
+                    except Exception as alt1_error:
+                        self.logger.warning(f"Alternative connection 1 failed: {alt1_error}")
+
+                        try:
+                            # Try alternative 2: DSN format
+                            connect_string = f"oracle://{username}:{password}@/?dsn={server_name}:{port_number}/{service_name}"
+                            engine = sc.create_engine(connect_string)
+                            return engine.connect()
+                        except Exception as alt2_error:
+                            self.logger.warning(f"Alternative connection 2 failed: {alt2_error}")
+
+                            # Re-raise primary error if all alternatives fail
+                            raise primary_error
+                else:
+                    # Re-raise the original error if no alternatives to try
+                    raise primary_error
+
         except Exception as e:
             self.__obj_generic_exception.raise_generic_exception(str(e))
 
@@ -310,7 +416,7 @@ class DBSecurity(Security):
     #                 server_name,
     #                 auth_provider=auth_provider,
     #                 port=port,
-    #                 control_connection_timeout=control_timeout,
+    #                 control_connection_timeout=control_timeout,connection_class=AsyncioConnection
     #             )
     #         else:
     #             cluster = Cluster(
@@ -324,10 +430,9 @@ class DBSecurity(Security):
     #         return session
     #
     #     except Exception as e:
-    #         raise e
-    #         # raise self.__obj_generic_exception.raise_generic_exception(
-    #         #     str(e) + f"Error connecting to Cassandra: {e}"
-    #         # ) from e
+    #         raise self.__obj_generic_exception.raise_generic_exception(
+    #             str(e) + f"Error connecting to Cassandra: {e}"
+    #         ) from e
 
     def establish_mongodb_connection(self, username, password, cluster_url, database_name):
         try:

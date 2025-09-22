@@ -5,8 +5,8 @@ import random
 from browserstack.local import Local
 from selenium.webdriver.remote.webdriver import WebDriver
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.exceptions import CoreExceptions
+from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 from cafex_ui.ui_security import UISecurity
 
 
@@ -16,7 +16,7 @@ class BrowserStackDriverFactory:
         self.web_driver: "WebDriver" = None
         self.bs_local = None
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.obj_config = ConfigUtils()
+        self.obj_config = WebConfigUtils()
 
     def create_browserstack_webdriver(
             self, browserstack_username: str, browserstack_access_key: str,
