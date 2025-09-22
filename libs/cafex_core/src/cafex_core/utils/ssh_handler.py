@@ -3,6 +3,8 @@ to a remote machine using SSH and perform operations like command execution
 """
 import re
 
+import paramiko
+
 from cafex_core.utils.core_security import Security
 from cafex_core.utils.exceptions import CoreExceptions
 
@@ -20,12 +22,12 @@ class SshHandler:
     """
 
     def __init__(self):
-        self.__obj_exception = CoreExceptions()
+        self.__exceptions_generic = CoreExceptions()
         self.security = Security()
 
     def establish_ssh_connection(
             self, server_name: str, username: str = None, password: str = None, pem_file: str = None
-    ):
+    ) -> paramiko.SSHClient:
         """This method is used for connecting to a remote machine using SSH.
 
         Args:
@@ -54,12 +56,19 @@ class SshHandler:
             )
             return ssh_client
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while establishing the SSH connection: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e
 
     def __ssh_client(
             self,
-            client,
+            client: paramiko.SSHClient,
             in_buffer: int,
             out_buffer: int,
             width: int = 80,
@@ -87,12 +96,19 @@ class SshHandler:
             )
             return shell, stdin, stdout
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while creating the SSH client: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e
 
     def __execute_command(
             self,
-            client,
+            client: paramiko.SSHClient,
             command,
             maintain_channel=True,
             shell=None,
@@ -150,12 +166,19 @@ class SshHandler:
                         output.pop()
             return exit_status, error if error else output
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while executing the command: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e
 
     def execute(
             self,
-            ssh_client,
+            ssh_client: paramiko.SSHClient,
             commands: list,
             filepath: str = None,
             maintain_channel: bool = True,
@@ -241,75 +264,97 @@ class SshHandler:
                         writefile.write(data)
             return command_output
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while executing the command: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e
 
-    def download_file_from_remote(self, ssh_client, remote_path: str, local_path: str) -> None:
-        """This method is used when we need to copy a file from a remote
-        location to a local location.
+    def download_file_from_remote(self, ssh_client: paramiko.SSHClient, remote_path: str, local_path: str) -> None:
+        """
+        Downloads a file from a remote server to a local machine.
 
         Args:
-            ssh_client (object): The object returned by the establish_connection method.
-            remote_path (str): Remote path of the file (must have the filename along with
-            extension).
-            local_path (str): Local path of the file (must have the filename along with extension).
+            ssh_client (paramiko.SSHClient): The SSH client object.
+            remote_path (str): Full path of the file on the remote server (including filename).
+            local_path (str): Full path where the file will be saved locally (including filename).
 
         Returns:
             None
 
-        Examples:
-            >> download_file_from_remote(ssh_object, "\\ssh_machine\\samplefile.txt",
-            "\\local_path\\samplefile.txt")
-
-        Warning:
-            1. Local and remote path must contain the file name along with extension.
-            2. The path should not contain any spaces.
+        Raises:
+            ValueError: If the ssh_client is None.
+            Exception: If any error occurs during the file transfer.
         """
         try:
-            if ssh_client:
-                ftp_client = ssh_client.open_sftp()
+            if not ssh_client:
+                raise ValueError("The ssh client is none, please check the connection object")
+
+            if not remote_path or not local_path:
+                raise ValueError("Both remote_path and local_path must be provided and valid")
+
+            ftp_client = ssh_client.open_sftp()
+            try:
                 ftp_client.get(remote_path, local_path)
+            finally:
                 ftp_client.close()
-            else:
-                raise ValueError("The ssh client is none, please check the connection object")
+
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while downloading the file from remote: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e
 
-    def upload_file_to_remote(self, ssh_client, local_path: str, remote_path: str) -> None:
-        """This method is used when we need to copy a file from a local
-        location to a remote location.
+    def upload_file_to_remote(self, ssh_client: paramiko.SSHClient, local_path: str, remote_path: str) -> None:
+        """
+        Uploads a file from a local machine to a remote server.
 
         Args:
-            ssh_client (object): The object returned by the establish_connection method.
-            local_path (str): Local path of the file (must have the filename along with
-             extension).
-            remote_path (str): Remote path of the file (must have the filename along with
-            extension).
+            ssh_client (paramiko.SSHClient): The SSH client object.
+            local_path (str): Full path of the file on the local machine (including filename).
+            remote_path (str): Full path where the file will be saved on the remote server (including filename).
 
         Returns:
             None
 
-        Examples:
-            >> upload_file_to_remote(ssh_object, "\\local_path\\samplefile.txt",
-            "\\ssh_machine\\samplefile.txt")
-
-        Warning:
-            1. Local and remote path must contain the file name along with extension.
-            2. The path should not contain any spaces.
+        Raises:
+            ValueError: If the ssh_client is None or paths are invalid.
+            Exception: If any error occurs during the file transfer.
         """
         try:
-            if ssh_client:
-                ftp_client = ssh_client.open_sftp()
+            if not ssh_client:
+                raise ValueError("The ssh client is None, please check the connection object")
+
+            if not local_path or not remote_path:
+                raise ValueError("Both local_path and remote_path must be provided and valid")
+
+            ftp_client = ssh_client.open_sftp()
+            try:
                 ftp_client.put(local_path, remote_path)
+            finally:
                 ftp_client.close()
-            else:
-                raise ValueError("The ssh client is none, please check the connection object")
+
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while uploading the file to remote: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e
 
-    def close_ssh_connection(self, ssh_client) -> None:
+    def close_ssh_connection(self, ssh_client: paramiko.SSHClient) -> None:
         """This method is used to close the SSH connection.
 
         Args:
@@ -321,5 +366,12 @@ class SshHandler:
         try:
             ssh_client.close()
         except Exception as e:
-            self.__obj_exception.raise_generic_exception(str(e))
+            error_description = f"An error occurred while closing the SSH connection: {str(e)}"
+            self.__exceptions_generic.raise_generic_exception(
+                message=error_description,
+                insert_report=True,
+                trim_log=True,
+                log_local=True,
+                fail_test=False,
+            )
             raise e

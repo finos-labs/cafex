@@ -7,9 +7,9 @@ to interact with a public REST API.
 
 import json
 import urllib3
-from cafex_api.request_builder import RequestBuilder
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.utils.config_utils import ConfigUtils
+from cafex import CafeXAPI
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -23,7 +23,7 @@ class JSONPlaceholderAPI:
 
     def __init__(self):
         """Initialize the JSONPlaceholderAPI class."""
-        self.request_builder = RequestBuilder()
+        # self.request_builder = RequestBuilder()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.config_utils = ConfigUtils("jsonplaceholder_api.yml")
         self.base_url = "https://jsonplaceholder.typicode.com"
@@ -80,11 +80,11 @@ class JSONPlaceholderAPI:
         try:
             url = f"{self.base_url}/posts/1"
             headers = {"Accept": "application/json"}
-            response = self.request_builder.call_request(
+            response = CafeXAPI().call_request(
                 method="GET",
                 url=url,
                 headers=headers,
-                pbln_verify=False  # Important: Disable SSL verification for test purposes
+                verify=False  # Important: Disable SSL verification for test purposes
             )
             return response.status_code == 200
         except Exception as e:
@@ -104,11 +104,11 @@ class JSONPlaceholderAPI:
         url = f"{self.base_url}{config['endpoint']}{post_id}"
         headers = config.get("headers", {"Accept": "application/json"})
 
-        self.response = self.request_builder.call_request(
+        self.response = CafeXAPI().call_request(
             method=config.get("method", "GET"),
             url=url,
             headers=headers,
-            pbln_verify=False  # Disable SSL verification for test purposes
+            verify=False  # Disable SSL verification for test purposes
         )
 
         return self.response
@@ -125,11 +125,11 @@ class JSONPlaceholderAPI:
         url = f"{self.base_url}{endpoint}"
         headers = {"Accept": "application/json"}
 
-        self.response = self.request_builder.call_request(
+        self.response = CafeXAPI().call_request(
             method="GET",
             url=url,
             headers=headers,
-            pbln_verify=False  # Disable SSL verification for test purposes
+            verify=False  # Disable SSL verification for test purposes
         )
 
         return self.response
@@ -154,12 +154,12 @@ class JSONPlaceholderAPI:
             "userId": 1
         })
 
-        self.response = self.request_builder.call_request(
+        self.response = CafeXAPI().call_request(
             method=config.get("method", "POST"),
             url=url,
             headers=headers,
-            pstr_payload=payload,
-            pbln_verify=False  # Disable SSL verification for test purposes
+            payload=payload,
+            verify=False  # Disable SSL verification for test purposes
         )
 
         return self.response
@@ -182,12 +182,12 @@ class JSONPlaceholderAPI:
             "title": title
         })
 
-        self.response = self.request_builder.call_request(
+        self.response = CafeXAPI().call_request(
             method=config.get("method", "PATCH"),
             url=url,
             headers=headers,
-            pstr_payload=payload,
-            pbln_verify=False  # Disable SSL verification for test purposes
+            payload=payload,
+            verify=False  # Disable SSL verification for test purposes
         )
 
         return self.response
@@ -205,11 +205,11 @@ class JSONPlaceholderAPI:
         url = f"{self.base_url}{config['endpoint']}{post_id}"
         headers = config.get("headers", {"Accept": "application/json"})
 
-        self.response = self.request_builder.call_request(
+        self.response = CafeXAPI().call_request(
             method=config.get("method", "DELETE"),
             url=url,
             headers=headers,
-            pbln_verify=False  # Disable SSL verification for test purposes
+            verify=False  # Disable SSL verification for test purposes
         )
 
         return self.response

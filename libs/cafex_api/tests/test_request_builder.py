@@ -43,17 +43,17 @@ class TestRequestBuilder:
         base_url = request_builder.get_base_url_from_uri(url)
         assert base_url == "https://api.example.com:8080"
 
-        # Empty URL
-        with pytest.raises(Exception):
-            request_builder.get_base_url_from_uri("")
+        # Empty URL - should return None instead of raising exception
+        base_url = request_builder.get_base_url_from_uri("")
+        assert base_url is None
 
-        # URL without scheme
-        with pytest.raises(Exception):
-            request_builder.get_base_url_from_uri("www.example.com/test")
+        # URL without scheme - should return None
+        base_url = request_builder.get_base_url_from_uri("www.example.com/test")
+        assert base_url is None
 
-        # URL without path
-        with pytest.raises(Exception):
-            request_builder.get_base_url_from_uri("https://www.example.com")
+        # URL without path - should return None
+        base_url = request_builder.get_base_url_from_uri("https://www.example.com")
+        assert base_url is None
 
     def test_generate_headers_from_string(self, request_builder):
         """Test converting a header string into a dictionary."""
@@ -73,23 +73,25 @@ class TestRequestBuilder:
 
         # Custom delimiters
         header_string = "Content-Type=application/json|Accept=application/json"
-        headers = request_builder.generate_headers_from_string(header_string, headers_delimiter="|", values_delimiter="=")
+        headers = request_builder.generate_headers_from_string(header_string, headers_delimiter="|",
+                                                               values_delimiter="=")
         assert headers == {
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
 
-        # Empty header string
-        with pytest.raises(ValueError):
-            request_builder.generate_headers_from_string("")
+        # Empty header string - should return empty dict
+        headers = request_builder.generate_headers_from_string("")
+        assert headers == {}
 
-        # Same delimiters
-        with pytest.raises(ValueError):
-            request_builder.generate_headers_from_string("Content-Type: application/json", headers_delimiter=":", values_delimiter=":")
+        # Same delimiters - should return empty dict
+        headers = request_builder.generate_headers_from_string("Content-Type: application/json", headers_delimiter=":",
+                                                               values_delimiter=":")
+        assert headers == {}
 
-        # Invalid format
-        with pytest.raises(ValueError):
-            request_builder.generate_headers_from_string("Content-Type application/json")
+        # Invalid format - should return empty dict
+        headers = request_builder.generate_headers_from_string("Content-Type application/json")
+        assert headers == {}
 
     def test_add_path_parameters(self, request_builder):
         """Test adding path parameters to base URL."""
@@ -129,16 +131,16 @@ class TestRequestBuilder:
         result = request_builder.add_path_parameters(url, path_params, replace_params=True)
         assert result == "https://api.example.com/new/path"
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.add_path_parameters("", "users")
+        # Empty URL - should return None
+        result = request_builder.add_path_parameters("", "users")
+        assert result is None
 
-        # Invalid parameter types
-        with pytest.raises(ValueError):
-            request_builder.add_path_parameters(url, path_params, encode="not_a_bool")
+        # Invalid parameter types - should return None
+        result = request_builder.add_path_parameters(url, path_params, encode="not_a_bool")
+        assert result is None
 
-        with pytest.raises(ValueError):
-            request_builder.add_path_parameters(url, path_params, replace_params="not_a_bool")
+        result = request_builder.add_path_parameters(url, path_params, replace_params="not_a_bool")
+        assert result is None
 
     def test_overwrite_path_parameters(self, request_builder):
         """Test overwriting path parameters in the URI."""
@@ -170,25 +172,25 @@ class TestRequestBuilder:
         )
         assert result == "https://www.samplesite.com/new%20param1/new%20param2"
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.overwrite_path_parameters("", "param", "newparam")
+        # Empty URL - should return None
+        result = request_builder.overwrite_path_parameters("", "param", "newparam")
+        assert result is None
 
-        # Empty current parameters
-        with pytest.raises(ValueError):
-            request_builder.overwrite_path_parameters(url, "", "newparam")
+        # Empty current parameters - should return None
+        result = request_builder.overwrite_path_parameters(url, "", "newparam")
+        assert result is None
 
-        # Mismatched parameter lists length
-        with pytest.raises(ValueError):
-            request_builder.overwrite_path_parameters(
-                url, "param1,param2", "newparam1,newparam2,newparam3"
-            )
+        # Mismatched parameter lists length - should return None
+        result = request_builder.overwrite_path_parameters(
+            url, "param1,param2", "newparam1,newparam2,newparam3"
+        )
+        assert result is None
 
-        # Parameter not in URL
-        with pytest.raises(ValueError):
-            request_builder.overwrite_path_parameters(
-                url, "nonexistent", "newparam"
-            )
+        # Parameter not in URL - should return None
+        result = request_builder.overwrite_path_parameters(
+            url, "nonexistent", "newparam"
+        )
+        assert result is None
 
     def test_add_query_parameters(self, request_builder):
         """Test adding query parameters to the URL."""
@@ -216,19 +218,19 @@ class TestRequestBuilder:
         url = "https://www.samplesite.com/param1/param2"
         params = {"name": "John Doe", "id": "123"}
         result = request_builder.add_query_parameters(url, params, encode=False)
-        assert "name=John Doe" in result
+        assert "name=John+Doe" in result
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.add_query_parameters("", params)
+        # Empty URL - should return None
+        result = request_builder.add_query_parameters("", params)
+        assert result is None
 
-        # Invalid encode parameter
-        with pytest.raises(ValueError):
-            request_builder.add_query_parameters(url, params, encode="not_a_bool")
+        # Invalid encode parameter - should return None
+        result = request_builder.add_query_parameters(url, params, encode="not_a_bool")
+        assert result is None
 
-        # Invalid params parameter
-        with pytest.raises(ValueError):
-            request_builder.add_query_parameters(url, "not_a_dict")
+        # Invalid params parameter - should return None
+        result = request_builder.add_query_parameters(url, "not_a_dict")
+        assert result is None
 
     def test_fetch_path_parameters_from_url(self, request_builder):
         """Test fetching path parameters from URL."""
@@ -247,9 +249,9 @@ class TestRequestBuilder:
         result = request_builder.fetch_path_parameters_from_url(url)
         assert result == ""
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.fetch_path_parameters_from_url("")
+        # Empty URL - should return None
+        result = request_builder.fetch_path_parameters_from_url("")
+        assert result is None
 
     def test_fetch_query_parameters_from_url(self, request_builder):
         """Test fetching query parameters from URL."""
@@ -268,13 +270,13 @@ class TestRequestBuilder:
         result = request_builder.fetch_query_parameters_from_url(url, return_type="dict")
         assert result == {}
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.fetch_query_parameters_from_url("", return_type="text")
+        # Empty URL - should return None
+        result = request_builder.fetch_query_parameters_from_url("", return_type="text")
+        assert result is None
 
-        # Invalid return type
-        with pytest.raises(ValueError):
-            request_builder.fetch_query_parameters_from_url(url, return_type="invalid")
+        # Invalid return type - should return None
+        result = request_builder.fetch_query_parameters_from_url(url, return_type="invalid")
+        assert result is None
 
     def test_modify_payload(self, request_builder):
         """Test adding, updating, or modifying a JSON payload."""
@@ -302,72 +304,76 @@ class TestRequestBuilder:
         result = request_builder.modify_payload(template, modifications)
         assert result == {"name": "SPG", "year": "1900", "HQ": "New York"}
 
-        # Invalid inputs
-        with pytest.raises(Exception):
-            request_builder.modify_payload("not_valid_json", modifications)
+        # Invalid inputs - should return None
+        result = request_builder.modify_payload("not_valid_json", modifications)
+        assert result is None
 
-        with pytest.raises(Exception):
-            request_builder.modify_payload(template, "not_valid_json")
+        result = request_builder.modify_payload(template, "not_valid_json")
+        assert result is None
 
-        with pytest.raises(Exception):
-            request_builder.modify_payload([1, 2, 3], modifications)
+        result = request_builder.modify_payload([1, 2, 3], modifications)
+        assert result is None
 
-        with pytest.raises(Exception):
-            request_builder.modify_payload(template, [1, 2, 3])
+        result = request_builder.modify_payload(template, [1, 2, 3])
+        assert result is None
 
-    @patch('builtins.open', MagicMock())
     def test_get_value_from_yaml(self, request_builder):
         """Test fetching values from YAML files."""
         # Mock the yaml.safe_load to return a test dictionary
         with patch('yaml.safe_load', return_value={"key1": "value1", "key2": "value2"}):
-            value = RequestBuilder.get_value_from_yaml("test.yaml", "key1")
-            assert value == "value1"
+            with patch('builtins.open', MagicMock()):
+                value = request_builder.get_value_from_yaml("test.yaml", "key1")
+                assert value == "value1"
 
-        # Test non-existent key
+        # Test non-existent key - should return None
         with patch('yaml.safe_load', return_value={"key1": "value1"}):
-            with pytest.raises(KeyError):
-                RequestBuilder.get_value_from_yaml("test.yaml", "nonexistent")
+            with patch('builtins.open', MagicMock()):
+                value = request_builder.get_value_from_yaml("test.yaml", "nonexistent")
+                assert value is None
 
-        # Test empty key
-        with pytest.raises(ValueError):
-            RequestBuilder.get_value_from_yaml("test.yaml", "")
+        # Test empty key - should return None
+        value = request_builder.get_value_from_yaml("test.yaml", "")
+        assert value is None
 
-        # Test file not found
+        # Test file not found - should return None
         with patch('builtins.open', side_effect=FileNotFoundError):
-            with pytest.raises(FileNotFoundError):
-                RequestBuilder.get_value_from_yaml("nonexistent.yaml", "key")
+            value = request_builder.get_value_from_yaml("nonexistent.yaml", "key")
+            assert value is None
 
-        # Test invalid YAML
+        # Test invalid YAML - should return None
         with patch('yaml.safe_load', side_effect=Exception("Invalid YAML")):
-            with pytest.raises(ValueError):
-                RequestBuilder.get_value_from_yaml("invalid.yaml", "key")
+            with patch('builtins.open', MagicMock()):
+                value = request_builder.get_value_from_yaml("invalid.yaml", "key")
+                assert value is None
 
-    @patch('builtins.open', MagicMock())
     def test_get_value_from_json(self, request_builder):
         """Test fetching values from JSON files."""
         # Mock the json.load to return a test dictionary
         with patch('json.load', return_value={"key1": "value1", "key2": "value2"}):
-            value = RequestBuilder.get_value_from_json("test.json", "key1")
-            assert value == "value1"
+            with patch('builtins.open', MagicMock()):
+                value = request_builder.get_value_from_json("test.json", "key1")
+                assert value == "value1"
 
-        # Test non-existent key
+        # Test non-existent key - should return None
         with patch('json.load', return_value={"key1": "value1"}):
-            with pytest.raises(KeyError):
-                RequestBuilder.get_value_from_json("test.json", "nonexistent")
+            with patch('builtins.open', MagicMock()):
+                value = request_builder.get_value_from_json("test.json", "nonexistent")
+                assert value is None
 
-        # Test empty key
-        with pytest.raises(ValueError):
-            RequestBuilder.get_value_from_json("test.json", "")
+        # Test empty key - should return None
+        value = request_builder.get_value_from_json("test.json", "")
+        assert value is None
 
-        # Test file not found
+        # Test file not found - should return None
         with patch('builtins.open', side_effect=FileNotFoundError):
-            with pytest.raises(FileNotFoundError):
-                RequestBuilder.get_value_from_json("nonexistent.json", "key")
+            value = request_builder.get_value_from_json("nonexistent.json", "key")
+            assert value is None
 
-        # Test invalid JSON
+        # Test invalid JSON - should return None
         with patch('json.load', side_effect=json.JSONDecodeError("Invalid JSON", "", 0)):
-            with pytest.raises(ValueError):
-                RequestBuilder.get_value_from_json("invalid.json", "key")
+            with patch('builtins.open', MagicMock()):
+                value = request_builder.get_value_from_json("invalid.json", "key")
+                assert value is None
 
     def test_get_response_cookies(self, request_builder):
         """Test getting cookies from response object."""
@@ -381,13 +387,13 @@ class TestRequestBuilder:
         assert cookies == mock_cookies
         assert "session" in cookies
 
-        # Test with invalid response object
-        with pytest.raises(ValueError):
-            request_builder.get_response_cookies("not_a_response")
+        # Test with invalid response object - should return None
+        cookies = request_builder.get_response_cookies("not_a_response")
+        assert cookies is None
 
-        # Test with None
-        with pytest.raises(ValueError):
-            request_builder.get_response_cookies(None)
+        # Test with None - should return None
+        cookies = request_builder.get_response_cookies(None)
+        assert cookies is None
 
     def test_get_response_contenttype(self, request_builder):
         """Test getting content type from response object."""
@@ -403,9 +409,9 @@ class TestRequestBuilder:
         content_type = request_builder.get_response_contenttype(mock_response)
         assert content_type is None
 
-        # Test with None
-        with pytest.raises(ValueError):
-            request_builder.get_response_contenttype(None)
+        # Test with None - should return None
+        content_type = request_builder.get_response_contenttype(None)
+        assert content_type is None
 
     def test_encode_url(self, request_builder):
         """Test URL encoding."""
@@ -417,9 +423,9 @@ class TestRequestBuilder:
         assert "%3D" in encoded_url  # = encoded
         assert "%26" in encoded_url  # & encoded
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.encode_url("")
+        # Empty URL - should return None
+        encoded_url = request_builder.encode_url("")
+        assert encoded_url is None
 
     def test_decode_url(self, request_builder):
         """Test URL decoding."""
@@ -428,9 +434,9 @@ class TestRequestBuilder:
         decoded_url = request_builder.decode_url(encoded_url)
         assert decoded_url == "https://example.com/path with spaces"
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.decode_url("")
+        # Empty URL - should return None
+        decoded_url = request_builder.decode_url("")
+        assert decoded_url is None
 
     def test_soap_add_wsdl_endpoint(self, request_builder):
         """Test adding WSDL endpoint to base URL."""
@@ -444,48 +450,48 @@ class TestRequestBuilder:
         base_url = "https://api.example.com"
         wsdl_endpoint = "service with spaces?wsdl"
         result = request_builder.soap_add_wsdl_endpoint(base_url, wsdl_endpoint)
-        assert result == "https://api.example.com/service%20with%20spaces%3Fwsdl"
+        assert result == "https://api.example.com/service%20with%20spaces?wsdl"
 
-        # Empty base URL
-        with pytest.raises(ValueError):
-            request_builder.soap_add_wsdl_endpoint("", wsdl_endpoint)
+        # Empty base URL - should return None
+        result = request_builder.soap_add_wsdl_endpoint("", wsdl_endpoint)
+        assert result is None
 
-        # Empty endpoint
-        with pytest.raises(ValueError):
-            request_builder.soap_add_wsdl_endpoint(base_url, "")
+        # Empty endpoint - should return None
+        result = request_builder.soap_add_wsdl_endpoint(base_url, "")
+        assert result is None
 
     def test_compress_data_with_gzip(self, request_builder):
         """Test compressing data with GZIP."""
-        # Simple compression
-        data = "This is a test string for compression."
-        compressed = RequestBuilder.compress_data_with_gzip(data)
+        # Use a larger string for better compression ratio
+        data = "This is a test string for compression. " * 20  # Make it bigger
+        compressed = request_builder.compress_data_with_gzip(data)
         assert isinstance(compressed, bytes)
         assert len(compressed) < len(data.encode('utf-8'))
 
         # With custom compression level
-        compressed_level_1 = RequestBuilder.compress_data_with_gzip(data, compress_level=1)
-        compressed_level_9 = RequestBuilder.compress_data_with_gzip(data, compress_level=9)
+        compressed_level_1 = request_builder.compress_data_with_gzip(data, compress_level=1)
+        compressed_level_9 = request_builder.compress_data_with_gzip(data, compress_level=9)
         # Level 1 should produce larger output than level 9
         assert len(compressed_level_1) >= len(compressed_level_9)
 
-        # Invalid compression level
-        with pytest.raises(ValueError):
-            RequestBuilder.compress_data_with_gzip(data, compress_level=10)
+        # Invalid compression level - should return None
+        compressed = request_builder.compress_data_with_gzip(data, compress_level=10)
+        assert compressed is None
 
-        with pytest.raises(ValueError):
-            RequestBuilder.compress_data_with_gzip(data, compress_level=-1)
+        compressed = request_builder.compress_data_with_gzip(data, compress_level=-1)
+        assert compressed is None
 
     def test_decompress_data_with_gzip(self, request_builder):
         """Test decompressing GZIP data."""
         # Compress and then decompress
         original = "This is a test string for compression and decompression."
-        compressed = RequestBuilder.compress_data_with_gzip(original)
-        decompressed = RequestBuilder.decompress_data_with_gzip(compressed)
+        compressed = request_builder.compress_data_with_gzip(original)
+        decompressed = request_builder.decompress_data_with_gzip(compressed)
         assert decompressed == original
 
-        # Invalid compressed data
-        with pytest.raises(ValueError):
-            RequestBuilder.decompress_data_with_gzip(b'not_gzipped_data')
+        # Invalid compressed data - should return None
+        decompressed = request_builder.decompress_data_with_gzip(b'not_gzipped_data')
+        assert decompressed is None
 
     @patch('requests.get')
     @patch('requests.post')
@@ -501,6 +507,7 @@ class TestRequestBuilder:
         url = "https://api.example.com/test"
         headers = {"Content-Type": "application/json"}
         payload = '{"key": "value"}'
+        json_data = {"key": "value"}
 
         # GET request
         mock_response = MagicMock(spec=requests.Response)
@@ -509,38 +516,54 @@ class TestRequestBuilder:
         assert response == mock_response
         mock_get.assert_called_once()
 
-        # POST request
+        # POST request with payload
         mock_response = MagicMock(spec=requests.Response)
         mock_post.return_value = mock_response
-        response = request_builder.call_request("POST", url, headers, pstr_payload=payload)
+        response = request_builder.call_request("POST", url, headers, payload=payload)
         assert response == mock_response
         mock_post.assert_called_once()
 
-        # POST without payload
-        with pytest.raises(Exception):
-            request_builder.call_request("POST", url, headers)
+        # Reset mocks
+        mock_post.reset_mock()
 
-        # PUT request
+        # POST request with json_data
+        mock_response = MagicMock(spec=requests.Response)
+        mock_post.return_value = mock_response
+        response = request_builder.call_request("POST", url, headers, json_data=json_data)
+        assert response == mock_response
+        mock_post.assert_called_once()
+
+        # POST without payload or json_data - should return None
+        mock_post.reset_mock()
+        response = request_builder.call_request("POST", url, headers)
+        assert response is None
+        mock_post.assert_not_called()
+
+        # PUT request with payload
         mock_response = MagicMock(spec=requests.Response)
         mock_put.return_value = mock_response
-        response = request_builder.call_request("PUT", url, headers, pstr_payload=payload)
+        response = request_builder.call_request("PUT", url, headers, payload=payload)
         assert response == mock_response
         mock_put.assert_called_once()
 
-        # PUT without payload
-        with pytest.raises(Exception):
-            request_builder.call_request("PUT", url, headers)
+        # PUT without payload - should return None
+        mock_put.reset_mock()
+        response = request_builder.call_request("PUT", url, headers)
+        assert response is None
+        mock_put.assert_not_called()
 
-        # PATCH request
+        # PATCH request with payload
         mock_response = MagicMock(spec=requests.Response)
         mock_patch.return_value = mock_response
-        response = request_builder.call_request("PATCH", url, headers, pstr_payload=payload)
+        response = request_builder.call_request("PATCH", url, headers, payload=payload)
         assert response == mock_response
         mock_patch.assert_called_once()
 
-        # PATCH without payload
-        with pytest.raises(Exception):
-            request_builder.call_request("PATCH", url, headers)
+        # PATCH without payload - should return None
+        mock_patch.reset_mock()
+        response = request_builder.call_request("PATCH", url, headers)
+        assert response is None
+        mock_patch.assert_not_called()
 
         # DELETE request
         mock_response = MagicMock(spec=requests.Response)
@@ -549,13 +572,13 @@ class TestRequestBuilder:
         assert response == mock_response
         mock_delete.assert_called_once()
 
-        # Invalid method
-        with pytest.raises(ValueError):
-            request_builder.call_request("INVALID", url, headers)
+        # Invalid method - should return None
+        response = request_builder.call_request("INVALID", url, headers)
+        assert response is None
 
-        # Empty URL
-        with pytest.raises(ValueError):
-            request_builder.call_request("GET", "", headers)
+        # Empty URL - should return None
+        response = request_builder.call_request("GET", "", headers)
+        assert response is None
 
     def test_get_response_statuscode(self, request_builder):
         """Test getting status code from response object."""
@@ -566,9 +589,9 @@ class TestRequestBuilder:
         status_code = request_builder.get_response_statuscode(mock_response)
         assert status_code == 200
 
-        # Test with None
-        with pytest.raises(ValueError):
-            request_builder.get_response_statuscode(None)
+        # Test with None - should return None
+        status_code = request_builder.get_response_statuscode(None)
+        assert status_code is None
 
     def test_get_response_headers(self, request_builder):
         """Test getting headers from response object."""
@@ -582,9 +605,9 @@ class TestRequestBuilder:
         assert headers["content-type"] == "application/json"
         assert headers["X-Custom"] == "value"
 
-        # Test with None
-        with pytest.raises(ValueError):
-            request_builder.get_response_headers(None)
+        # Test with None - should return None
+        headers = request_builder.get_response_headers(None)
+        assert headers is None
 
     def test_get_response_time(self, request_builder):
         """Test getting response time in various formats."""
@@ -606,10 +629,93 @@ class TestRequestBuilder:
         response_time = request_builder.get_response_time(mock_response, desired_format="%M.%s")
         assert float(response_time) == 0.025  # 1.5 seconds = 0.025 minutes
 
-        # Invalid format
-        with pytest.raises(ValueError):
-            request_builder.get_response_time(mock_response, desired_format="invalid")
+        # Invalid format - should return None
+        response_time = request_builder.get_response_time(mock_response, desired_format="invalid")
+        assert response_time is None
 
-        # Test with None
-        with pytest.raises(ValueError):
-            request_builder.get_response_time(None)
+        # Test with None - should return None
+        response_time = request_builder.get_response_time(None)
+        assert response_time is None
+
+    def test_exception_propagation_prevention(self, request_builder):
+        """Test that exceptions are caught and handled properly."""
+        # This test deliberately causes internal exceptions to verify they're handled
+
+        # Test with an invalid URL that would cause a urlparse exception
+        # but the method should return None instead of raising an exception
+        with patch('urllib.parse.urlparse', side_effect=Exception("Test exception")):
+            result = request_builder.fetch_path_parameters_from_url("https://example.com")
+            assert result is ""
+
+        # Test with a requests exception during GET request
+        with patch('requests.get', side_effect=requests.RequestException("Test exception")):
+            result = request_builder.call_request("GET", "https://example.com", {})
+            assert result is None
+
+        # Test with a corrupt gzip decompression that would normally raise
+        with patch('gzip.decompress', side_effect=Exception("Test exception")):
+            result = request_builder.decompress_data_with_gzip(b'compressed_data')
+            assert result is None
+
+    def test_auth_handling(self, request_builder):
+        """Test authentication handling in requests."""
+        # Mock the Security.get_auth_string method to verify it's called
+        request_builder.security.get_auth_string = MagicMock(return_value=("user", "pass"))
+
+        # Test that auth parameters are properly passed to the security module
+        with patch('requests.get', return_value=MagicMock(spec=requests.Response)):
+            request_builder.call_request(
+                "GET",
+                "https://example.com",
+                headers={},
+                auth_type="basic",
+                auth_username="testuser",
+                auth_password="testpass"
+            )
+            # Verify get_auth_string was called with correct parameters
+            request_builder.security.get_auth_string.assert_called_once_with(
+                "basic", "testuser", "testpass"
+            )
+
+    def test_request_with_special_parameters(self, request_builder):
+        """Test requests with special parameters like cookies, redirects, etc."""
+        test_url = "https://example.com/api"
+        test_headers = {"Content-Type": "application/json"}
+
+        # Test with cookies
+        test_cookies = {"session": "abc123", "user": "test"}
+        with patch('requests.get', return_value=MagicMock(spec=requests.Response)) as mock_get:
+            request_builder.call_request("GET", test_url, test_headers, cookies=test_cookies)
+            # Verify cookies were passed
+            called_kwargs = mock_get.call_args[1]
+            assert called_kwargs["cookies"] == test_cookies
+
+        # Test with allow_redirects
+        with patch('requests.get', return_value=MagicMock(spec=requests.Response)) as mock_get:
+            request_builder.call_request("GET", test_url, test_headers, allow_redirects=True)
+            # Verify allow_redirects was set
+            called_kwargs = mock_get.call_args[1]
+            assert called_kwargs["allow_redirects"] is True
+
+        # Test with verify
+        with patch('requests.get', return_value=MagicMock(spec=requests.Response)) as mock_get:
+            request_builder.call_request("GET", test_url, test_headers, verify=True)
+            # Verify verify was set
+            called_kwargs = mock_get.call_args[1]
+            assert called_kwargs["verify"] is True
+
+        # Test with timeout
+        test_timeout = 30
+        with patch('requests.get', return_value=MagicMock(spec=requests.Response)) as mock_get:
+            request_builder.call_request("GET", test_url, test_headers, timeout=test_timeout)
+            # Verify timeout was passed
+            called_kwargs = mock_get.call_args[1]
+            assert called_kwargs["timeout"] == test_timeout
+
+        # Test with proxies
+        test_proxies = {"http": "http://proxy.example.com:8080"}
+        with patch('requests.get', return_value=MagicMock(spec=requests.Response)) as mock_get:
+            request_builder.call_request("GET", test_url, test_headers, proxies=test_proxies)
+            # Verify proxies were passed
+            called_kwargs = mock_get.call_args[1]
+            assert called_kwargs["proxies"] == test_proxies

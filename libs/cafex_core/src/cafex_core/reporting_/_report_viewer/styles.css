@@ -278,6 +278,11 @@ header {
 }
 
 /* Pass/Fail Colors */
+.status-badge {
+    font-weight: bold;
+    color: #555;
+}
+
 .pass {
     color: green;
 }
@@ -308,6 +313,40 @@ header {
     margin: 0;
 }
 
+.logs-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#log-search-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+    font-size: 14px;
+}
+
+.search-btn {
+    background: #990e0e;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-btn:hover {
+    background: #7a0b0b;
+}
+
 .pop-out-btn {
     background: #990e0e;
     color: white;
@@ -320,6 +359,80 @@ header {
 
 .pop-out-btn:hover {
     background: #7a0b0b;
+}
+
+.search-results {
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-results-header {
+    padding: 8px 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clear-search-btn {
+    background: none;
+    border: none;
+    color: #990e0e;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+.clear-search-btn:hover {
+    text-decoration: underline;
+}
+
+.search-results-list {
+    padding: 0;
+}
+
+.search-result-item {
+    padding: 8px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: #f9f9f9;
+}
+
+.search-result-file {
+    font-weight: bold;
+    color: #990e0e;
+    margin-right: 10px;
+}
+
+.search-result-context {
+    color: #333;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+}
+
+.search-result-context mark {
+    background-color: #ffe066;
+    padding: 2px 0;
+}
+
+.highlight {
+    background-color: #ffe066;
 }
 
 .log-container select {
@@ -343,4 +456,27 @@ header {
     line-height: 1.5;
     font-family: monospace;
     white-space: pre-wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .logs-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .logs-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    #log-search-input {
+        width: 100%;
+    }
 }

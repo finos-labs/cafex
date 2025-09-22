@@ -1,13 +1,11 @@
 from cafex_db.db_exceptions import DBExceptions
-from cafex_db.database_handler import DatabaseConnection
+from cafex_db import CafeXDB
 from cafex_core.utils.config_utils import ConfigUtils
-from cafex_core.parsers.json_parser import ParseJsonData
 import os
 
+
 class EmployeeDbQueries:
-    database_handler = DatabaseConnection()
     db_config_object = ConfigUtils('mi_api_db_config.yml')
-    json_parser = ParseJsonData()
 
     def __init__(self):
         self.resultset_list = []
@@ -17,13 +15,27 @@ class EmployeeDbQueries:
     def mi_establish_connection(self, pstr_server):
         try:
             config = self.db_config_object.get_db_configuration(pstr_server, True)
+            db_type = config["db_type"].lower()
+
             connection_params = {
                 "database_name": config["db_name"],
                 "username": config["username"],
                 "password": config["password"],
                 "port_number": config["port"]
             }
-            self.connection_object = self.database_handler.create_db_connection(
+
+            if db_type == "oracle":
+                oracle_params = {
+                    "service_name": config.get("service_name"),
+                    "sid": config.get("sid"),
+                    "tns_admin": config.get("tns_admin"),
+                    "thick_mode": config.get("thick_mode"),
+                    "use_wallet": config.get("use_wallet"),
+                    "encoding": config.get("encoding")
+                }
+                connection_params.update(oracle_params)
+
+            self.connection_object = CafeXDB().create_db_connection(
                 config["db_type"], config["db_server"], **{k: v for k, v in connection_params.items() if v}
             )
             return self.connection_object is not None
@@ -39,10 +51,10 @@ class EmployeeDbQueries:
             with open(full_path.strip(), 'r') as f:
                 query = ' '.join(f.readlines())
 
-            self.resultset = self.database_handler.execute_statement(self.connection_object, query, 'resultset')
+            self.resultset = CafeXDB().execute_statement(self.connection_object, query, 'resultset')
             self.resultset_list = self.resultset.fetchall()
             print(self.resultset_list)
-            self.database_handler.close(self.connection_object)
+            CafeXDB().close(self.connection_object)
         except Exception as e:
             print(f'Exception occurred in query_execute_with_file method: {e}')
 

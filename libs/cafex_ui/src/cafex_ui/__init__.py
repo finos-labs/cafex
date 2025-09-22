@@ -2,15 +2,18 @@ import argparse
 import inspect
 
 from .mobile_client import MobileClientActionsClass, MobileDriverClass
-from .web_client import Keyboard_Mouse_Class, WebDriverClass
+from .web_client import WebDriverClass, PlaywrightClass
 
 
-class CafeXWeb(Keyboard_Mouse_Class, WebDriverClass):
-    pass
-
+class CafeXWeb(PlaywrightClass,WebDriverClass):
+    def __init__(self):
+        PlaywrightClass.__init__(self)
+        WebDriverClass.__init__(self)
 
 class CafeXMobile(MobileClientActionsClass, MobileDriverClass):
-    pass
+    def __init__(self):
+        MobileClientActionsClass.__init__(self)
+        MobileDriverClass.__init__(self)
 
 
 def list_methods():
