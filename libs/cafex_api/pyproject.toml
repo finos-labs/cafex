@@ -18,7 +18,8 @@ classifiers = [
 dependencies = [
     "cafex-core>=0.0.30",
     "zeep==4.2.1",
-    "websocket-client==1.8.0"
+    "websocket-client==1.8.0",
+    "gql==3.5.2"
 ]
 
 keywords = ["api", "api testing", "pytest", "automation"]

@@ -21,8 +21,8 @@ dependencies = [
     "selenium==4.26.1",
     "Appium-Python-Client==4.0.1",
     "browserstack-local==1.2.7",
-    "pywinauto==0.6.8 ; platform_system == 'Windows'",
-    "opencv-python==4.10.0.84"
+    "opencv-python==4.10.0.84",
+    "playwright==1.54.0"
 ]
 
 keywords = ["ui", "appium", "selenium", "pytest", "automation"]

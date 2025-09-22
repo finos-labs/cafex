@@ -3,7 +3,11 @@ import time
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import websocket
+
 from cafex_core.logging.logger_ import CoreLogger
+from cafex_core.utils.exceptions import CoreExceptions
+
+from .api_exceptions import APIExceptions
 
 try:
     import thread
@@ -12,8 +16,8 @@ except ImportError:
 
 
 class WebSocketHandler:
-    """Handles WebSocket connections, sending messages, and receiving
-    responses.
+    """
+    Handles WebSocket connections, sending messages, and receiving responses.
 
     This class provides methods for:
     * Establishing WebSocket connections.
@@ -27,9 +31,12 @@ class WebSocketHandler:
         self.arr_multi_response = []
         self.list_messages = ""
         self.logger = CoreLogger(name=__name__).get_logger()
+        self.__exceptions_generic = CoreExceptions()
+        self.__exceptions_services = APIExceptions()
 
-    def set_socket_connection(self, socket_url: str) -> websocket.WebSocket:
-        """Establishes a WebSocket connection to the specified URL.
+    def set_socket_connection(self, socket_url: str) -> Optional[websocket.WebSocket]:
+        """
+        Establishes a WebSocket connection to the specified URL.
 
         This method creates a WebSocket connection using the `create_connection`
         function from the `websocket` library.
@@ -38,53 +45,73 @@ class WebSocketHandler:
             socket_url: The URL of the WebSocket server.
 
         Returns:
-            A WebSocket object representing the established connection.
+            A WebSocket object representing the established connection, or None if connection fails.
 
-        Raises:
-            ValueError: If the `socket_url` is empty or `None`.
-            Exception: If an error occurs while establishing the WebSocket connection.
+        Examples:
+            >>> handler = WebSocketHandler()
+            >>> ws = handler.set_socket_connection("ws://echo.websocket.org")
+            >>> # Use the WebSocket connection
+            >>> ws.send("Hello WebSocket!")
+            >>> response = ws.recv()
         """
-        if not socket_url:
-            raise ValueError("socket_url cannot be empty or None")
         try:
+            if not socket_url:
+                self.__exceptions_services.raise_null_value(
+                    "socket_url cannot be empty or None", fail_test=False
+                )
+                return None
+
             self._ws = websocket.create_connection(socket_url)
             return self._ws
         except Exception as e:
-            self.logger.exception("Error establishing WebSocket connection: %s", e)
-            raise e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error establishing WebSocket connection: {str(e)}", fail_test=False
+            )
+            return None
 
-    def send_socket_message(self, socket_url: str, message: str) -> str:
-        """Sends a single message to the WebSocket server and returns the
-        response.
+    def send_socket_message(self, socket_url: str, message: str) -> Optional[str]:
+        """
+        Sends a single message to the WebSocket server and returns the response.
 
         Args:
-            socket_url (str): The URL of the WebSocket server.
-            message (str): The message to be sent.
+            socket_url: The URL of the WebSocket server.
+            message: The message to be sent.
 
         Returns:
-            str: The response received from the WebSocket server.
-
-        Raises:
-            ValueError: If the `socket_url` or `message` is empty or `None`.
-            Exception: If an error occurs while sending the message.
+            The response received from the WebSocket server, or None if operation fails.
 
         Examples:
-            send_socket_message('ws://example.com/json','abcd')
+            >>> handler = WebSocketHandler()
+            >>> ws_response = handler.send_socket_message('ws://echo.websocket.org', 'Hello World')
+            >>> print(ws_response)
+            'Hello World'
         """
-        if not socket_url:
-            raise ValueError("socket_url cannot be empty or None")
-        if not message:
-            raise ValueError("pstr_message cannot be empty or None")
-
         try:
+            if not socket_url:
+                self.__exceptions_services.raise_null_value(
+                    "socket_url cannot be empty or None", fail_test=False
+                )
+                return None
+
+            if not message:
+                self.__exceptions_services.raise_null_value(
+                    "pstr_message cannot be empty or None", fail_test=False
+                )
+                return None
+
             if self._ws is None:
                 self._ws = self.set_socket_connection(socket_url)
+                if self._ws is None:
+                    return None
+
             self._ws.send(message)
             response = self._ws.recv()
             return response
         except Exception as e:
-            self.logger.exception("Error while sending message to the WebSocket server: %s", e)
-            raise e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error while sending message to the WebSocket server: {str(e)}", fail_test=False
+            )
+            return None
 
     def send_multi_socket_message(
         self,
@@ -96,53 +123,66 @@ class WebSocketHandler:
         on_open: Optional[Callable] = None,
         on_close: Optional[Callable] = None,
         ssl_options: Optional[dict] = None,
-    ) -> None:
-        """Sends multiple messages to the WebSocket server and captures the
-        response until an exit criteria is met. This method allows overwriting
-        the default behavior of WebSocket's on_message, on_error, on_open, and
-        on_close methods.
+    ) -> bool:
+        """
+        Sends multiple messages to the WebSocket server and captures the response until an exit
+        criteria is met. This method allows overwriting the default behavior of WebSocket's
+        on_message, on_error, on_open, and on_close methods.
 
         Args:
-            socket_url (str): The URL of the WebSocket server.
-            messages (List[Dict]): A list of messages to be sent.
-            on_message (Optional[Callable], optional): A custom on_message callback function.
-            on_error (Optional[Callable], optional): A custom on_error callback function.
-            on_open (Optional[Callable], optional): A custom on_open callback function.
-            on_close (Optional[Callable], optional): A custom on_close callback function.
-            wait_time (int, optional): The time (in seconds) to wait between sending messages.
-                                       Defaults to 1.
-            ssl_options (Optional[Dict], optional): SSL options for the WebSocket connection.
-                                                    Defaults to None.
+            socket_url: The URL of the WebSocket server.
+            messages: A list of messages to be sent.
+            wait_time: The time (in seconds) to wait between sending messages. Defaults to 1.
+            on_message: A custom on_message callback function.
+            on_error: A custom on_error callback function.
+            on_open: A custom on_open callback function.
+            on_close: A custom on_close callback function.
+            ssl_options: SSL options for the WebSocket connection.
 
         Returns:
-            None: This method doesn't return anything. But to fetch the response of multi socket
-            message,use the WebSocketHandler class variable 'arr_multi_response'
-
-        Raises:
-            ValueError: If the `socket_url` is empty or `None`.
-            Exception: If an error occurs while sending the messages
+            True if successful, False otherwise
 
         Examples:
-            # Using default callbacks
-            handler.send_multi_socket_message(socket_url, messages)
-
-            # Using custom callbacks
-            handler.send_multi_socket_message(socket_url, messages,
-                                              on_message=custom_on_message, ...)
-
-            # Bypass SSL verification
-            ssl_opt = {"cert_reqs": ssl.CERT_NONE}
-            handler.send_multi_socket_message(socket_url, messages, ssl_opt=ssl_opt)
+            >>> handler = WebSocketHandler()
+            >>> # Define messages
+            >>> messages_ws = [{"type": "subscribe", "channel": "channel1"},
+            ...            {"type": "message", "content": "Hello WebSocket!"}]
+            >>>
+            >>> # Using default callbacks
+            >>> success = handler.send_multi_socket_message("ws://example.com", messages_ws)
+            >>>
+            >>> # Using custom callbacks
+            >>> def custom_on_message(ws, message):
+            ...     print(f"Received: {message}")
+            >>>
+            >>> success_cus = handler.send_multi_socket_message(
+            ...     "ws://example.com",
+            ...     messages_ws,
+            ...     on_message=custom_on_message
+            ... )
+            >>>
+            >>> # Access the responses
+            >>> for response in handler.arr_multi_response:
+            ...     print(response)
 
         Note:
             When user wants to create custom implementation of
             on_message/on_error/on_open/on_close, make sure to leverage
             WebSocketHandler's class variables 'arr_multi_response' and 'list_messages'
         """
-        if not socket_url:
-            raise ValueError("socket_url cannot be empty or None")
-
         try:
+            if not socket_url:
+                self.__exceptions_services.raise_null_value(
+                    "socket_url cannot be empty or None", fail_test=False
+                )
+                return False
+
+            if not messages:
+                self.__exceptions_services.raise_null_value(
+                    "messages cannot be empty or None", fail_test=False
+                )
+                return False
+
             # Use default callbacks if not provided
             on_message = on_message or self.__on_message
             on_error = on_error or self.__on_error
@@ -160,28 +200,49 @@ class WebSocketHandler:
                 on_open=on_open,
                 on_close=on_close,
             )
+
             self._ws.on_open = self.__on_open
             self._ws.run_forever(sslopt=ssl_options)
+            return True
         except Exception as e:
-            self.logger.exception(
-                "Error while sending multiple messages to WebSocket server: %s", e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error while sending multiple messages to WebSocket server: {str(e)}",
+                fail_test=False,
             )
-            raise e
+            return False
 
     def __on_message(self, _ws: websocket.WebSocket, message: str) -> None:
+        """
+        Default on_message callback for WebSocket connection.
+
+        Args:
+            _ws: The WebSocket connection.
+            message: The received message.
+        """
         try:
             self.logger.info("***ON_MESSAGE***")
             self.logger.info(message)
             self.arr_multi_response.append(message)
         except Exception as e:
-            raise e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error in on_message handler: {str(e)}", fail_test=False
+            )
 
-    def __on_error(self, _ws: websocket.WebSocket, error: Union[str, Exception]):
+    def __on_error(self, _ws: websocket.WebSocket, error: Union[str, Exception]) -> None:
+        """
+        Default on_error callback for WebSocket connection.
+
+        Args:
+            _ws: The WebSocket connection.
+            error: The error that occurred.
+        """
         try:
             self.logger.exception("***ON_ERROR***")
             self.logger.exception(error)
         except Exception as e:
-            raise e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error in on_error handler: {str(e)}", fail_test=False
+            )
 
     def __on_close(
         self,
@@ -189,25 +250,47 @@ class WebSocketHandler:
         _close_status_code: Optional[int] = None,
         _close_msg: Optional[str] = None,
     ) -> None:
+        """
+        Default on_close callback for WebSocket connection.
+
+        Args:
+            _ws: The WebSocket connection.
+            _close_status_code: The WebSocket close status code.
+            _close_msg: The WebSocket close message.
+        """
         try:
             self.logger.warning("***ON_CLOSE***")
             self.logger.warning(self.arr_multi_response)
         except Exception as e:
-            raise e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error in on_close handler: {str(e)}", fail_test=False
+            )
 
     def __on_open(self, *_args: Any) -> None:
+        """
+        Default on_open callback for WebSocket connection.
+
+        Args:
+            *_args: Variable length argument list.
+        """
+
         try:
 
             def run(*_args) -> None:
+                """Thread function to send messages one by one."""
                 try:
                     for message in self.list_messages:
                         self._ws.send(json.dumps(message))
                         time.sleep(self.multi_message_wait_time)
                     self._ws.close()
                 except Exception as ex:
-                    self.logger.exception("Error in run: %s", ex)
+                    self.__exceptions_generic.raise_generic_exception(
+                        f"Error in WebSocket thread: {str(ex)}", fail_test=False
+                    )
 
             thread.start_new_thread(run, ())
             self.logger.info("WebSocket connection opened")
         except Exception as e:
-            raise e
+            self.__exceptions_generic.raise_generic_exception(
+                f"Error in on_open handler: {str(e)}", fail_test=False
+            )

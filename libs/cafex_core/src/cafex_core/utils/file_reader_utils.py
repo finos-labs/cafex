@@ -9,11 +9,13 @@ import warnings
 import zipfile
 from typing import Union
 
-import fitz
+
 import pandas as pd
 import openpyxl
 from bs4 import BeautifulSoup
 from docx import Document
+from fitz import fitz
+
 from cafex_core.utils.exceptions import CoreExceptions
 from cafex_core.logging.logger_ import CoreLogger
 
@@ -65,7 +67,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -114,7 +116,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -147,7 +149,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -177,7 +179,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -218,7 +220,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -250,7 +252,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -282,7 +284,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -314,7 +316,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -347,7 +349,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -383,7 +385,7 @@ class FileReaderUtil:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -418,7 +420,7 @@ r4[p'        Examples:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e
 
@@ -452,6 +454,6 @@ r4[p'        Examples:
                 insert_report=True,
                 trim_log=True,
                 log_local=True,
-                fail_test=False,
+                fail_test=True,
             )
             raise e

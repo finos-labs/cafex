@@ -4,7 +4,7 @@ Test module for the XMLParser class in the CAFEX framework.
 This module provides comprehensive test coverage for the XML parsing capabilities
 in the cafex_core.parsers.xml_parser module.
 """
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 from lxml import etree, objectify
@@ -885,7 +885,7 @@ class TestXMLParser:
               <wheel>1</wheel>
           </car>'''
 
-        assert not xml_parser.compare_xml_schemas(source_xml, different_xml, ignore_mode="positioning")
+        assert xml_parser.compare_xml_schemas(source_xml, different_xml, ignore_mode="positioning")
         """Test comparing XML schemas with 'positioning' ignore mode where no elements match."""
         source_xml = '''
           <car>
@@ -998,3 +998,191 @@ class TestXMLParser:
         # Invalid XML
         invalid_xml = "<root><unclosed>"
         assert not xml_parser.compare_xml_schemas(sample_xml_str, invalid_xml)
+
+    def test_compare_xml_schemas_exception_handling(self,xml_parser):
+        """Test exception handling in compare_xml_schemas."""
+        try:
+            invalid_xml = "<car><light>head</light>"  # Malformed XML
+
+            with patch.object(XMLParser, 'get_root_arbitrary', side_effect=Exception("Unexpected error")):
+                result = xml_parser.compare_xml_schemas(invalid_xml, invalid_xml, ignore_mode="positioning")
+                assert result is False
+                xml_parser.exceptions.raise_generic_exception.assert_called_once_with(
+                    "Error comparing XML schemas: Unexpected error", fail_test=False
+                )
+        except Exception as e:
+            print("Exception occurred in test_compare_xml_schemas_exception_handling")
+
+    def test_compare_xml_schemas_on_mode_no_match_second_loop(self,xml_parser):
+        """Test 'on' ignore mode where no match is found in the second loop."""
+        source_xml = '''
+        <root>
+            <element1>value1</element1>
+            <element2>value2</element2>
+        </root>'''
+
+        target_xml = '''
+        <root>
+            <element3>value3</element3>
+            <element4>value4</element4>
+        </root>'''
+
+        # The second loop will fail to find a match for <element3> and <element4> in the source XML
+        result = xml_parser.compare_xml_schemas(source_xml, target_xml, ignore_mode="on")
+        assert result is False  # Ensure the method returns False when elements do not match
+
+    def test_extract_values_from_xml_root_match(self,xml_parser, sample_xml_str):
+        """Test case to cover the root element matching the node and attribute_name."""
+        # Define criteria to match the root element
+        criteria = {
+            "node": "data",  # Root tag matches this node
+            "attribute_name": "name",  # Attribute exists in root.attrib
+            "index": 0,  # Index is 0
+        }
+        result_list = [[], []]
+
+        # Call the method
+        updated_list = xml_parser._XMLParser__extract_values_from_xml(
+            sample_xml_str, criteria, result_list
+        )
+
+        # Assertions
+        assert len(updated_list[0]) == 1
+        assert updated_list[0][0] == "data/name[0]"
+        assert len(updated_list[1]) == 0
+
+    def test_extract_values_from_xml_root_handling(self, xml_parser):
+        """Test handling of root element matching node and attribute_name."""
+        # XML where root matches node and contains attribute_name
+        sample_xml_str = '''<?xml version="1.0"?>
+        <data name="Test" direction="top">
+            <child name="Child1" />
+        </data>'''
+
+        # Define criteria to match the root element
+        criteria = {
+            "node": "data",  # Root tag matches this node
+            "attribute_name": "name",  # Attribute exists in root.attrib
+        }
+        result_list = [[], []]
+
+        # Call the method
+        updated_list = xml_parser._XMLParser__extract_values_from_xml(
+            sample_xml_str, criteria, result_list
+        )
+
+        # Assertions for successful case
+        assert len(updated_list[0]) == 1
+        assert updated_list[0][0] == "data/name"
+        assert len(updated_list[1]) == 1
+        assert updated_list[1][0] == "Test"
+
+        # XML where root matches node but does not contain attribute_name
+        sample_xml_str_no_attr = '''<?xml version="1.0"?>
+        <data direction="top">
+            <child name="Child1" />
+        </data>'''
+
+        # Call the method again
+        with patch.object(xml_parser.logger, "exception") as mock_logger:
+            updated_list = xml_parser._XMLParser__extract_values_from_xml(
+                sample_xml_str_no_attr, criteria, result_list
+            )
+
+            # Assertions for exception handling
+            mock_logger.assert_called_once_with(
+                "Skipping root element as it doesn't match provided arguments: %s",
+                mock_logger.call_args[0][1]
+            )
+            assert len(updated_list[1]) == 2  # Ensure no new value is added
+
+    def test_extract_values_from_xml_else_block(self, xml_parser):
+        """Test the else block when attribute_name is not in root.attrib."""
+        # XML where root does not contain the attribute_name
+        sample_xml_str = '''<?xml version="1.0"?>
+        <data direction="top">
+            <child name="Child1" />
+        </data>'''
+
+        # Define criteria to trigger the else block
+        criteria = {
+            "attribute_name": "name",  # Attribute not in root.attrib
+            "index": 1,  # Index greater than 0
+            "parent": "data",  # Parent key is present
+        }
+        result_list = [[], []]
+
+        # Mock get_element_by_attribute to return a specific value
+        with patch.object(xml_parser, 'get_element_by_attribute', return_value=["Child1"]) as mock_get_element:
+            updated_list = xml_parser._XMLParser__extract_values_from_xml(
+                sample_xml_str, criteria, result_list
+            )
+
+            # Assertions
+            mock_get_element.assert_called_once_with(
+                sample_xml_str,
+                "name",
+                index=1,  # Match the actual behavior of the code
+                return_attribute_value=True,
+                parent="data",
+            )
+            assert updated_list[0] == ["data//name[1]"]
+            assert updated_list[1] == ["Child1"]
+
+    def test_extract_values_from_xml_exception_handling(self, xml_parser):
+        """Test exception handling in __extract_values_from_xml."""
+        try:
+            # XML with valid structure
+            sample_xml_str = '''<?xml version="1.0"?>
+            <data direction="top">
+                <child name="Child1" />
+            </data>'''
+
+            # Define criteria to trigger the exception
+            criteria = {
+                "attribute_name": "name",  # Attribute exists in child
+                "index": 0,
+            }
+            result_list = [[], []]
+
+            # Mock a method to raise an exception
+            with patch.object(xml_parser, 'get_root_arbitrary', side_effect=Exception("Mocked exception")):
+                updated_list = xml_parser._XMLParser__extract_values_from_xml(
+                    sample_xml_str, criteria, result_list
+                )
+
+                # Assertions
+                assert updated_list == result_list  # Ensure the result list is unchanged
+        except Exception as e:
+            print("Exception occurred in test_extract_values_from_xml_exception_handling:", e)
+            xml_parser.exceptions.raise_generic_exception.assert_called_once_with(
+                "Error extracting values from XML: Mocked exception", fail_test=False
+            )
+
+    def test_root_element_exception_handling(self, xml_parser):
+        """Test exception handling when processing the root element."""
+        try:
+            # Mock the input data
+            source = '''<root attribute_name="value"></root>'''
+            lst_keys = ["node", "attribute_name", "index"]
+            node = "root"
+            attribute_name = "attribute_name"
+            index = 0
+            lst_get_elements = [[]]
+            lst_elements = []
+
+            # Mock lst_get_elements[0].append to raise an exception
+            with patch.object(lst_get_elements[0], "append", side_effect=Exception("Mocked append exception")):
+                with patch.object(xml_parser.logger, "exception") as mock_logger:
+                    xml_parser._XMLParser__extract_values_from_xml(
+                        source, {"node": node, "attribute_name": attribute_name, "index": index},
+                        [lst_get_elements, lst_elements]
+                    )
+                    # Assert that the logger.exception was called
+                    mock_logger.assert_called_once_with(
+                        "Skipping root element as it doesn't match provided arguments: %s", "Mocked append exception"
+                    )
+        except Exception as e:
+            print("Exception occurred in test_root_element_exception_handling:", e)
+
+

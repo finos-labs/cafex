@@ -2,7 +2,7 @@ import os
 
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.session_ import SessionStore
-from cafex_core.utils.config_utils import ConfigUtils
+from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 from cafex_ui.web_client.browserstack_integration import (
     BrowserStackDriverFactory,
 )
@@ -18,7 +18,7 @@ class WebDriverInitializer:
 
     def __init__(self) -> None:
         self.session_store = SessionStore()
-        self.config_utils = ConfigUtils()
+        self.config_utils = WebConfigUtils()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.bs_obj = None
 
@@ -154,3 +154,35 @@ class WebDriverInitializer:
         self.session_store.globals["obj_wdf"] = WebDriverFactory()
         self.session_store.globals["obj_wca"] = WebClientActions(self.session_store.driver)
         self.session_store.globals["obj_kma"] = KeyboardMouseActions(self.session_store.driver)
+
+    def initialize_playwright_driver(self) -> None:
+        from playwright.sync_api import sync_playwright
+        self.logger.info("playwright_web configuration")
+        try:
+            browser_args = self.config_utils.base_config.get("playwright_browser_args", {})
+            if self.session_store.playwright_browser is None:
+                playwright = sync_playwright().start()
+                browser_type = self.config_utils.fetch_current_browser()
+                if 'headless' not in browser_args or browser_args.get('headless') is None:
+                    browser_args['headless'] = False
+                if os.environ.get("isCTBuild") == "1":
+                    browser_args['headless'] = True
+                if browser_type in ["chromium","edge","chrome"]:
+                    browser = playwright.chromium.launch(**browser_args)
+                elif browser_type == "firefox":
+                    browser = playwright.firefox.launch(**browser_args)
+                elif browser_type in ["webkit","safari"]:
+                    browser = playwright.webkit.launch(**browser_args)
+                else:
+                    raise ValueError(f"Unsupported browser type: {browser_type}")
+
+                context = browser.new_context()
+                page = context.new_page()
+                self.session_store.playwright_browser = browser
+                self.session_store.playwright_context = context
+                self.session_store.playwright_page = page
+                self.logger.info("Playwright driver created successfully")
+        except Exception as e:
+            self.logger.exception(f"Error in playwright_web configuration: {str(e)}")
+            raise e
+

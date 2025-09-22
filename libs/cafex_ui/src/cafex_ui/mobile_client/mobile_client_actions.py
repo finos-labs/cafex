@@ -7,8 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.session_ import SessionStore
-from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.exceptions import CoreExceptions
+from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 
 
 class MobileClientActions:
@@ -25,7 +25,7 @@ class MobileClientActions:
                                    If not provided, it will be retrieved from ConfigUtils.
         """
         self.mobile_driver = mobile_driver or SessionStore().mobile_driver
-        self.default_explicit_wait = default_explicit_wait or ConfigUtils().get_explicit_wait()
+        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.__exceptions_generic = CoreExceptions()
 
