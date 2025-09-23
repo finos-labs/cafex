@@ -85,6 +85,7 @@ Tox is a tool for automating testing, linting, and other development tasks in is
 - **`tox -e cafex-db-build`:**  Runs the same process for the `cafex-db` package. 
 - **`tox -e cafex-ui-build`:** Runs the same process for the `cafex-ui` package.
 - **`tox -e cafex-core-build`:** Runs the same process for the `cafex-core` package. 
+- **`tox -e cafex-desktop-build`:** Runs the same process for the `cafex-desktop` package. 
 - **`tox -e coverage-report`:**  Combines the coverage reports from all packages and generates a combined report. 
 
 #### Example Tox Usage
