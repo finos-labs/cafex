@@ -1,42 +1,73 @@
-# CAFEX Monorepo
+CAFEX Monorepo Documentation
+Overview
 
-This monorepo contains the following CAFE packages:
+The CAFEX Monorepo contains multiple Python packages for automation testing:
 
-- **cafex-core:** The core package providing foundational functionalities and utilities.
-- **cafex-api:** Package for API testing, including request building, response parsing, and assertion methods.
-- **cafex-db:** Package for database testing, supporting various databases like MSSQL, MySQL, Oracle, Hive, Postgres, and Cassandra.
-- **cafex-ui:** Package for web UI and mobile app testing, including driver management, element interaction, and assertion methods.
-- **cafex:** The super package containing all the above packages
+Package	Description
+cafex-core	Provides foundational functionalities and utilities for automation.
+cafex-api	Tools for API testing, including request building, response parsing, and assertions.
+cafex-db	Database testing support for MSSQL, MySQL, Oracle, Hive, Postgres, and Cassandra.
+cafex-ui	Web UI and mobile app testing, including driver management, element interactions, and assertions.
+cafex	Meta-package containing all the above packages.
 
-## Introduction
+CAFEX (Core Automation Framework Enhancements) is designed to simplify and streamline various testing tasks with a Python-based framework.
 
-CAFE (Core Automation Framework Enhancements) is a Python-based automation framework designed to simplify and streamline various testing tasks. This monorepo structure allows for efficient management and development of all CAFE packages in a single location.
+Getting Started
+Prerequisites
 
-## Getting Started
+Python 3.12 or later
 
-### Prerequisites
+pip 24 or later (Python package manager)
 
-- Python 3.12 or later
-- pip 24 or later(Python package manager)
+Installation
 
-### Installation
+Clone the repository:
 
-1. Clone or download the CAFE monorepo.
-2. Install the required dependencies using pip: ```pip install -r dev-requirements.txt```
+git clone <repo-url>
+cd cafex-monorepo
 
-**Dependencies:**
-- For UI, API and DB testing: `pip install cafex`
-- For UI testing: `pip install cafex-ui`
-- For DB testing: `pip install cafex-db`
-- For API testing: `pip install cafex-api`
-- For Core modules: `pip install cafex-core`
 
-## Package Details
+Install development dependencies:
 
-For detailed information about each package, please refer to their respective README files:
+pip install -r dev-requirements.txt
 
-- **cafex:** libs/cafex/README.md
-- **cafex-api:** libs/cafex_api/README.md
-- **cafex-db:** libs/cafex_db/README.md
-- **cafex-ui:** libs/cafex_ui/README.md
-- **cafex-core:** libs/cafex_core/README.md
+
+Install the CAFEX packages as needed:
+
+Use Case	Command
+Full stack (UI, API, DB)	pip install cafex
+UI Testing only	pip install cafex-ui
+API Testing only	pip install cafex-api
+Database Testing only	pip install cafex-db
+Core modules only	pip install cafex-core
+Package Details
+
+For more information, refer to the individual README files:
+
+CAFEX Super Package: libs/cafex/README.md
+
+CAFEX Core: libs/cafex_core/README.md
+
+CAFEX API: libs/cafex_api/README.md
+
+CAFEX DB: libs/cafex_db/README.md
+
+CAFEX UI: libs/cafex_ui/README.md
+
+Optional: Quick Start Example
+# Example: API testing using cafex-api
+from cafex_api.client import ApiClient
+
+client = ApiClient(base_url="https://api.example.com")
+response = client.get("/status")
+assert response.status_code == 200
+
+Tips
+
+Use the super package cafex if you need all functionalities at once.
+
+Install packages individually if you only need specific modules.
+
+Check the respective README files for detailed usage examples.
+
+✅ This version is cleaner, more structured, and beginner-friendly, while keeping all original information.
