@@ -1184,5 +1184,3 @@ class TestXMLParser:
                     )
         except Exception as e:
             print("Exception occurred in test_root_element_exception_handling:", e)
-
-
