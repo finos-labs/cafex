@@ -4,7 +4,7 @@ import os
 import sys
 import shutil
 
-VALID_PACKAGES = ["cafex", "cafex_api", "cafex_core", "cafex_db", "cafex_spg_business_utils", "cafex_ui",
+VALID_PACKAGES = ["cafex", "cafex_api", "cafex_core", "cafex_db", "cafex_ui",
                   "cafex_desktop"]
 
 if __name__ == "__main__":
