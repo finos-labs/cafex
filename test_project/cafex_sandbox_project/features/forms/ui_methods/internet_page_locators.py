@@ -16,5 +16,3 @@ class InternetPage:
     username_xpath = "xpath=//input[@id='username']"
     flash_message = "xpath=//div[@id='flash']"
     form_login_button = "xpath=//button[normalize-space()='Login']"
-
-
