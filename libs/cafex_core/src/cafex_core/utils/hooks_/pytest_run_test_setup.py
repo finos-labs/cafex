@@ -107,15 +107,20 @@ class PytestRunTestSetup:
                     from cafex_ui.web_client.ui_web_driver_initializer import (
                         WebDriverInitializer,
                     )
-
                     self.logger.info("Setting up web driver for non-BDD test.")
                     self.session_store.ui_scenario = True
                     WebDriverInitializer().initialize_driver()
+                if marker.name == "playwright_web" and not self.item_attribute_accessor.is_scenario:
+                    from cafex_ui.web_client.ui_web_driver_initializer import (
+                        WebDriverInitializer,
+                    )
+                    self.logger.info("Setting up playwright web driver for non-BDD test.")
+                    self.session_store.playwright_ui_scenario = True
+                    WebDriverInitializer().initialize_playwright_driver()
                 if marker.name == "mobile_app" and not self.item_attribute_accessor.is_scenario:
                     from cafex_ui.mobile_client.mobile_driver_initializer import (
                         MobileDriverInitializer,
                     )
-
                     self.logger.info("Setting up mobile driver for non-BDD test.")
                     self.session_store.mobile_ui_scenario = True
                     MobileDriverInitializer().initialize_driver()
