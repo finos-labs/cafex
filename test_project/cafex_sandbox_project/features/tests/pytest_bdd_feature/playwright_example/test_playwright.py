@@ -1,6 +1,5 @@
 from pytest_bdd import given, when, then, scenario,parsers
-
-from cafex_ui import CafeXWeb
+from test_project.cafex_sandbox_project.features.forms.playwright.login_form import LoginForm, CheckboxForm
 
 
 @scenario('playwright.feature', 'Validate user login')
@@ -18,67 +17,72 @@ def launch_browser():
     print("Launching the browser...")
 
 
-@when('I navigate to "https://the-internet.herokuapp.com/login"')
-def navigate_to_url():
-    CafeXWeb().playwright_page.goto("https://the-internet.herokuapp.com/login")
+@when('I navigate to the login page')
+def navigate_to_login_page():
+    LoginForm().goto_login()
 
 
-@when('I enter the username "tomsmith" in the field with XPath "//input[@id=\'username\']"')
+@when('I enter the username "tomsmith"')
 def enter_username():
-    CafeXWeb().playwright_page.locator("//input[@id='username']").fill("tomsmith")
+    LoginForm().enter_username("tomsmith")
 
 
-@when('I enter the password "SuperSecretPassword!" in the field with XPath "//input[@id=\'password\']"')
+@when('I enter the password "SuperSecretPassword!"')
 def enter_password():
-    CafeXWeb().playwright_page.locator("//input[@id='password']").fill("SuperSecretPassword!")
+    LoginForm().enter_password("SuperSecretPassword!")
 
 
-@when('I click the login button with XPath "//button[@type=\'submit\']"')
+@when('I click the login button')
 def click_login_button():
-    CafeXWeb().playwright_page.locator("//button[@type='submit']").click()
+    LoginForm().click_login()
 
 
-@then('I should see the secure area with XPath "//div[@id=\'flash\']"')
+@then('I should see the secure area')
 def validate_secure_area():
-    flash_message = CafeXWeb().playwright_page.locator("//div[@id='flash']").text_content()
+    flash_message = LoginForm().get_flash_message()
     assert "You logged into a secure area!" in flash_message, "Login validation failed"
     print("Login validation passed")
 
-@when('I navigate to "https://the-internet.herokuapp.com/checkboxes"')
-def navigate_to_checkboxes():
-    CafeXWeb().playwright_page.goto("https://the-internet.herokuapp.com/checkboxes")
+@when('I navigate to the checkboxes page')
+def navigate_to_checkboxes_page():
+    CheckboxForm().goto_checkboxes()
 
 
 @then(parsers.cfparse('the page title should contain "{expected_title}"'))
 def verify_page_title(expected_title):
-    title = CafeXWeb().playwright_page.title()
+    title = CheckboxForm().get_title()
     assert expected_title in title, f"Expected '{expected_title}' to be in the title, but got '{title}'"
 
 
-@then(parsers.cfparse('I verify checkbox with XPath "{xpath}" is unchecked'))
-def verify_checkbox_unchecked(xpath):
-    is_checked = CafeXWeb().playwright_page.locator(xpath).is_checked()
-    assert not is_checked, f"Checkbox with XPath '{xpath}' is checked, but expected to be unchecked"
+@then('I verify the first checkbox is unchecked')
+def verify_first_checkbox_unchecked():
+    is_checked = CheckboxForm().is_checkbox1_checked()
+    assert not is_checked, "First checkbox is checked, but expected to be unchecked"
 
 
-@then(parsers.cfparse('I verify checkbox with XPath "{xpath}" is checked'))
-def verify_checkbox_checked(xpath):
-    is_checked = CafeXWeb().playwright_page.locator(xpath).is_checked()
-    assert is_checked, f"Checkbox with XPath '{xpath}' is not checked, but expected to be checked"
+@then('I verify the second checkbox is checked')
+def verify_second_checkbox_checked():
+    is_checked = CheckboxForm().is_checkbox2_checked()
+    assert is_checked, "Second checkbox is not checked, but expected to be checked"
 
 
-@when(parsers.cfparse('I click on the checkbox with XPath "{xpath}"'))
-def click_checkbox(xpath):
-    CafeXWeb().playwright_page.locator(xpath).click()
+@when('I click on the first checkbox')
+def click_first_checkbox():
+    CheckboxForm().click_checkbox1()
 
 
-@then(parsers.cfparse('the checkbox with XPath "{xpath}" should be checked'))
-def verify_checkbox_is_checked(xpath):
-    is_checked = CafeXWeb().playwright_page.locator(xpath).is_checked()
-    assert is_checked, f"Checkbox with XPath '{xpath}' is not checked after clicking"
+@then('the first checkbox should be checked')
+def verify_first_checkbox_checked():
+    is_checked = CheckboxForm().is_checkbox1_checked()
+    assert is_checked, "First checkbox is not checked after clicking"
 
 
-@then(parsers.cfparse('the checkbox with XPath "{xpath}" should be unchecked'))
-def verify_checkbox_is_unchecked(xpath):
-    is_checked = CafeXWeb().playwright_page.locator(xpath).is_checked()
-    assert not is_checked, f"Checkbox with XPath '{xpath}' is still checked after clicking"
+@when('I click on the second checkbox')
+def click_second_checkbox():
+    CheckboxForm().click_checkbox2()
+
+
+@then('the second checkbox should be unchecked')
+def verify_second_checkbox_unchecked():
+    is_checked = CheckboxForm().is_checkbox2_checked()
+    assert not is_checked, "Second checkbox is still checked after clicking"

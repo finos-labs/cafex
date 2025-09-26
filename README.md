@@ -254,6 +254,58 @@ pytest --browser=firefox -m ui_web
 cafex report  # Opens latest HTML report in browser
 ```
 
+## Playwright Setup Instructions
+
+To get started with Playwright, please follow these steps in your command prompt:
+
+1. Set the environment variable to allow self-signed certificates:
+   ```cmd
+   set NODE_TLS_REJECT_UNAUTHORIZED=0
+   ```
+2. Install Playwright using the following command:
+   ```cmd
+   playwright install
+   ```
+   
+   **Note:** If you are using multiple Python versions and the default Python version is not set to the version supported by Café, try the following command:
+   ```cmd
+   <python_path> -m playwright install
+   ```
+
+## Playwright Code Generation
+
+- Playwright test files are generated using the Playwright codegen tool, and the logic is adapted for use with pytest. Since Playwright's pytest plugin is not supported in our environment, we manually handle the Playwright driver setup and teardown in our tests.
+
+You can generate code for your interactions using the Playwright codegen command. Open your terminal and run:
+
+```cmd
+playwright codegen https://example.com
+```
+
+This command will open a browser window where you can manually interact with the site. Playwright will automatically generate the corresponding code for your actions in real-time.
+
+### Verification Parameters
+
+When using the codegen command, you can also specify various parameters to customize its behavior. Here are some useful parameters:
+
+- `--target`: Specify the target language for the generated code.
+  - Example:
+    ```cmd
+    playwright codegen --target=python https://example.com
+    ```
+- `--output`: Define the output file where the generated code will be saved.
+  - Example:
+    ```cmd
+    playwright codegen --output=generated_script.py https://example.com
+    ```
+- `--headless`: Run the browser in headless mode (without a GUI).
+  - Example:
+    ```cmd
+    playwright codegen --headless https://example.com
+    ```
+
+These parameters allow you to tailor the code generation process to fit your specific needs.
+
 ### Developer Integration:
 
 **For developers** wanting to integrate CAFEX into their workflow:

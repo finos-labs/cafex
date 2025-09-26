@@ -23,9 +23,9 @@
 'service_description': 'services/service_description'
 'service_payloads': 'services/payloads'
 'run_on_browserstack': false
-'auto_launch_report': false
+'auto_launch_report': true
 playwright_browser_args:
- headless: true
+ headless: false
  args: ['--disable-gpu', '--window-size=1920,1080', '--no-sandbox']
  slow_mo: 50
  devtools: false
