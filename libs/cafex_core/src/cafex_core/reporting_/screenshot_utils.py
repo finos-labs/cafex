@@ -70,7 +70,10 @@ def capture_screenshot(name, error=False):
         if driver:
             driver.save_screenshot(file_path)
             return file_path
-
+        playwright_driver= session_store.playwright_page
+        if playwright_driver:
+            playwright_driver.screenshot(path=file_path, full_page=True)
+            return file_path
     except Exception as e:
         logger.error(f"Error while taking screenshot: {str(e)}")
     return None
