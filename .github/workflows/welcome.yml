@@ -1,0 +1,48 @@
+name: Welcome New Contributors
+
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            ## 👋 Welcome to CAFEX!
+            
+            Thank you for opening your first issue in the **Centralized Automation Framework Enabler (CAFEX)** project. We appreciate your contribution to the FINOS community!
+            
+            ### 📚 Helpful Resources
+            - [Contributing Guidelines](https://github.com/finos-labs/cafex/blob/main/CONTRIBUTING.md)
+            - [Developer Guide](https://github.com/finos-labs/cafex/blob/main/docs/developer_guide/DEV-README.md)
+            - [Code of Conduct](https://www.finos.org/code-of-conduct)
+            
+            We're excited to have you as part of the CAFEX community! 🚀
+            
+          pr-message: |
+            ## 🎉 Thank You for Your First Pull Request!
+            
+            Welcome to the **Centralized Automation Framework Enabler (CAFEX)** project! We're thrilled to receive your first contribution.
+            
+            ### 🔍 Review Process
+            Your pull request will be reviewed by our maintainers to ensure:
+            - ✅ Code quality and best practices
+            - ✅ Alignment with project standards and architecture
+            - ✅ Adequate test coverage
+            - ✅ Documentation updates (if applicable)
+            
+            ### ⏱️ What to Expect
+            - A maintainer will review your PR. 
+            - You may receive feedback or change requests
+            - Once approved, your PR will be merged by a maintainer
+            
+            Thank you for helping make CAFEX better! 🙌
