@@ -76,3 +76,6 @@ exclude = ["test*", "__pycache__"]
 
 [tool.setuptools.dynamic]
 version = {attr = "cafex_core.__version__"}
+
+[tool.setuptools.package-data]
+"cafex_core.reporting_._report_viewer" = ["*"]
