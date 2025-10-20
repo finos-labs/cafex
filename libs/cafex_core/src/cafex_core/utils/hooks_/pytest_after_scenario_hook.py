@@ -1,22 +1,22 @@
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.request_ import RequestSingleton
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.hooks_.hook_util import HookUtil
 from cafex_ui.cafex_ui_config_utils import MobileConfigUtils
 
 
 class PytestAfterScenario:
-    def __init__(self, scenario, sys_args, feature):
+    def __init__(self, scenario, sys_args, feature, context: SessionContext | None = None):
         self.scenario = scenario
         self.sys_args = sys_args
         self.feature = feature
         self.request_ = RequestSingleton().request
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.session_store = SessionStore()
-        self.config_utils = ConfigUtils()
-        self.config_utils_mobile = MobileConfigUtils()
-        self.hook_util = HookUtil()
+        self.session_store: SessionContext = context or get_session_context()
+        self.config_utils = ConfigUtils(context=self.session_store)
+        self.config_utils_mobile = MobileConfigUtils(context=self.session_store)
+        self.hook_util = HookUtil(self.session_store)
         self.is_parallel_execution = self.hook_util.is_parallel_execution(self.sys_args)
 
     def after_scenario_hook(self):
@@ -135,7 +135,7 @@ class PytestAfterScenario:
                         self.session_store.mobile_driver.quit()
                         self.session_store.mobile_driver = None
         except Exception as e:
-            self.logger.exception("Error in after_scenario_mobile_teardown-->" + str(e))
+        self.logger.exception("Error in after_scenario_mobile_teardown-->" + str(e))
 
     def after_scenario_desktop_client_teardown(self):
         """This method is to teardown the desktop client application based on the configuration."""
@@ -149,12 +149,15 @@ class PytestAfterScenario:
                 self.session_store.datadriven = 1
 
             def close_or_kill_app():
+                desktop_actions = self.session_store.globals.get("obj_dca")
+                if desktop_actions is None:
+                    return
                 if self.config_utils.base_config.get("connect_to_open_app"):
-                    if self.session_store.globals["obj_dca"].window is not None:
-                        self.session_store.globals["obj_dca"].window.close()
+                    if desktop_actions.window is not None:
+                        desktop_actions.window.close()
                 else:
-                    if self.session_store.globals["obj_dca"].app is not None:
-                        self.session_store.globals["obj_dca"].app.kill()
+                    if desktop_actions.app is not None:
+                        desktop_actions.app.kill()
 
             if examples_len == 0:
                 close_or_kill_app()
@@ -175,6 +178,3 @@ class PytestAfterScenario:
                         self.session_store.counter += 1
         except Exception as e:
             self.logger.exception(f"Error in after_scenario_desktop_client_teardown --> {e}")
-
-
-

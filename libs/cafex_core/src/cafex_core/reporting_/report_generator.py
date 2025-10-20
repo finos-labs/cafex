@@ -3,13 +3,13 @@ import socket
 from pathlib import Path
 from typing import Any, Dict
 
+from cafex_core.context import get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 
 from ._report_viewer import create_server_script, launch_server_and_browser
 
 logger = CoreLogger(name=__name__).get_logger()
-session_store = SessionStore()
+session_store = get_session_context()
 
 
 class ReportGenerator:
@@ -133,7 +133,8 @@ class ReportGenerator:
             ReportGenerator._write_report(complete_html, output_file)
 
             # Launch server and open browser
-            if session_store.base_config.get("auto_launch_report", True):
+            base_config = session_store.base_config or {}
+            if base_config.get("auto_launch_report", True):
                 # Find available port and create server script
                 port = ReportGenerator._find_free_port()
                 script_file = create_server_script(result_dir, port)

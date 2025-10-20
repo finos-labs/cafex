@@ -1,24 +1,20 @@
 import os
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_ui.cafex_ui_config_utils import WebConfigUtils
-from cafex_ui.web_client.browserstack_integration import (
-    BrowserStackDriverFactory,
-)
+from cafex_ui.web_client.browserstack_integration import BrowserStackDriverFactory
 from cafex_ui.web_client.keyboard_mouse_actions import KeyboardMouseActions
-from cafex_ui.web_client.web_client_actions.base_web_client_actions import (
-    WebClientActions,
-)
+from cafex_ui.web_client.web_client_actions.base_web_client_actions import WebClientActions
 from cafex_ui.web_client.web_driver_factory import WebDriverFactory
 
 
 class WebDriverInitializer:
     """A class that initializes the web driver."""
 
-    def __init__(self) -> None:
-        self.session_store = SessionStore()
-        self.config_utils = WebConfigUtils()
+    def __init__(self, context: SessionContext | None = None) -> None:
+        self.session_store: SessionContext = context or get_session_context()
+        self.config_utils = WebConfigUtils(context=self.session_store)
         self.logger = CoreLogger(name=__name__).get_logger()
         self.bs_obj = None
 
@@ -145,15 +141,19 @@ class WebDriverInitializer:
         )
 
     def _get_proxy_options(self, use_proxy: bool) -> str:
-        if use_proxy and "proxy_options" in self.session_store.base_config.keys():
+        if use_proxy and self.session_store.base_config and "proxy_options" in self.session_store.base_config:
             return self.session_store.base_config["proxy_options"]
         return ""
 
     def _store_driver_in_session(self, driver_obj) -> None:
         self.session_store.driver = driver_obj
         self.session_store.globals["obj_wdf"] = WebDriverFactory()
-        self.session_store.globals["obj_wca"] = WebClientActions(self.session_store.driver)
-        self.session_store.globals["obj_kma"] = KeyboardMouseActions(self.session_store.driver)
+        self.session_store.globals["obj_wca"] = WebClientActions(
+            self.session_store.driver, context=self.session_store
+        )
+        self.session_store.globals["obj_kma"] = KeyboardMouseActions(
+            self.session_store.driver, context=self.session_store
+        )
 
     def initialize_playwright_driver(self) -> None:
         from playwright.sync_api import sync_playwright
@@ -185,4 +185,3 @@ class WebDriverInitializer:
         except Exception as e:
             self.logger.exception(f"Error in playwright_web configuration: {str(e)}")
             raise e
-

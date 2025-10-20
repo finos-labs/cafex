@@ -3,10 +3,10 @@ handle the collection finish hook in Pytest."""
 
 from collections import Counter
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.handlers.file_handler import FileHandler
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.singletons_.request_ import RequestSingleton
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.date_time_utils import DateTimeActions
 from cafex_core.utils.item_attribute_accessor import ItemAttributeAccessor
 
@@ -17,7 +17,7 @@ class PytestCollectionFinish:
     """A class that handles the collection finish hook in Pytest.
 
     Attributes:
-        session_store (SessionStore): The session store object.
+        session_store (SessionContext): The session context object.
         logger (Logger): The logger object.
         file_handler_obj (FileHandler): The file handler object.
         session (Session): The session object.
@@ -27,15 +27,15 @@ class PytestCollectionFinish:
         collection_finish_hook: The collection finish hook method.
     """
 
-    def __init__(self, session):
+    def __init__(self, session, context: SessionContext | None = None):
         self.date_time_util = DateTimeActions()
         self.collection_start_time = self.date_time_util.get_current_date_time()
         self.logger = CoreLogger(name=__name__).get_logger()
         self.file_handler_obj = None
         self.session = session
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.request_store = RequestSingleton()
-        self.hook_util = HookUtil()
+        self.hook_util = HookUtil(self.session_store)
         self.__init_collection_finish()
 
     def __init_collection_finish(self):

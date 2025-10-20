@@ -1,8 +1,8 @@
 """This module contains the PytestBeforeScenario class which is used to handle
 the before scenario hook in Pytest."""
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.item_attribute_accessor import ItemAttributeAccessor
 
 from .hook_util import HookUtil
@@ -11,7 +11,14 @@ from .hook_util import HookUtil
 class PytestBeforeScenario:
     """A class that handles the before scenario hook in Pytest."""
 
-    def __init__(self, feature_, scenario_, request_, args_):
+    def __init__(
+            self,
+            feature_,
+            scenario_,
+            request_,
+            args_,
+            context: SessionContext | None = None,
+    ):
         """Initialize the PytestBeforeScenario class.
 
         Args:
@@ -21,9 +28,9 @@ class PytestBeforeScenario:
         self.feature = feature_
         self.request = request_
         self.args = args_
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.hook_util = HookUtil()
+        self.hook_util = HookUtil(self.session_store)
         self.scenario_tags = list(self.scenario.tags)
         self.item_attribute_accessor = None
 
@@ -48,10 +55,10 @@ class PytestBeforeScenario:
                     self.scenario.feature.scenarios[self.scenario.name].examples.examples
             ) >= self.session_store.counter:
                 if self.session_store.driver is None:
-                    WebDriverInitializer().initialize_driver()
+                    WebDriverInitializer(self.session_store).initialize_driver()
             else:
                 if self.session_store.driver is None:
-                    WebDriverInitializer().initialize_driver()
+                    WebDriverInitializer(self.session_store).initialize_driver()
         elif "mobile_app" in self.scenario_tags:
             from cafex_ui.mobile_client.mobile_driver_initializer import (
                 MobileDriverInitializer,
@@ -61,9 +68,9 @@ class PytestBeforeScenario:
             if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
                     self.scenario.feature.scenarios[self.scenario.name].examples.examples
             ) >= self.session_store.counter:
-                MobileDriverInitializer().initialize_driver()
+                MobileDriverInitializer(self.session_store).initialize_driver()
             else:
-                MobileDriverInitializer().initialize_driver()
+                MobileDriverInitializer(self.session_store).initialize_driver()
         elif "ui_desktop_client" in self.scenario_tags:
             from cafex_desktop.desktop_client.desktop_client_driver_initializer \
                 import DesktopClientDriverInitializer
@@ -71,9 +78,9 @@ class PytestBeforeScenario:
             if (self.session_store.datadriven >= self.session_store.rowcount + 1) or len(
                     self.scenario.feature.scenarios[self.scenario.name].examples.examples
             ) >= self.session_store.counter:
-                DesktopClientDriverInitializer().initialize_driver()
+                DesktopClientDriverInitializer(self.session_store).initialize_driver()
             else:
-                DesktopClientDriverInitializer().initialize_driver()
+                DesktopClientDriverInitializer(self.session_store).initialize_driver()
         elif "playwright_web" in self.scenario_tags and "ui_web" not in self.scenario_tags:
             from cafex_ui.web_client.ui_web_driver_initializer import (
                 WebDriverInitializer,
@@ -83,10 +90,10 @@ class PytestBeforeScenario:
                     self.scenario.feature.scenarios[self.scenario.name].examples.examples
             ) >= self.session_store.counter:
                 if self.session_store.driver is None:
-                    WebDriverInitializer().initialize_playwright_driver()
+                    WebDriverInitializer(self.session_store).initialize_playwright_driver()
             else:
                 if self.session_store.driver is None:
-                    WebDriverInitializer().initialize_playwright_driver()
+                    WebDriverInitializer(self.session_store).initialize_playwright_driver()
 
     def before_scenario_report_configuration(self):
         try:

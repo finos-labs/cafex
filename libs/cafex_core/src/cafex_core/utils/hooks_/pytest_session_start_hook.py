@@ -13,10 +13,10 @@ from ast import literal_eval
 import pytest
 import xdist
 import yaml
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.handlers.file_handler import FileHandler
 from cafex_core.handlers.folder_handler import FolderHandler
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.date_time_utils import DateTimeActions
 from cafex_ui.cafex_ui_config_utils import WebConfigUtils, MobileConfigUtils
@@ -44,13 +44,13 @@ class PytestSessionStart:
         pytest_session_start_auto_dash_configuration: Configures the auto dashboard for pytest session.
     """
 
-    def __init__(self, session, sys_arg):
+    def __init__(self, session, sys_arg, context: SessionContext | None = None):
         self.session = session
         self.sys_arg = sys_arg
         self.file_handler_obj = None
         self.session_worker = xdist.get_xdist_worker_id(self.session)
         self.is_worker = xdist.get_xdist_worker_id(self.session)
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.session_store.global_dict = {}
         self.session_store.collection_details = {}
         self.session_store.base_config = None
@@ -58,9 +58,9 @@ class PytestSessionStart:
         self.date_time_util = DateTimeActions()
         self.file_handler_obj = FileHandler()
         self.folder_handler = FolderHandler()
-        self.config_utils = ConfigUtils()
-        self.config_utils_web = WebConfigUtils()
-        self.config_utils_mobile = MobileConfigUtils()
+        self.config_utils = ConfigUtils(context=self.session_store)
+        self.config_utils_web = WebConfigUtils(context=self.session_store)
+        self.config_utils_mobile = MobileConfigUtils(context=self.session_store)
         self.config_utils.read_base_config_file()
         self.config_utils_mobile.read_mobile_config_file()
 

@@ -5,6 +5,8 @@ These options can be used to customize the behavior of the pytest
 framework for specific test runs.
 """
 
+from cafex_core.context import SessionContext, get_session_context
+
 
 class PytestAddOptionHook:
     """A class that adds custom options to the pytest command line.
@@ -16,13 +18,14 @@ class PytestAddOptionHook:
         add_option_hook: Adds the custom options to the pytest command line.
     """
 
-    def __init__(self, parser_obj):
+    def __init__(self, parser_obj, context: SessionContext | None = None):
         """Initialize the PytestAddOptionHook class.
 
         Args:
             parser_obj: The parser object used to add options.
         """
         self.parser_obj = parser_obj
+        self.session_context: SessionContext = context or get_session_context()
 
     def add_option_hook(self):
         """Adds the custom options to the pytest command line.

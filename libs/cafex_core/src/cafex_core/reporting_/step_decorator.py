@@ -1,11 +1,8 @@
 from functools import wraps
 
+from cafex_core.context import get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.reporting_.screenshot_utils import (
-    add_screenshot_to_report,
-    capture_screenshot,
-)
-from cafex_core.singletons_.session_ import SessionStore
+from cafex_core.reporting_.screenshot_utils import add_screenshot_to_report, capture_screenshot
 from cafex_core.utils.date_time_utils import DateTimeActions
 
 
@@ -80,16 +77,16 @@ def step(description: str):
                 Result of the wrapped function
 
             Raises:
-                ValueError: If current_test is not set in SessionStore
+                ValueError: If current_test is not set in the session context
                 AssertionError: If any assertions fail in the step
             """
             logger = CoreLogger(name=__name__).get_logger()
             logger.info(f"Executing step: {description}")
-            session_store = SessionStore()
+            session_store = get_session_context()
             date_time_util = DateTimeActions()
 
             if session_store.current_test is None:
-                raise ValueError("current_test is not set in SessionStore")
+                raise ValueError("current_test is not set in the session context")
 
             test_data = session_store.reporting["tests"][session_store.current_test]
             step_data = {

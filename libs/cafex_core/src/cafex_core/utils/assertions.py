@@ -6,9 +6,9 @@ It integrates with the Reporting class for comprehensive test result logging.
 import ast
 from typing import Any
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.reporting_.reporting import Reporting
-from cafex_core.singletons_.session_ import SessionStore
 
 
 class Assertions:
@@ -18,9 +18,9 @@ class Assertions:
     logging.
     """
 
-    def __init__(self):
-        self.reporting = Reporting()
-        self.session_store = SessionStore()
+    def __init__(self, context: SessionContext | None = None):
+        self.session_context: SessionContext = context or get_session_context()
+        self.reporting = Reporting(self.session_context)
         self.logger = CoreLogger(name=__name__).get_logger()
 
     def _handle_assertion(

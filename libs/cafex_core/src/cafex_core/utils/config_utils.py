@@ -8,8 +8,8 @@ import os
 from functools import reduce
 
 import yaml
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 
 
 class ConfigUtils:
@@ -25,7 +25,7 @@ class ConfigUtils:
 
     """
 
-    def __init__(self, team_config_filename=None):
+    def __init__(self, team_config_filename=None, context: SessionContext | None = None):
         """
         Description:
             |  This method acts as a constructor for the ConfigUtils class. It initializes several
@@ -42,7 +42,7 @@ class ConfigUtils:
         self.logger_class = CoreLogger(name=__name__)
         self.logger = self.logger_class.get_logger()
         self._base_config = None
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.features_dir_path = self.get_features_directory_path()
         self.mobile_os = None
         self.mobile_platform = None
@@ -896,4 +896,3 @@ class ConfigUtils:
         except Exception as e:
             self.logger.exception("Error in fetch_thick_client_parameters method --> %s", str(e))
             raise
-

@@ -9,8 +9,8 @@ import os
 
 from dotenv import load_dotenv
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 
 
 class PytestConfiguration:
@@ -20,7 +20,7 @@ class PytestConfiguration:
         logger (Logger): The logging object.
         config (Config): The pytest config object.
         worker_id (str): The worker ID.
-        session_store (SessionStore): The session store object.
+        session_store (SessionContext): The session context object.
 
     Methods:
         __init__: Initializes the PytestConfiguration class.
@@ -30,7 +30,7 @@ class PytestConfiguration:
         configure_hook: Executes the configuration hook.
     """
 
-    def __init__(self, config_):
+    def __init__(self, config_, context: SessionContext | None = None):
         """Initialize the PytestConfiguration class.
 
         Args:
@@ -41,6 +41,7 @@ class PytestConfiguration:
         self.worker_id = self.worker
         self.workers_count = self.worker_nodes_count
         self.session_store = None
+        self._context: SessionContext = context or get_session_context()
         self.__init_configure()
 
     def __init_configure(self):
@@ -49,7 +50,7 @@ class PytestConfiguration:
         Initialize the configuration by setting up the necessary
         components.
         """
-        self.session_store = SessionStore()
+        self.session_store = self._context
         self.session_store.worker_id = self.worker_id
         self.session_store.workers_count = self.workers_count
         self.logger_class = CoreLogger(name=None)

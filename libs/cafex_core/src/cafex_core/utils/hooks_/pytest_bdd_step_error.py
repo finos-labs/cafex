@@ -1,13 +1,10 @@
 """This module contains the PytestBDDStepError class for custom error reporting
 and logging in pytest-bdd tests."""
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.reporting_.screenshot_utils import (
-    add_screenshot_to_report,
-    capture_screenshot,
-)
+from cafex_core.reporting_.screenshot_utils import add_screenshot_to_report, capture_screenshot
 from cafex_core.singletons_.request_ import RequestSingleton
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.date_time_utils import DateTimeActions
 
 
@@ -16,19 +13,19 @@ class PytestBDDStepError:
 
     Attributes:
         logger (Logger): The logger object.
-        session_store (SessionStore): The session store object.
+        session_store (SessionContext): The session context object.
          step (pytest_bdd.parser.Step): The step that failed.
     Methods:
         __init__: Initializes the PytestBDDStepError class.
         bdd_step_error: step status and logging of failure.
     """
 
-    def __init__(self, step):
+    def __init__(self, step, context: SessionContext | None = None):
         """Initialize the PytestBDDStepError class."""
 
         self.logger = CoreLogger(name=__name__).get_logger()
         self.date_time_util = DateTimeActions()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.request_ = RequestSingleton().request
         self.step = step
 

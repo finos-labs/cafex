@@ -1,9 +1,6 @@
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.reporting_.screenshot_utils import (
-    add_screenshot_to_report,
-    capture_screenshot,
-)
-from cafex_core.singletons_.session_ import SessionStore
+from cafex_core.reporting_.screenshot_utils import add_screenshot_to_report, capture_screenshot
 from cafex_core.utils.date_time_utils import DateTimeActions
 from cafex_core.utils.regex_constants import TRACE_ORIGIN_PATTERN
 
@@ -12,8 +9,8 @@ class Reporting:
     """Handles reporting functionality for test execution, including step and
     assertion tracking."""
 
-    def __init__(self):
-        self.session_store = SessionStore()
+    def __init__(self, context: SessionContext | None = None):
+        self.session_store: SessionContext = context or get_session_context()
         self.datetime_util = DateTimeActions()
         self.logger = CoreLogger(name=__name__).get_logger()
 
@@ -195,7 +192,7 @@ class Reporting:
                 )
 
             if not current_test:
-                self.logger.warning("No current test set in SessionStore")
+                self.logger.warning("No current test set in session context")
                 return
 
             # If within a step, add as assertion

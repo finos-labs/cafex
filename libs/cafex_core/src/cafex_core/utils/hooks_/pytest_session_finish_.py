@@ -11,11 +11,11 @@ import os
 from datetime import datetime
 
 import xdist
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.handlers.file_handler import FileHandler
 from cafex_core.handlers.folder_handler import FolderHandler
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.reporting_.report_generator import ReportGenerator
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.date_time_utils import DateTimeActions
 
 
@@ -26,14 +26,14 @@ class PytestSessionFinish:
     Attributes:
         session_ (Session): The pytest session object.
         logger (Logger): The logger object.
-        session_store (SessionStore): The session store object.
+        session_store (SessionContext): The shared session context object.
 
     Methods:
         __init__: Initializes the PytestSessionFinish class.
         session_finish_: Finishes the session.
     """
 
-    def __init__(self, session_):
+    def __init__(self, session_, context: SessionContext | None = None):
         """
         Initialize the PytestSessionFinish class.
 
@@ -43,7 +43,7 @@ class PytestSessionFinish:
         self.scenarios_folder = None
         self.session_ = session_
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.file_handler = FileHandler()
         self.folder_handler = FolderHandler()
         self.datetime_util = DateTimeActions()
@@ -184,10 +184,10 @@ class PytestSessionFinish:
     def driver_teardown(self):
         """Quits the driver if it is not None."""
         try:
-            driver = self.session_store.storage.get("driver")
-            mobile_driver = self.session_store.storage.get("mobile_driver")
-            handler = self.session_store.storage.get("handler")
-            playwright_browser = self.session_store.storage.get("playwright_browser")
+            driver = self.session_store.driver
+            mobile_driver = self.session_store.mobile_driver
+            handler = self.session_store.handler
+            playwright_browser = self.session_store.playwright_browser
             if driver is not None:
                 driver.quit()
                 self.logger.info("Driver quit successfully")
@@ -195,11 +195,12 @@ class PytestSessionFinish:
                 mobile_driver.quit()
                 self.logger.info("Mobile driver quit successfully")
             if handler is not None:
-                if self.session_store.globals["obj_dca"] is not None:
-                    self.session_store.globals["obj_dca"].app.kill()
+                desktop_actions = self.session_store.globals.get("obj_dca")
+                if desktop_actions is not None:
+                    desktop_actions.app.kill()
                     self.logger.info("Desktop Client Actions handler quit successfully")
                 handler.close()
-                self.logger.info("Desktop Client Actions handler quit successfully")
+                self.logger.info("Desktop Client handler closed successfully")
             if playwright_browser is not None:
                 self.session_finish_playwright_teardown()
         except Exception as e:

@@ -6,8 +6,8 @@ It includes methods to initialize the class and run the setup.
 
 import inspect
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.date_time_utils import DateTimeActions
 from cafex_core.utils.item_attribute_accessor import ItemAttributeAccessor
 
@@ -19,14 +19,14 @@ class PytestRunTestSetup:
         item_ (Item): The pytest item object.
         logger (Logger): The logger object.
         item_attribute_accessor (ItemAttributeAccessor): An attribute accessor for the item.
-        session_store (SessionStore): The session store object.
+        session_store (SessionContext): The session context object.
 
     Methods:
         __init__: Initializes the PytestRunTestSetup class.
         run_setup: Runs the setup.
     """
 
-    def __init__(self, item_):
+    def __init__(self, item_, context: SessionContext | None = None):
         """Initialize the PytestRunTestSetup class.
 
         Args:
@@ -35,7 +35,7 @@ class PytestRunTestSetup:
         self.item_ = item_
         self.logger = CoreLogger(name=__name__).get_logger()
         self.item_attribute_accessor = None
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.date_time_util = DateTimeActions()
 
     def run_setup(self):
@@ -109,24 +109,24 @@ class PytestRunTestSetup:
                     )
                     self.logger.info("Setting up web driver for non-BDD test.")
                     self.session_store.ui_scenario = True
-                    WebDriverInitializer().initialize_driver()
+                    WebDriverInitializer(self.session_store).initialize_driver()
                 if marker.name == "playwright_web" and not self.item_attribute_accessor.is_scenario:
                     from cafex_ui.web_client.ui_web_driver_initializer import (
                         WebDriverInitializer,
                     )
                     self.logger.info("Setting up playwright web driver for non-BDD test.")
                     self.session_store.playwright_ui_scenario = True
-                    WebDriverInitializer().initialize_playwright_driver()
+                    WebDriverInitializer(self.session_store).initialize_playwright_driver()
                 if marker.name == "mobile_app" and not self.item_attribute_accessor.is_scenario:
                     from cafex_ui.mobile_client.mobile_driver_initializer import (
                         MobileDriverInitializer,
                     )
                     self.logger.info("Setting up mobile driver for non-BDD test.")
                     self.session_store.mobile_ui_scenario = True
-                    MobileDriverInitializer().initialize_driver()
+                    MobileDriverInitializer(self.session_store).initialize_driver()
                 if marker.name == "ui_desktop_client" and not self.item_attribute_accessor.is_scenario:
                     from cafex_desktop.desktop_client.desktop_client_driver_initializer \
                         import DesktopClientDriverInitializer
                     self.logger.info("Setting up Desktop Client Handler for non-BDD test.")
                     self.session_store.ui_desktop_client_scenario = True
-                    DesktopClientDriverInitializer().initialize_driver()
+                    DesktopClientDriverInitializer(self.session_store).initialize_driver()

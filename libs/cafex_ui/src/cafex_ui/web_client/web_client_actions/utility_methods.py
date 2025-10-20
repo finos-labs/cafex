@@ -6,8 +6,9 @@ from selenium.common import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
+
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 from cafex_ui.web_client.web_client_actions.element_interactions import (
     ElementInteractions,
@@ -26,6 +27,7 @@ class UtilityMethods:
             web_driver: WebDriver = None,
             default_explicit_wait: int = None,
             default_implicit_wait: int = None,
+            context: SessionContext | None = None,
     ):
         """Initializes WebClientActions with a driver and optional explicit
         wait.
@@ -36,19 +38,27 @@ class UtilityMethods:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
-        self.default_implicit_wait = default_implicit_wait or WebConfigUtils().get_implicit_wait()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        self.session_context: SessionContext = context or get_session_context()
+        self.config_utils = WebConfigUtils(context=self.session_context)
+        self.default_explicit_wait = default_explicit_wait or self.config_utils.get_explicit_wait()
+        self.default_implicit_wait = default_implicit_wait or self.config_utils.get_implicit_wait()
+        self.driver = web_driver or self.session_context.driver
+        if self.driver is None:
+            raise RuntimeError(
+                "Web driver is not initialised. Ensure WebDriverInitializer has been executed."
+            )
         self.logger = CoreLogger(name=__name__).get_logger()
         self.navigate_methods = WebDriverInteractions(
             web_driver=self.driver,
             default_explicit_wait=self.default_explicit_wait,
             default_implicit_wait=self.default_implicit_wait,
+            context=self.session_context,
         )
         self.element_interactions = ElementInteractions(
             web_driver=self.driver,
             default_explicit_wait=self.default_explicit_wait,
             default_implicit_wait=self.default_implicit_wait,
+            context=self.session_context,
         )
 
     def get_webtable_data_into_dataframe(self, pstr_row_locator: str, **kwargs) -> pd.DataFrame:
@@ -270,7 +280,7 @@ class UtilityMethods:
         """
         try:
             current_execution_browser = (
-                    current_execution_browser or WebConfigUtils().fetch_current_browser()
+                    current_execution_browser or self.config_utils.fetch_current_browser()
             )
             explicit_wait = explicit_wait or self.default_explicit_wait
             if current_execution_browser.lower() == "chrome":

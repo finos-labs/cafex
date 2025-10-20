@@ -2,17 +2,17 @@ import os
 import uuid
 
 import xdist
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.handlers.folder_handler import FolderHandler
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 
 
 class HookUtil:
-    def __init__(self):
+    def __init__(self, context: SessionContext | None = None):
         self.logger_class = CoreLogger(name=__name__)
         self.logger = self.logger_class.get_logger()
         self.folder_handler = FolderHandler()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
 
     @staticmethod
     def get_xdist_worker_id(request_):

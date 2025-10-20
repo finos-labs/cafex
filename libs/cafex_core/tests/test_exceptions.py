@@ -1,21 +1,27 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
+from cafex_core.context import reset_session_context
 from cafex_core.utils.exceptions import CoreExceptions
 
 
 class TestCoreExceptions(unittest.TestCase):
 
     def setUp(self):
+        reset_session_context()
         self.core_exceptions = CoreExceptions()
 
     @patch('cafex_core.logging.logger_.CoreLogger.get_logger')
     @patch('cafex_core.reporting_.reporting.Reporting')
-    @patch('cafex_core.singletons_.session_.SessionStore')
-    def test_init(self, mock_session_store, mock_reporting, mock_logger):
+    @patch('cafex_core.utils.exceptions.get_session_context')
+    def test_init(self, mock_get_context, mock_reporting, mock_logger):
+        mock_context = MagicMock()
+        mock_get_context.return_value = mock_context
         core_exceptions = CoreExceptions()
         self.assertIsNotNone(core_exceptions.logger)
         self.assertIsNotNone(core_exceptions.reporting)
-        self.assertIsNotNone(core_exceptions.session_store)
+        self.assertIs(core_exceptions.session_store, mock_context)
+        mock_reporting.assert_called_with(mock_context)
 
     @patch('cafex_core.utils.exceptions.sys.exc_info', return_value=(None, None, None))
     @patch('cafex_core.utils.exceptions.traceback.extract_stack')

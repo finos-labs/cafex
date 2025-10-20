@@ -68,17 +68,19 @@ class TestCoreSecurity(unittest.TestCase):
 
         self.assertEqual(str(context.exception), "Secure key not found in .env file.")
 
-    @patch('cafex_core.utils.core_security.SessionStore')
-    def test_use_secured_password(self, mock_session_store):
-        mock_session_store().base_config = {'use_secured_password': True}
+    @patch('cafex_core.utils.core_security.get_session_context')
+    def test_use_secured_password(self, mock_get_context):
+        mock_context = MagicMock()
+        mock_context.base_config = {'use_secured_password': True}
+        mock_get_context.return_value = mock_context
         self.assertTrue(use_secured_password())
 
     @patch('cafex_core.utils.core_security.CoreLogger')
-    @patch('cafex_core.utils.core_security.SessionStore')
-    def test_use_secured_password_exception(self, mock_session_store, mock_core_logger):
+    @patch('cafex_core.utils.core_security.get_session_context')
+    def test_use_secured_password_exception(self, mock_get_context, mock_core_logger):
         mock_logger = MagicMock()
         mock_core_logger.return_value.get_logger.return_value = mock_logger
-        mock_session_store.side_effect = Exception("Session store error")
+        mock_get_context.side_effect = Exception("Session store error")
 
         with self.assertRaises(Exception) as context:
             use_secured_password()

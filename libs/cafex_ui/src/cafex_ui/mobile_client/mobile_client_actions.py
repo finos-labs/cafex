@@ -5,8 +5,9 @@ from appium.webdriver import WebElement
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.exceptions import CoreExceptions
 from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 
@@ -14,7 +15,12 @@ from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 class MobileClientActions:
     """Provides actions for interacting with mobile elements."""
 
-    def __init__(self, mobile_driver: webdriver.Remote = None, default_explicit_wait: int = None):
+    def __init__(
+            self,
+            mobile_driver: webdriver.Remote = None,
+            default_explicit_wait: int = None,
+            context: SessionContext | None = None,
+    ):
         """Initializes MobileClientActions with a driver and optional explicit
         wait.
 
@@ -24,10 +30,16 @@ class MobileClientActions:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.mobile_driver = mobile_driver or SessionStore().mobile_driver
-        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
+        self.session_context: SessionContext = context or get_session_context()
+        self.mobile_driver = mobile_driver or self.session_context.mobile_driver
+        if self.mobile_driver is None:
+            raise RuntimeError(
+                "Mobile driver is not initialised. Ensure MobileDriverInitializer has been executed."
+            )
+        self.config_utils = WebConfigUtils(context=self.session_context)
+        self.default_explicit_wait = default_explicit_wait or self.config_utils.get_explicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.__exceptions_generic = CoreExceptions()
+        self.__exceptions_generic = CoreExceptions(self.session_context)
 
         self.mobile_locator_strategies = {
             "XPATH": AppiumBy.XPATH,

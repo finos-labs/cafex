@@ -8,9 +8,9 @@ import sys
 import traceback
 
 import pytest
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.reporting_.reporting import Reporting
-from cafex_core.singletons_.session_ import SessionStore
 
 
 class CoreExceptions:
@@ -23,11 +23,11 @@ class CoreExceptions:
     - Control test execution flow
     """
 
-    def __init__(self):
+    def __init__(self, context: SessionContext | None = None):
         """Initialize the Exceptions class."""
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.reporting = Reporting()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
+        self.reporting = Reporting(self.session_store)
         self.exception_message_prefix = "CAFEX Exception -->"
         self.cafex_packages = [
             "cafex_api",
@@ -144,8 +144,8 @@ class CoreExceptions:
 
                 # Get stored exception info
                 stored_exc = {
-                    "type": self.session_store.storage.get("exception_type", "Exception"),
-                    "message": self.session_store.storage.get("exception_message", message),
+                    "type": self.session_store.exception_type or "Exception",
+                    "message": self.session_store.exception_message or message,
                 }
 
                 # Clean and format the message
@@ -164,10 +164,8 @@ class CoreExceptions:
                 pytest.fail(message, pytrace=False)
         finally:
             # Clean up session store
-            keys_to_clean = ["exception_type", "exception_message"]
-            for key in keys_to_clean:
-                if key in self.session_store.storage:
-                    del self.session_store.storage[key]
+            self.session_store.exception_type = None
+            self.session_store.exception_message = None
 
     @staticmethod
     def __clean_message_for_report(message: str) -> str:

@@ -1,19 +1,19 @@
 """This module contains the PytestRunTestMakeReport class which modifies test
 reports based on verification failures."""
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 
 
 class PytestRunTestMakeReport:
     """A class that handles modifying test reports based on verification
     failures."""
 
-    def __init__(self, report_):
+    def __init__(self, report_, context: SessionContext | None = None):
         """Initialize the PytestRunTestMakeReport class."""
         self.report = report_
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
 
     def run_make_report(self):
         """Modifies the test report based on verification failures."""

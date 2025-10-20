@@ -1,5 +1,5 @@
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.config_utils import ConfigUtils
 from cafex_desktop.desktop_client.desktop_application_handler import (
     DesktopApplicationHandler,
@@ -17,10 +17,10 @@ class DesktopClientDriverInitializer:
     It sets up the driver and handles the configuration for the desktop client.
     """
 
-    def __init__(self):
+    def __init__(self, context: SessionContext | None = None):
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.session_store = SessionStore()
-        self.config_utils = ConfigUtils()
+        self.session_store: SessionContext = context or get_session_context()
+        self.config_utils = ConfigUtils(context=self.session_store)
 
     def initialize_driver(self):
         try:
@@ -31,7 +31,8 @@ class DesktopClientDriverInitializer:
                 )
                 self.session_store.handler = self.session_store.globals["obj_dah"].get_handler()
                 self.session_store.globals["obj_dca"] = DesktopClientActions(
-                    self.session_store.handler
+                    self.session_store.handler,
+                    context=self.session_store,
                 )
         except Exception as error_before_scenario_desktop_client_setup:
             self.logger.error(

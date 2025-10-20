@@ -1,87 +1,81 @@
+"""Compatibility wrapper around the new SessionContext."""
+
+from __future__ import annotations
+
+import warnings
+from dataclasses import fields
+from typing import Any
+
+from cafex_core.context import SessionContext, get_session_context
+
+_ALLOWED_FIELD_NAMES = {field_.name for field_ in fields(SessionContext)}
+
+
 class SessionStore:
-    """A singleton class for storing variables throughout a session."""
+    """Backward-compatible facade that proxies to the shared SessionContext.
 
-    _instance = None
+    This preserves the previous import surface while enforcing an allowlist of
+    known attributes. Attempting to write to an unknown attribute now raises
+    an AttributeError so callers discover missing context plumbing during
+    migration.
+    """
 
-    def __new__(cls):
-        """Ensures only one instance of SessionStore exists.
+    _instance: "SessionStore | None" = None
 
-        Returns:
-            SessionStore: The singleton instance.
-        """
-        if not cls._instance:
+    def __new__(cls) -> "SessionStore":
+        if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance.storage = {}
-            cls._instance.reporting = {"tests": {}}
-            cls._instance.current_test = None
-            cls._instance.current_step = None
-            cls._instance.failed_tests = set()
-            cls._instance.error_messages = {}
-            cls._instance.base_config = None
         return cls._instance
 
-    def __setattr__(self, name, value):
-        """Sets an attribute (session variable) on the SessionStore instance.
+    # ------------------------------------------------------------------ helpers
+    @staticmethod
+    def _context() -> SessionContext:
+        return get_session_context()
 
-        Args:
-            name (str): The name of the attribute (variable).
-            value: The value to store.
-        """
-        if name == "storage":  # Protect the internal storage dictionary
+    # ------------------------------------------------------------------ getattr
+    def __getattr__(self, name: str) -> Any:
+        context = self._context()
+        if hasattr(context, name):
+            return getattr(context, name)
+        raise AttributeError(
+            f"'SessionStore' object has no attribute '{name}'. "
+            "Update SessionContext or use context.extras for ad-hoc data."
+        )
+
+    # ------------------------------------------------------------------ setattr
+    def __setattr__(self, name: str, value: Any) -> None:
+        # Allow normal attribute handling for private attributes
+        if name.startswith("_"):
             super().__setattr__(name, value)
-        else:
-            self.storage[name] = value
+            return
 
-    def __getattr__(self, name):
-        """Retrieves the value of an attribute (session variable).
+        if name == "storage":
+            raise AttributeError(
+                "SessionStore.storage is deprecated and cannot be reassigned. "
+                "Store arbitrary data in SessionContext.extras instead."
+            )
 
-        Args:
-            name (str): The name of the attribute (variable).
+        if name in _ALLOWED_FIELD_NAMES:
+            setattr(self._context(), name, value)
+            return
 
-        Returns:
-            The value of the attribute.
+        raise AttributeError(
+            f"'SessionStore' does not allow setting unknown attribute '{name}'. "
+            "Add it to SessionContext or use context.extras."
+        )
 
-        Raises:
-            AttributeError: If the attribute does not exist.
-        """
-        return self.storage[name]
+    # ---------------------------------------------------------------- properties
+    @property
+    def storage(self) -> dict:
+        warnings.warn(
+            "SessionStore.storage is deprecated. Use SessionContext.extras instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._context().extras
 
-    def add_error_message(self, error_info: dict) -> None:
-        """Add error message for current test.
+    # --------------------------------------------------------------- convenience
+    def __dir__(self) -> list[str]:
+        # Provide better autocomplete in IDEs
+        return sorted(set(super().__dir__()) | _ALLOWED_FIELD_NAMES)
 
-        Args:
-            error_info: Dictionary containing error details
-                {
-                    'message': str,  # Error message
-                    'type': str,     # 'step' or 'assert'
-                    'name': str,     # Step or assertion name
-                    'phase': str     # test phase when error occurred
-                }
-        """
-        if self.current_test:
-            if self.current_test not in self.error_messages:
-                self.error_messages[self.current_test] = []
-            self.error_messages[self.current_test].append(error_info)
-
-    def get_error_messages(self, test_id: str) -> list:
-        """Get all error messages for a test."""
-        return self.error_messages.get(test_id, [])
-
-    def clear_error_messages(self, test_id: str) -> None:
-        """Clear error messages for a test."""
-        if test_id in self.error_messages:
-            del self.error_messages[test_id]
-
-    def mark_test_failed(self):
-        """Mark current test as failed."""
-        if self.current_test:
-            self.failed_tests.add(self.current_test)
-
-    def is_current_test_failed(self) -> bool:
-        """Check if current test has failed."""
-        return self.current_test in self.failed_tests
-
-    def clear_current_test_status(self):
-        """Clear the failure status of current test."""
-        if self.current_test:
-            self.failed_tests.discard(self.current_test)

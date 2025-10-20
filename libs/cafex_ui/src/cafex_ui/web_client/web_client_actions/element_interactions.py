@@ -6,8 +6,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.relative_locator import locate_with
 from selenium.webdriver.support.ui import Select, WebDriverWait
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_ui.cafex_ui_config_utils import WebConfigUtils
 
 
@@ -20,6 +20,7 @@ class ElementInteractions:
             web_driver: WebDriver = None,
             default_explicit_wait: int = None,
             default_implicit_wait: int = None,
+            context: SessionContext | None = None,
     ):
         """Initializes WebClientActions with a driver and optional explicit
         wait.
@@ -30,10 +31,16 @@ class ElementInteractions:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
-        self.default_implicit_wait = default_implicit_wait or WebConfigUtils().get_implicit_wait()
+        self.session_context: SessionContext = context or get_session_context()
+        self.config_utils = WebConfigUtils(context=self.session_context)
+        self.default_explicit_wait = default_explicit_wait or self.config_utils.get_explicit_wait()
+        self.default_implicit_wait = default_implicit_wait or self.config_utils.get_implicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        self.driver = web_driver or self.session_context.driver
+        if self.driver is None:
+            raise RuntimeError(
+                "Web driver is not initialised. Ensure WebDriverInitializer has been executed."
+            )
 
     def click(self, locator: Union[str, WebElement], explicit_wait: int = None) -> None:
         """Click on the locator provided.

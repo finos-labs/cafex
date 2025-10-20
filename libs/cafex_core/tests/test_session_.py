@@ -1,10 +1,13 @@
 import unittest
+
+from cafex_core.context import reset_session_context
 from cafex_core.singletons_.session_ import SessionStore
 
 
 class TestSessionStore(unittest.TestCase):
 
     def setUp(self):
+        reset_session_context()
         self.session_store = SessionStore()
 
     def test_singleton_instance(self):
@@ -12,16 +15,22 @@ class TestSessionStore(unittest.TestCase):
         instance2 = SessionStore()
         self.assertIs(instance1, instance2)
 
-    def test_set_and_get_attribute(self):
-        self.session_store.some_attribute = "value"
-        self.assertEqual(self.session_store.some_attribute, "value")
+    def test_set_and_get_known_attribute(self):
+        self.session_store.current_test = "value"
+        self.assertEqual(self.session_store.current_test, "value")
+
+    def test_setting_unknown_attribute_raises(self):
+        with self.assertRaises(AttributeError):
+            self.session_store.some_attribute = "value"
 
     def test_protect_internal_storage(self):
-        try:
-            with self.assertRaises(AttributeError):
-                self.session_store.storage = {"key": "value"}
-        except Exception as e:
-            pass
+        with self.assertRaises(AttributeError):
+            self.session_store.storage = {"key": "value"}
+
+    def test_storage_property_maps_to_extras(self):
+        storage = self.session_store.storage
+        storage["foo"] = "bar"
+        self.assertEqual(self.session_store.storage["foo"], "bar")
 
     def test_add_error_message(self):
         self.session_store.current_test = "test1"

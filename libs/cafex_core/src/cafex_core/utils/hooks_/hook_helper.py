@@ -1,5 +1,5 @@
 # This file contains the HookHelper class which is responsible for initializing the hooks and creating the folders
-from ...singletons_.session_ import SessionStore
+from ...context import SessionContext, get_session_context, reset_session_context
 from .hook_util import HookUtil
 from .pytest_add_option_hook import PytestAddOptionHook
 from .pytest_after_scenario_hook import PytestAfterScenario
@@ -22,11 +22,11 @@ class HookHelper:
     def __init__(self, conf_cwd):
         """Constructor for HookHelper class."""
         self.conf_cwd = conf_cwd
-        self.hook_util = HookUtil()
-        self.session_store = SessionStore()
+        self.session_context: SessionContext = reset_session_context()
+        self.hook_util = HookUtil(self.session_context)
         self.execution_uuid = self.hook_util.get_or_create_execution_uuid()
-        self.session_store.conf_dir = self.conf_cwd
-        self.session_store.execution_uuid = self.execution_uuid
+        self.session_context.conf_dir = self.conf_cwd
+        self.session_context.execution_uuid = self.execution_uuid
         self._init_hook()
 
     def _init_hook(self):
@@ -39,52 +39,52 @@ class HookHelper:
 
     @staticmethod
     def pytest_add_option_(parser_):
-        PytestAddOptionHook(parser_).add_option_hook()
+        PytestAddOptionHook(parser_, get_session_context()).add_option_hook()
 
     @staticmethod
     def pytest_configure_(config):
-        PytestConfiguration(config).configure_hook()
+        PytestConfiguration(config, get_session_context()).configure_hook()
 
     @staticmethod
     def pytest_collection_finish_(session):
-        PytestCollectionFinish(session).collection_finish_hook()
+        PytestCollectionFinish(session, get_session_context()).collection_finish_hook()
 
     @staticmethod
     def pytest_session_start_(session, sys_arg):
-        PytestSessionStart(session, sys_arg).session_start_hook()
+        PytestSessionStart(session, sys_arg, get_session_context()).session_start_hook()
 
     @staticmethod
     def pytest_before_scenario_(feature, scenario_, request, args):
-        PytestBeforeScenario(feature, scenario_, request, args).before_scenario_hook()
+        PytestBeforeScenario(feature, scenario_, request, args, get_session_context()).before_scenario_hook()
 
     @staticmethod
     def pytest_before_step(scenario_, step_):
-        PytestBddBeforeStep(scenario_, step_).before_step_hook()
+        PytestBddBeforeStep(scenario_, step_, get_session_context()).before_step_hook()
 
     @staticmethod
     def pytest_after_step(step_):
-        PytestBddAfterStep(step_).after_step_hook()
+        PytestBddAfterStep(step_, get_session_context()).after_step_hook()
 
     @staticmethod
     def pytest_after_scenario(scenario, sys_args, feature):
-        PytestAfterScenario(scenario, sys_args, feature).after_scenario_hook()
+        PytestAfterScenario(scenario, sys_args, feature, get_session_context()).after_scenario_hook()
 
     @staticmethod
     def pytest_run_test_setup(item_):
-        PytestRunTestSetup(item_).run_setup()
+        PytestRunTestSetup(item_, get_session_context()).run_setup()
 
     @staticmethod
     def pytest_run_test_make_report(report_):
-        PytestRunTestMakeReport(report_).run_make_report()
+        PytestRunTestMakeReport(report_, get_session_context()).run_make_report()
 
     @staticmethod
     def pytest_run_test_log_report(report):
-        PytestRunLogReport(report).run_log_report()
+        PytestRunLogReport(report, get_session_context()).run_log_report()
 
     @staticmethod
     def pytest_bdd_step_error(step):
-        PytestBDDStepError(step).bdd_step_error()
+        PytestBDDStepError(step, get_session_context()).bdd_step_error()
 
     @staticmethod
     def pytest_session_finish_(session):
-        PytestSessionFinish(session).session_finish_()
+        PytestSessionFinish(session, get_session_context()).session_finish_()

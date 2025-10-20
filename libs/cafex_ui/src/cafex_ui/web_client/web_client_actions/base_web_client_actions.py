@@ -1,13 +1,9 @@
+from cafex_core.context import SessionContext, get_session_context
 from selenium.webdriver.remote.webdriver import WebDriver
-from cafex_ui.web_client.web_client_actions.element_interactions import (
-    ElementInteractions,
-)
-from cafex_ui.web_client.web_client_actions.utility_methods import (
-    UtilityMethods,
-)
-from cafex_ui.web_client.web_client_actions.webdriver_interactions import (
-    WebDriverInteractions,
-)
+
+from cafex_ui.web_client.web_client_actions.element_interactions import ElementInteractions
+from cafex_ui.web_client.web_client_actions.utility_methods import UtilityMethods
+from cafex_ui.web_client.web_client_actions.webdriver_interactions import WebDriverInteractions
 
 
 class WebClientActions(WebDriverInteractions, ElementInteractions, UtilityMethods):
@@ -18,6 +14,7 @@ class WebClientActions(WebDriverInteractions, ElementInteractions, UtilityMethod
             web_driver: WebDriver = None,
             default_explicit_wait: int = None,
             default_implicit_wait: int = None,
+            context: SessionContext | None = None,
     ):
         """Initializes WebClientActions with a driver and optional explicit
         wait.
@@ -28,20 +25,24 @@ class WebClientActions(WebDriverInteractions, ElementInteractions, UtilityMethod
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
+        self.session_context: SessionContext = context or get_session_context()
         super().__init__(
             web_driver=web_driver,
             default_explicit_wait=default_explicit_wait,
             default_implicit_wait=default_implicit_wait,
+            context=self.session_context,
         )
         self.navigate_methods = WebDriverInteractions(
             web_driver=self.driver,
             default_explicit_wait=self.default_explicit_wait,
             default_implicit_wait=self.default_implicit_wait,
+            context=self.session_context,
         )
         self.element_interactions = ElementInteractions(
             web_driver=self.driver,
             default_explicit_wait=self.default_explicit_wait,
             default_implicit_wait=self.default_implicit_wait,
+            context=self.session_context,
         )
 
     def set_implicit_wait(self, wait_time: int = None) -> None:

@@ -4,12 +4,10 @@ from selenium.webdriver import Keys
 from selenium.webdriver.common import keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_ui.cafex_ui_config_utils import WebConfigUtils
-from cafex_ui.web_client.web_client_actions.base_web_client_actions import (
-    WebClientActions,
-)
+from cafex_ui.web_client.web_client_actions.base_web_client_actions import WebClientActions
 
 
 class KeyboardMouseActions:
@@ -18,7 +16,12 @@ class KeyboardMouseActions:
         |  This class contains methods related to ActionChains Class of Selenium package.
     """
 
-    def __init__(self, web_driver: webdriver.Remote = None, default_explicit_wait: int = None):
+    def __init__(
+            self,
+            web_driver: webdriver.Remote = None,
+            default_explicit_wait: int = None,
+            context: SessionContext | None = None,
+    ):
         """Initializes KeyboardMouseActions with a driver and optional explicit
         wait.
 
@@ -28,12 +31,21 @@ class KeyboardMouseActions:
             default_explicit_wait: The default explicit wait time (in seconds).
                                    If not provided, it will be retrieved from ConfigUtils.
         """
-        self.default_explicit_wait = default_explicit_wait or WebConfigUtils().get_explicit_wait()
+        self.session_context: SessionContext = context or get_session_context()
+        self.config_utils = WebConfigUtils(context=self.session_context)
+        self.default_explicit_wait = default_explicit_wait or self.config_utils.get_explicit_wait()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.driver = web_driver or SessionStore().storage.get("driver")
+        self.driver = web_driver or self.session_context.driver
+        if self.driver is None:
+            raise RuntimeError(
+                "Web driver is not initialised. Ensure WebDriverInitializer has been executed."
+            )
         self.actions = ActionChains(self.driver)
         self.wca = WebClientActions(
-            self.driver, default_explicit_wait=self.default_explicit_wait, default_implicit_wait=5
+            self.driver,
+            default_explicit_wait=self.default_explicit_wait,
+            default_implicit_wait=5,
+            context=self.session_context,
         )
 
     def robust_click(self, locator: Union[str, WebElement], explicit_wait: int = None) -> None:

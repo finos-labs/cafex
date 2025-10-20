@@ -18,9 +18,9 @@ from pypsexec.client import Client as Remote_client
 from requests.auth import HTTPBasicAuth, HTTPProxyAuth, HTTPDigestAuth
 from requests_ntlm import HttpNtlmAuth
 
+from cafex_core.context import get_session_context
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.reporting_.reporting import Reporting
-from cafex_core.singletons_.session_ import SessionStore
 
 
 def generate_fernet_key_for_file(passcode: bytes) -> bytes:
@@ -56,10 +56,11 @@ def decrypt_password(encrypted_password: str) -> str | Exception:
 def use_secured_password() -> bool:
     """Decrypts an encrypted password."""
     try:
-        if SessionStore().base_config is None:
+        context = get_session_context()
+        if not context.base_config:
             return False
 
-        return SessionStore().base_config.get("use_secured_password", False)
+        return context.base_config.get("use_secured_password", False)
     except Exception as e:
         CoreLogger(name=__name__).get_logger().exception("Error decrypting password: %s", e)
         raise e
@@ -110,12 +111,12 @@ class Security:
             if nifi_token:
                 nipyapi.security.set_service_auth_token(token=nifi_token, service="nifi")
                 bearer_token = "Bearer " + nifi_token
-                Reporting().insert_step(
+                Reporting(get_session_context()).insert_step(
                     "Successfully generated Nifi token", "Successfully generated Nifi token", "Pass"
                 )
                 return True, bearer_token
 
-            Reporting().insert_step(
+            Reporting(get_session_context()).insert_step(
                 "Failed to generate Nifi token", "Failed to generate Nifi token", "Fail"
             )
             return False, ""

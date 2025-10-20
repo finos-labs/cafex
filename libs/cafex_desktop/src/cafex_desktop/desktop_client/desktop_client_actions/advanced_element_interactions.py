@@ -10,7 +10,7 @@ if platform.system().upper() == "WINDOWS":
     from pywinauto import mouse, controls, uia_defines, uia_element_info, keyboard
     from ctypes.wintypes import tagPOINT
 
-from cafex_core.singletons_.session_ import SessionStore
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
 from cafex_core.utils.exceptions import CoreExceptions
 from cafex_desktop.desktop_client.desktop_client_actions.desktop_element_interactions import (
@@ -23,13 +23,14 @@ from cafex_desktop.desktop_client.desktop_client_exceptions import (
 
 class AdvancedElementInteractions:
 
-    def __init__(self, phandler: Application = None):
-        self.app = phandler or SessionStore().storage.get("handler")
+    def __init__(self, phandler: Application = None, context: SessionContext | None = None):
+        self.session_context: SessionContext = context or get_session_context()
+        self.app = phandler or self.session_context.handler
         self.window = None
-        self.__exceptions_generic = CoreExceptions()
+        self.__exceptions_generic = CoreExceptions(self.session_context)
         self.__exceptions_desktop_client = DesktopClientExceptions()
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.element_interactions = DesktopElementInteractions(phandler)
+        self.element_interactions = DesktopElementInteractions(phandler, context=self.session_context)
 
     def scrolling(
         self,

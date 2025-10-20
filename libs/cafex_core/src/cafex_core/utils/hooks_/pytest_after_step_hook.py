@@ -1,18 +1,15 @@
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.reporting_.screenshot_utils import (
-    add_screenshot_to_report,
-    capture_screenshot,
-)
+from cafex_core.reporting_.screenshot_utils import add_screenshot_to_report, capture_screenshot
 from cafex_core.singletons_.request_ import RequestSingleton
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.date_time_utils import DateTimeActions
 
 
 class PytestBddAfterStep:
-    def __init__(self, step):
+    def __init__(self, step, context: SessionContext | None = None):
         self.logger = CoreLogger(name=__name__).get_logger()
         self.date_time_util = DateTimeActions()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.request_ = RequestSingleton().request
         self.step = step
         self.step_details = None

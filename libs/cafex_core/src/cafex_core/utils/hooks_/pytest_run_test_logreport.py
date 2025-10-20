@@ -6,8 +6,8 @@ It includes methods to initialize the class and run the log report.
 
 import os
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_core.utils.date_time_utils import DateTimeActions
 
 
@@ -17,14 +17,14 @@ class PytestRunLogReport:
     Attributes:
         report (Report): The pytest report object.
         logger (Logger): The logger object.
-        session_store (SessionStore): The session store object.
+        session_store (SessionContext): The session context object.
 
     Methods:
         __init__: Initializes the PytestRunLogReport class.
         run_log_report: Runs the log report.
     """
 
-    def __init__(self, report):
+    def __init__(self, report, context: SessionContext | None = None):
         """Initialize the PytestRunLogReport class.
 
         Args:
@@ -32,7 +32,7 @@ class PytestRunLogReport:
         """
         self.report = report
         self.logger = CoreLogger(name=__name__).get_logger()
-        self.session_store = SessionStore()
+        self.session_store: SessionContext = context or get_session_context()
         self.date_time_util = DateTimeActions()
 
     def run_log_report(self):

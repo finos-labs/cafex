@@ -1,7 +1,7 @@
 import os
 
+from cafex_core.context import SessionContext, get_session_context
 from cafex_core.logging.logger_ import CoreLogger
-from cafex_core.singletons_.session_ import SessionStore
 from cafex_ui.mobile_client.mobile_client_actions import MobileClientActions
 from cafex_ui.mobile_client.mobile_driver_factory import MobileDriverFactory
 from cafex_ui.mobile_client.mobile_utils import MobileUtils
@@ -11,10 +11,10 @@ from cafex_ui.cafex_ui_config_utils import MobileConfigUtils, WebConfigUtils
 class MobileDriverInitializer:
     """Initializes and configures the mobile driver for UI tests."""
 
-    def __init__(self):
-        self.session_store = SessionStore()
-        self.config_utils = MobileConfigUtils()
-        self.web_config_utils = WebConfigUtils()
+    def __init__(self, context: SessionContext | None = None):
+        self.session_store: SessionContext = context or get_session_context()
+        self.config_utils = MobileConfigUtils(context=self.session_store)
+        self.web_config_utils = WebConfigUtils(context=self.session_store)
         self.logger = CoreLogger(name=__name__).get_logger()
 
     def initialize_driver(self):
@@ -30,7 +30,8 @@ class MobileDriverInitializer:
                 self._setup_local_driver(mobile_os, mobile_platform, desired_capabilities)
 
         self.session_store.globals["obj_mca"] = MobileClientActions(
-            self.session_store.mobile_driver
+            self.session_store.mobile_driver,
+            context=self.session_store,
         )
 
     def _setup_browserstack_driver(
@@ -124,7 +125,7 @@ class MobileDriverInitializer:
             appcenter_url = self.session_store.mobile_config.get("android_appcenter_url")
         desired_capabilities["app"] = custom_app_id
         browserstack_url = self.session_store.mobile_config.get("browserstack_url")
-        if not self.session_store.storage.get("browserstack_app_uploaded"):
+        if not self.session_store.browserstack_app_uploaded:
             if mobile_utils.browserstack_upload_appcenter_app(
                     appcenter_token=appcenter_token,
                     appcenter_url=appcenter_url,
