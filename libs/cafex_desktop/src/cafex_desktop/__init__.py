@@ -25,4 +25,4 @@ def main():
         list_methods()
 
 
-__version__ = "0.0.44"
+__version__ = "0.0.1"
