@@ -17,10 +17,11 @@ classifiers = [
 ]
 
 dependencies = [
-    "cafex-core>=0.0.30",
-    "cafex-api>=0.0.30",
-    "cafex-db>=0.0.30",
-    "cafex-ui>=0.0.30",
+    "cafex-core>=1.0.0",
+    "cafex-api>=1.0.0",
+    "cafex-db>=1.0.0",
+    "cafex-ui>=1.0.0",
+    "cafex-desktop>=1.0.0"
 ]
 
 keywords = ["ui", "appium", "selenium", "pytest", "automation", "db", "db testing", "api", "api testing"]

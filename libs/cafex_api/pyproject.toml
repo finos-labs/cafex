@@ -16,7 +16,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "cafex-core>=0.0.30",
+    "cafex-core>=1.0.0",
     "zeep==4.2.1",
     "websocket-client==1.8.0",
     "gql==3.5.2"

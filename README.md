@@ -8,6 +8,7 @@ This monorepo contains the following CAFE packages:
 - **cafex-api:** Package for API testing, including request building, response parsing, and assertion methods.
 - **cafex-db:** Package for database testing, supporting various databases like MSSQL, MySQL, Oracle, Hive, Postgres, and Cassandra.
 - **cafex-ui:** Package for web UI and mobile app testing, including driver management, element interaction, and assertion methods.
+- **cafex-desktop:** Package for desktop application testing, supporting Windows applications with functionalities for window handling, element interaction, and assertions.
 - **cafex:** The super package containing all the above packages
 
 ## Introduction
@@ -30,19 +31,36 @@ CAFEX runs **locally during development** for rapid testing and debugging. It's 
 
 ### Prerequisites
 
-- Python 3.12 or later
+- Python 3.12.10
 - pip 24 or later(Python package manager)
 
 ### Installation
 
 1. Clone or download the CAFE monorepo.
-2. Install the required dependencies using pip: ```pip install -r dev-requirements.txt```
+2. Install the required dependencies:
+   - **With uv:**
+     ```bash
+     pip install uv
+     uv pip install -r dev-requirements.txt
+     ```
+   - **With pip:**
+     ```bash
+     pip install -r dev-requirements.txt
+     ```
+**Dependencies with uv:**
+- For UI, API,Desktop and DB testing: `uv pip install cafex`
+- For UI testing: `uv pip install cafex-ui`
+- For DB testing: `uv pip install cafex-db`
+- For API testing: `uv pip install cafex-api`
+- For Desktop App testing: `uv pip install cafex-desktop`
+- For Core modules: `uv pip install cafex-core`
 
-**Dependencies:**
-- For UI, API and DB testing: `pip install cafex`
+**Dependencies with pip:**
+- For UI, API,Desktop and DB testing: `pip install cafex`
 - For UI testing: `pip install cafex-ui`
 - For DB testing: `pip install cafex-db`
 - For API testing: `pip install cafex-api`
+- For Desktop App testing: `pip install cafex-desktop`
 - For Core modules: `pip install cafex-core`
 
 ## Package Details
@@ -53,6 +71,7 @@ For detailed information about each package, please refer to their respective RE
 - **cafex-api:** libs/cafex_api/README.md
 - **cafex-db:** libs/cafex_db/README.md
 - **cafex-ui:** libs/cafex_ui/README.md
+- **cafex-desktop:** libs/cafex_desktop/README.md
 - **cafex-core:** libs/cafex_core/README.md
 
 ## What should a user do after installing the source code and its dependencies?
