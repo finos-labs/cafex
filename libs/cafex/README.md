@@ -1,6 +1,6 @@
 # CAFEX
 
-CAFEX is a Python package that provides tools and utilities for UI, API and DB testing. It is part of the CAFE (Core Automation Framework Enhancements) monorepo.
+CAFEX is a Python package that provides tools and utilities for UI, API and DB testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ## Features
 

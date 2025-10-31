@@ -1,6 +1,6 @@
 # CAFE-UI
 
-CAFE-UI is a Python package that provides tools and utilities for web UI and mobile app testing. It is part of the CAFE (Core Automation Framework Enhancements) monorepo.
+CAFE-UI is a Python package that provides tools and utilities for web UI and mobile app testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 

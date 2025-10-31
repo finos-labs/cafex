@@ -1,6 +1,6 @@
 # CAFE-DB
 
-CAFE-DB is a Python package that provides tools and utilities for database testing. It is part of the CAFE (Core Automation Framework Enhancements) monorepo.
+CAFE-DB is a Python package that provides tools and utilities for database testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 

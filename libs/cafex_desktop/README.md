@@ -1,6 +1,6 @@
 # CAFE-DESKTOP
 
-CAFE-DESKTOP is a Python package that provides tools and utilities for desktop application testing. It is part of the CAFE (Core Automation Framework Enhancements) monorepo.
+CAFE-DESKTOP is a Python package that provides tools and utilities for desktop application testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 

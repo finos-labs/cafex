@@ -1,6 +1,6 @@
 # CAFEX Monorepo
 
-This monorepo contains the following CAFE packages:
+This monorepo contains the following CAFEX packages:
 
 - **cafex-core:** The core package providing foundational functionalities and utilities.
 - **cafex-api:** Package for API testing, including request building, response parsing, and assertion methods.
@@ -10,7 +10,7 @@ This monorepo contains the following CAFE packages:
 
 ## Introduction
 
-CAFE (Core Automation Framework Enhancements) is a Python-based automation framework designed to simplify and streamline various testing tasks. This monorepo structure allows for efficient management and development of all CAFE packages in a single location.
+CAFEX (Centralized Automation Framework Enabler) is a Python-based automation framework designed to simplify and streamline various testing tasks. This monorepo structure allows for efficient management and development of all CAFEX packages in a single location.
 
 ## Getting Started
 
@@ -21,7 +21,7 @@ CAFE (Core Automation Framework Enhancements) is a Python-based automation frame
 
 ### Installation
 
-1. Clone or download the CAFE monorepo.
+1. Clone or download the CAFEX monorepo.
 2. Install the required dependencies using pip: ```pip install -r dev-requirements.txt```
 
 **Dependencies:**
