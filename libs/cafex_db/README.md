@@ -1,10 +1,10 @@
-# CAFE-DB
+# CAFEX-DB
 
-CAFE-DB is a Python package that provides tools and utilities for database testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
+CAFEX-DB is a Python package that provides tools and utilities for database testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 
-CAFE-DB offers the following features:
+CAFEX-DB offers the following features:
 
 - **Database connection:** Supports connections to various databases, including MSSQL, MySQL, Oracle, Hive, Postgres, and Cassandra.
 - **Query execution:** Provides methods to execute SQL queries and retrieve data.
@@ -21,7 +21,7 @@ CAFE-DB offers the following features:
 
 #### **Installation**
 
-1. Install CAFE-DB using pip:
+1. Install CAFEX-DB using pip:
 
    ```
    pip install cafex-db
@@ -29,7 +29,7 @@ CAFE-DB offers the following features:
 
 ### Usage
 
-CAFE-DB provides a set of intuitive methods and classes to facilitate database testing. Here's a basic example:
+CAFEX-DB provides a set of intuitive methods and classes to facilitate database testing. Here's a basic example:
 
 ```python
 from cafex_db import database_handler

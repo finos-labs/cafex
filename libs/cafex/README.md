@@ -52,9 +52,9 @@ CAFEX is a Python package that provides tools and utilities for UI, API and DB t
    pip install cafex
    ```
 
-## CAFE-UI Usage
+## CAFEX-UI Usage
 
-CAFE-UI provides a set of intuitive methods and classes to facilitate UI testing. Here's a basic example for web UI testing:
+CAFEX-UI provides a set of intuitive methods and classes to facilitate UI testing. Here's a basic example for web UI testing:
 
 ```python
 from cafex_ui.web_client import web_client_actions
@@ -74,9 +74,9 @@ assert web_actions.get_title() == "Success Page"
 
 ```
 
-## CAFE-API Usage
+## CAFEX-API Usage
 
-CAFE-API provides a set of intuitive methods and classes to facilitate API testing. Here's a basic example:
+CAFEX-API provides a set of intuitive methods and classes to facilitate API testing. Here's a basic example:
 
 ```python
 from cafex_api import request_builder
@@ -96,9 +96,9 @@ assert parsed_response["status"] == "success"
 
 ```
 
-## CAFE-DB Usage
+## CAFEX-DB Usage
 
-CAFE-DB provides a set of intuitive methods and classes to facilitate database testing. Here's a basic example:
+CAFEX-DB provides a set of intuitive methods and classes to facilitate database testing. Here's a basic example:
 
 ```python
 from cafex_db import database_handler

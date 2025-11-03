@@ -1,10 +1,10 @@
-# CAFE-DESKTOP
+# CAFEX-DESKTOP
 
-CAFE-DESKTOP is a Python package that provides tools and utilities for desktop application testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
+CAFEX-DESKTOP is a Python package that provides tools and utilities for desktop application testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 
-CAFE-DESKTOP offers the following features:
+CAFEX-DESKTOP offers the following features:
 
 - **Window management:** Supports interaction with desktop application windows, including opening, closing, and switching between windows.
 - **Element interaction:** Provides methods to interact with desktop application elements, such as clicking, typing, and retrieving text.
@@ -21,7 +21,7 @@ CAFE-DESKTOP offers the following features:
 
 #### **Installation**
 
-1. Install CAFE-DESKTOP using pip:
+1. Install CAFEX-DESKTOP using pip:
 
    ```
    pip install cafex-desktop
@@ -29,7 +29,7 @@ CAFE-DESKTOP offers the following features:
 
 ### Usage
 
-CAFE-DESKTOP provides a set of intuitive methods and classes to facilitate desktop application testing. Here's a basic example for desktop application testing:
+CAFEX-DESKTOP provides a set of intuitive methods and classes to facilitate desktop application testing. Here's a basic example for desktop application testing:
 
 ```python
 from cafex_desktop import desktop_client_actions

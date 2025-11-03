@@ -1,10 +1,10 @@
-# CAFE-UI
+# CAFEX-UI
 
-CAFE-UI is a Python package that provides tools and utilities for web UI and mobile app testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
+CAFEX-UI is a Python package that provides tools and utilities for web UI and mobile app testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 
-CAFE-UI offers the following features:
+CAFEX-UI offers the following features:
 
 - **Driver management:** Supports various web browsers (Chrome, Firefox, Edge, etc.) and mobile platforms (iOS, Android).
 - **Element interaction:** Provides methods to interact with web elements and mobile app elements, such as clicking, typing, and retrieving text.
@@ -21,7 +21,7 @@ CAFE-UI offers the following features:
 
 #### **Installation**
 
-1. Install CAFE-UI using pip:
+1. Install CAFEX-UI using pip:
 
    ```
    pip install cafex-ui
@@ -29,7 +29,7 @@ CAFE-UI offers the following features:
 
 ### Usage
 
-CAFE-UI provides a set of intuitive methods and classes to facilitate UI testing. Here's a basic example for web UI testing:
+CAFEX-UI provides a set of intuitive methods and classes to facilitate UI testing. Here's a basic example for web UI testing:
 
 ```python
 from cafex_ui import web_client_actions
