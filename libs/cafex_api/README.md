@@ -1,6 +1,6 @@
-# CAFE-API
+# CAFEX-API
 
-CAFEX-API is a Python package that provides tools and utilities for API testing. It is part of the CAFE (Core Automation Framework Enhancements) monorepo.
+CAFEX-API is a Python package that provides tools and utilities for API testing. It is part of the CAFEX (Centralized Automation Framework Enabler) monorepo.
 
 ### Features
 
@@ -29,7 +29,7 @@ CAFEX-API offers the following features:
 
 ### Usage
 
-CAFE-API provides a set of intuitive methods and classes to facilitate API testing. Here's a basic example:
+CAFEX-API provides a set of intuitive methods and classes to facilitate API testing. Here's a basic example:
 
 ```python
 from cafex_api import request_builder
