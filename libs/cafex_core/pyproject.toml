@@ -55,10 +55,10 @@ classifiers = [
 cafex = "cafex_core.cafex_cli:main"
 
 [project.optional-dependencies]
-ui = ["cafex-ui>=0.0.30"]
-db = ["cafex-db>=0.0.30"]
-api = ["cafex-api>=0.0.30"]
-all = ["cafex-ui>=0.0.30","cafex-api>=0.0.30","cafex-db>=0.0.30"]
+ui = ["cafex-ui>=1.0.0"]
+db = ["cafex-db>=1.0.0"]
+api = ["cafex-api>=1.0.0"]
+all = ["cafex-ui>=1.0.0","cafex-api>=1.0.0","cafex-db>=1.0.0"]
 
 [project.urls]
 Homepage = "https://example.com"

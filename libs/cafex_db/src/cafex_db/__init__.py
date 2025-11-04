@@ -5,7 +5,7 @@ from .mongo_utils import MongoDBUtils
 from .databricks_utils import DatabricksUtils
 from .snowflake_utils import SnowflakeUtil
 
-__version__ = "0.0.38"
+__version__ = "1.0.0"
 
 
 class DBUtils(MongoDBUtils,
