@@ -1,6 +1,6 @@
 # CAFEX Monorepo Developer Guide
 
-This document provides information for developers working on the CAFE monorepo.
+This document provides information for developers working on the CAFEX monorepo.
 
 ### Project Structure
 
@@ -26,7 +26,7 @@ cafex
 ├── toxtool.toml
 └── ... (other project files)
 ```
-- **libs:** Contains the source code for all CAFE packages.
+- **libs:** Contains the source code for all CAFEX packages.
 - **scripts:** Contains versioning script.
 - **dev-requirements.txt:** Lists additional dependencies required for development (e.g., testing tools).
 - **pip-requirements.txt:** Lists pip version dependency.
