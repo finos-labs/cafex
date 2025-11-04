@@ -7,4 +7,4 @@ class CafeXAPI(RequestBuilder, WebSocketHandler,GraphQLUtils ):
     pass
 
 
-__version__ = "0.0.38"
+__version__ = "1.0.0"

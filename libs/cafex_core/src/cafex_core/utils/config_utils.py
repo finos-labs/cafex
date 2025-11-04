@@ -601,13 +601,13 @@ class ConfigUtils:
                 self.fetch_service_description_path(), service_desc_rel_filepath
             )
             service_description = self.get_value_from_yaml_keypath(service_desc_path, keypath)
-            target_url = service_description.get("target_url", "None")
+            target_url = service_description.get("target_url", None)
             overwrite_base_url = self.fetch_overwrite_base_url()
 
             service_desc = {
                 "target_url": (
                     self.fetch_target_url(target_url)
-                    if target_url != "None" and overwrite_base_url
+                    if target_url is not None and overwrite_base_url
                     else self.fetch_base_url()
                 ),
                 "method": service_description.get("method"),
@@ -629,14 +629,14 @@ class ConfigUtils:
             payload (str): The name of the payload file.
 
         Returns:
-            str: The content of the payload file, or None if the payload parameter is "None".
+            str: The content of the payload file, or None if the payload parameter is None.
 
         Example:
             >> config_utils = ConfigUtils()
             >> payload_content = config_utils.get_payload('payload_file')
             >> print(payload_content)
         """
-        if payload == "None":
+        if payload is None:
             return None
         payload_path = os.path.join(self.fetch_service_payload_path(), payload)
         with open(payload_path, "r", encoding="utf-8") as file:
@@ -729,7 +729,7 @@ class ConfigUtils:
                     dict_db_desc["db_type"].lower() == "ec2_hive"):
                 dict_db_desc["secret_key"] = dict_db_configuration.get("secret_key", None)
                 dict_db_desc["is_password_encoded"] = dict_db_configuration.get("is_password_encoded", None)
-                if dict_db_configuration.get("key_file", "None") == None:
+                if dict_db_configuration.get("key_file", None) is None:
                     dict_db_desc["key_file"] = None
                 else:
                     dict_db_desc["key_file"] = os.path.join(self.get_configuration_directory_path(),

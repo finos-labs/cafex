@@ -39,21 +39,46 @@ cafex
 
 #### Prerequisites
 
-- Python 3.12 or later
+- Python 3.12.10
 - pip 24 or later (Python package manager)
 
 #### Editable Installation
 
 To install the packages in editable mode, allowing you to make changes and see them reflected immediately, use the following commands:
 
-1. Install development dependencies: `pip install -r dev-requirements.txt`
+1. Install development dependencies:
+2. Install the required dependencies:
+
+**With uv:**
+```cmd
+pip install uv
+uv pip install -r dev-requirements.txt
+```
+
+**With pip:**
+```cmd
+pip install -r dev-requirements.txt
+```
+
 2. Install each package in editable mode:
-   * `pip install -e libs/cafex_core/`
-   * `pip install -e libs/cafex_api/`
-   * `pip install -e libs/cafex_db/`
-   * `pip install -e libs/cafex_ui/`
-   * `pip install -e libs/cafex_desktop/`
-   * `pip install -e libs/cafex/`
+   - With pip:
+     ```cmd
+     pip install -e libs/cafex_core/
+     pip install -e libs/cafex_api/
+     pip install -e libs/cafex_db/
+     pip install -e libs/cafex_ui/
+     pip install -e libs/cafex_desktop/
+     pip install -e libs/cafex/
+     ```
+   - With uv:
+     ```cmd
+     uv pip install -e libs/cafex_core/
+     uv pip install -e libs/cafex_api/
+     uv pip install -e libs/cafex_db/
+     uv pip install -e libs/cafex_ui/
+     uv pip install -e libs/cafex_desktop/
+     uv pip install -e libs/cafex/
+     ```
    
 ### Building Wheels
 
@@ -94,3 +119,4 @@ To build all packages in parallel, each with an incremented patch version:
 
 ```bash
 tox -p auto
+```
