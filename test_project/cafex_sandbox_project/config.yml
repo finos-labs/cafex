@@ -6,8 +6,7 @@
 'execution_environment': 'dev'
 'selenium_grid_ip': 'http://localhost:4444'
 'use_grid': false
-'chrome_options': ['download.default_directory=C:/mydownloads', 'download.prompt_for_download=false',
-  'download.directory_upgrade= true', 'safebrowsing.enabled= true']
+'chrome_options': ["--disable-notifications", "--start-maximized"]
 'web_capabilities':
   'ms:edgeOptions':
     'args': ['--window-size=1900,1200']
@@ -41,6 +40,11 @@ playwright_browser_args:
       'default_user':
         'password': '8GPtex4qM7BhgisF5sgR0pLL2UgHMQ93fL9Y4WxwYxWSQGFoVQKuJt4u/TW1zptVFhgg7g=='
         'username': 'tomsmith'
+    'salesforce_demo':
+      'base_url': 'https://login.salesforce.com'
+      'default_user':
+        'password': ''
+        'username': ''
     'db_demo':
       'base_url': ''
       'default_db_user':
