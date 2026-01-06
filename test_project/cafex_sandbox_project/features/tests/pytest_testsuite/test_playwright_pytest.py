@@ -1,6 +1,6 @@
 import pytest
 from cafex_core.reporting_.step_decorator import step
-from test_project.cafex_sandbox_project.features.forms.playwright.login_form import LoginForm, CheckboxForm
+from features.forms.playwright.login_form import LoginForm, CheckboxForm
 
 login_form = LoginForm()
 checkbox_form = CheckboxForm()

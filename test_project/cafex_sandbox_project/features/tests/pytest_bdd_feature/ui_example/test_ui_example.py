@@ -1,6 +1,6 @@
 from pytest_bdd import given, when, then, scenario, parsers
 
-from test_project.cafex_sandbox_project.features.forms.ui_methods.internet_page import InternetPageMethods
+from features.forms.ui_methods.internet_page import InternetPageMethods
 
 internet_page = InternetPageMethods()
 

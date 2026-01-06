@@ -14,10 +14,18 @@ This directory contains the reference test automation project for the CAFEX mono
 Clone the CAFEX monorepo and navigate to the test project directory:
 
 ```cmd
-cd cafex\test_project\cafex_sandbox_project
+cd test_project\cafex_sandbox_project
 ```
+### 2. Mark as Source Folder in PyCharm
 
-### 2. Install Dependencies
+After opening the project in PyCharm:
+
+- Right-click on the `cafex_sandbox_project` folder in the Project view.
+- Select `Mark Directory as` → `Sources Root`.
+
+This step configures PyCharm to treat the folder as a source root for code completion and imports.
+
+### 3. Install Dependencies
 
 Ensure you have Python 3.12.10 and pip 24+ installed.
 
@@ -75,7 +83,7 @@ Ensure you have Python 3.12.10 and pip 24+ installed.
     uv pip install cafex
     ```
 
-### 3. Project Structure
+### 4. Project Structure
 
 ```
 cafex_sandbox_project/
@@ -96,7 +104,7 @@ cafex_sandbox_project/
 └── README.md                   # Project documentation
 ```
 
-### 4. Configuration
+### 5. Configuration
 
 Edit `config.yml` to set up your environment, browser, base URLs, credentials, and other settings. Example:
 

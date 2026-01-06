@@ -1,5 +1,5 @@
 from pytest_bdd import given, when, then, scenario,parsers
-from test_project.cafex_sandbox_project.features.forms.playwright.login_form import LoginForm, CheckboxForm
+from features.forms.playwright.login_form import LoginForm, CheckboxForm
 
 
 @scenario('playwright.feature', 'Validate user login')
