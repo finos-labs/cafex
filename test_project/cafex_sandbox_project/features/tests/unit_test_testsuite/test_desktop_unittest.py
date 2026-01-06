@@ -1,7 +1,7 @@
 import unittest
 import pytest
 from cafex_core.reporting_.step_decorator import step
-from test_project.cafex_sandbox_project.features.forms.desktop_methods.desktop_methods import NotepadUtils
+from features.forms.desktop_methods.desktop_methods import NotepadUtils
 
 notepad = NotepadUtils()
 

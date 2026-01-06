@@ -14,7 +14,7 @@ import pytest
 from cafex_core.reporting_.step_decorator import step
 from requests import Response
 
-from test_project.cafex_sandbox_project.features.services.jsonplaceholder_api import JSONPlaceholderAPI
+from features.services.jsonplaceholder_api import JSONPlaceholderAPI
 
 
 class TestJSONPlaceholderAPIUnit(unittest.TestCase):

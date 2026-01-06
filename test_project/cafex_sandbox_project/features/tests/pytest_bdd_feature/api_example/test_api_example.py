@@ -12,7 +12,7 @@ from pytest_bdd import (
     parsers,
 )
 
-from test_project.cafex_sandbox_project.features.services.jsonplaceholder_api import JSONPlaceholderAPI
+from features.services.jsonplaceholder_api import JSONPlaceholderAPI
 
 # Initialize the API service
 api_service = JSONPlaceholderAPI()

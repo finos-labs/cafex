@@ -7,7 +7,7 @@ the capabilities of the RequestBuilder module.
 
 import pytest
 from cafex_core.reporting_.step_decorator import step
-from test_project.cafex_sandbox_project.features.services.jsonplaceholder_api import JSONPlaceholderAPI
+from features.services.jsonplaceholder_api import JSONPlaceholderAPI
 
 
 class TestJSONPlaceholderAPI:

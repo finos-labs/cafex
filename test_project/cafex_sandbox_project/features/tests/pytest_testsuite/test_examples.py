@@ -2,7 +2,7 @@ import pytest
 from cafex import CafeXWeb
 from cafex import CafeXAPI
 from cafex import CafeXDB
-from test_project.cafex_sandbox_project.features.forms.ui_methods. \
+from features.forms.ui_methods. \
     internet_page_locators import InternetPage
 
 web_config = InternetPage()
