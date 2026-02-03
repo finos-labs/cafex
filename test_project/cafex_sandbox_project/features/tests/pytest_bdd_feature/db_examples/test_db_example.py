@@ -1,6 +1,6 @@
 from pytest_bdd import (given, scenario, when, then, parsers)
 
-from test_project.cafex_sandbox_project.features.queries.database_methods import EmployeeDbQueries
+from features.queries.database_methods import EmployeeDbQueries
 
 db_queries_obj = EmployeeDbQueries()
 

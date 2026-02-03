@@ -4,7 +4,7 @@ from cafex_core.reporting_.reporting import Reporting
 from cafex_core.utils.config_utils import ConfigUtils
 from cafex_core.utils.core_security import decrypt_password, use_secured_password
 from cafex import CafeXWeb
-from test_project.cafex_sandbox_project.features.forms.ui_methods. \
+from features.forms.ui_methods. \
     internet_page_locators import InternetPage
 
 

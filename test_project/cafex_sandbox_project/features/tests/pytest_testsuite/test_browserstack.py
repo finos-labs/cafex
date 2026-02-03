@@ -4,7 +4,7 @@ import pytest
 from selenium.webdriver.common.by import By
 from cafex_ui.web_client.web_driver_factory import WebDriverFactory
 from cafex_ui import CafeXWeb
-from test_project.cafex_sandbox_project.features.forms.ui_methods.internet_page_locators import InternetPage
+from features.forms.ui_methods.internet_page_locators import InternetPage
 
 web_config = InternetPage()
 

@@ -1,4 +1,4 @@
-from test_project.cafex_sandbox_project.features.queries.cassandra_connection import cassandra_connection
+from features.queries.cassandra_connection import cassandra_connection
 import pytest
 
 

@@ -1,5 +1,5 @@
 from pytest_bdd import given, when, then, parsers, scenario
-from test_project.cafex_sandbox_project.features.forms.desktop_methods.desktop_methods import NotepadUtils
+from features.forms.desktop_methods.desktop_methods import NotepadUtils
 
 notepad = NotepadUtils()
 

@@ -1,7 +1,7 @@
 import pytest
 
 from cafex_core.reporting_.step_decorator import step
-from test_project.cafex_sandbox_project.features.forms.\
+from features.forms.\
     ui_methods.internet_page import InternetPageMethods
 
 internet_page = InternetPageMethods()
